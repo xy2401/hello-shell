@@ -2,4 +2,5 @@ node_modules/
 docs/.vitepress/dist/
 docs/.vitepress/cache/
 *.log
+!demos/shared/fixtures/data/app.log
 .DS_Store
