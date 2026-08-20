@@ -1,0 +1,5 @@
+
+D:\a\hello-shell\hello-shell>rem 05_functions_scope: call :label subroutines, exit /b return codes, setlocal scope 
+functionResult=42
+exitCodeReturn=7
+afterCall=outer

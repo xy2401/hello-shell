@@ -1,0 +1,3 @@
+version=PowerShell 7.6.4
+shell=powershell7
+platform=windows

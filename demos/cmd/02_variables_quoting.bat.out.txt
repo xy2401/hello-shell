@@ -1,0 +1,6 @@
+
+D:\a\hello-shell\hello-shell>rem 02_variables_quoting: set "var=value" quoting, for tokenizing, interpolation, glob literals 
+value=hello world
+wordCount=3
+interpolated=value-is-42
+starLiteral=a*b*c

@@ -1,0 +1,4 @@
+hello from powershell7
+this line goes to stderr
+childExitCode=1
+scriptExitCode=0

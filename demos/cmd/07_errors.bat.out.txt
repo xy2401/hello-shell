@@ -1,0 +1,6 @@
+
+D:\a\hello-shell\hello-shell>rem 07_errors: ERRORLEVEL checks, continuing after failure, child process exit code (cmd has no set -e) 
+caughtError=true
+afterFailure=continued
+setEExitCode=1
+scriptExitCode=0

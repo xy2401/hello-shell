@@ -1,0 +1,5 @@
+prepared=3
+renamed=1
+unchanged=2
+verify=ok
+report=prepared=3,renamed=1,unchanged=2

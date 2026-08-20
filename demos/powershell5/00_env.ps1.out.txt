@@ -1,0 +1,3 @@
+version=PowerShell 5.1.26100.33158
+shell=powershell5
+platform=windows

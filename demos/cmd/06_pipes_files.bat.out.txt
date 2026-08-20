@@ -1,0 +1,6 @@
+
+D:\a\hello-shell\hello-shell>rem 06_pipes_files: dir /b listing, find counting through pipes, fixed-order status histogram 
+globList=app.log,config.csv,readme.txt
+logFiles=1
+requestLines=4
+statusCounts=paid:3,pending:1,refunded:1

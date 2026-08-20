@@ -1,0 +1,6 @@
+
+D:\a\hello-shell\hello-shell>rem 01_hello_io: stdout vs stderr streams and capturing a failing command exit code 
+stdout: hello from cmd
+stderr: this line goes to stderr 
+childExitCode=1
+scriptExitCode=0

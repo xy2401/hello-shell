@@ -1,0 +1,5 @@
+
+D:\a\hello-shell\hello-shell>rem 00_env: shell identity - version line, shell name, platform 
+version=Microsoft Windows [Version 10.0.26100.33158]
+shell=cmd
+platform=windows

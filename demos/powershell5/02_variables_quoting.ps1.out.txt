@@ -1,0 +1,4 @@
+value=hello world
+wordCount=3
+interpolated=value-is-42
+starLiteral=a*b*c

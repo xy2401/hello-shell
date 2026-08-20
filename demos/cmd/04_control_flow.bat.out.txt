@@ -1,0 +1,5 @@
+
+D:\a\hello-shell\hello-shell>rem 04_control_flow: numeric for loop, CSV scan with for /f, file set counting 
+sum123=6
+paidCount=3
+loopFiles=3

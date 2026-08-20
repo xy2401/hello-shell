@@ -1,0 +1,8 @@
+
+D:\a\hello-shell\hello-shell>rem 03_args_parsing: re-exec self with sample args, then parse with a shift loop 
+invocation=3
+argCount=5
+firstArg=alice
+secondArg=bob smith
+verboseFlag=true
+nValue=3

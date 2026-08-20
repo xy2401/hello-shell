@@ -1,0 +1,4 @@
+stdout: hello from powershell5
+stderr: this line goes to stderr
+childExitCode=1
+scriptExitCode=0
