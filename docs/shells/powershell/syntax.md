@@ -1,6 +1,6 @@
 # PowerShell 语法基础
 
-> 本页结论：PowerShell 语法围绕对象管道展开——cmdlet 之间传对象、`$_` 指代当前对象；`$变量` 双引号插值、单引号字面量；函数有真正的返回值；try/catch 只接得住「终止性错误」，要靠 `-ErrorAction Stop` 或 `$ErrorActionPreference='Stop'` 升级。片段摘自 `demos/powershell7/`，输出对照 `demos/pwsh/` 快照（PS7 Linux 实测，PS5 与 PS7 Windows 快照待首次采集）。
+> 本页结论：PowerShell 语法围绕对象管道展开——cmdlet 之间传对象、`$_` 指代当前对象；`$变量` 双引号插值、单引号字面量；函数有真正的返回值；try/catch 只接得住「终止性错误」，要靠 `-ErrorAction Stop` 或 `$ErrorActionPreference='Stop'` 升级。片段摘自 `demos/powershell7/`，输出对照 `demos/pwsh/` 快照（PS7 Linux 实测）；Windows 侧 `demos/powershell5/` 与 `demos/powershell7/` 的对应快照也已落库，且本页涉及的 02/05/06/07 四个任务均与 Linux 版逐行一致。
 
 ## 对象管道：Get-ChildItem | … | Measure-Object
 
@@ -38,6 +38,9 @@ logFiles=1
 requestLines=2
 statusCounts=paid:3,pending:1,refunded:1
 ```
+
+`demos/powershell5/` 与 `demos/powershell7/` 下的同名 Windows 快照
+与此逐行相同——对象管道语义在两代 Windows PowerShell 上无差异。
 
 全程没有一处正则切分字符串——这就是「对象管道」相对文本管道的优势。
 

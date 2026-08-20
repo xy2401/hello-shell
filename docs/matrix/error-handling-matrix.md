@@ -1,6 +1,6 @@
 # 错误处理矩阵：退出码、双轨制与异常
 
-> 本页结论：八个运行体的错误模型分四族——bash/zsh 靠**退出码 + `set -e`**、fish 靠 **`$status`（且永不自动中止）**、cmd 靠 **`ERRORLEVEL` + 延迟展开（没有任何自动中止）**、PowerShell 5/7 靠 **`$ErrorActionPreference` + `try/catch` 与 `$LASTEXITCODE` 的双轨制**，python 是**异常**。任务 07 的契约行 `caughtError=true`、`afterFailure=continued`、`setEExitCode=1`、`scriptExitCode=0` 五体一致，证明「失败可被捕获、捕获后照常继续」在所有模型里都成立；任务 01 的快照还顺手证明了两件事：stderr 与 stdout 确实分流（stderr 行不进快照），以及退出码的数值由命令自身定义、不由 shell 定义（busybox `ls` 失败=1，GNU `ls` 失败=2）。
+> 本页结论：八个运行体的错误模型分四族——bash/zsh 靠**退出码 + `set -e`**、fish 靠 **`$status`（且永不自动中止）**、cmd 靠 **`ERRORLEVEL` + 延迟展开（没有任何自动中止）**、PowerShell 5/7 靠 **`$ErrorActionPreference` + `try/catch` 与 `$LASTEXITCODE` 的双轨制**，python 是**异常**。任务 07 的契约行 `caughtError=true`、`afterFailure=continued`、`setEExitCode=1`、`scriptExitCode=0` 八体一致，证明「失败可被捕获、捕获后照常继续」在所有模型里都成立；任务 01 的快照还顺手证明了两件事：stderr 与 stdout 确实分流（Linux 采集只收 stdout、stderr 行缺席于快照；Windows 采集用 `2>&1` 合并、stderr 行被收回快照——一缺一有，互为镜像），以及退出码的数值由命令自身定义、不由 shell 定义（busybox `ls` 失败=1，GNU `ls` 失败=2，Windows `dir` 失败=1）。
 
 ## 统一实验
 
@@ -17,7 +17,7 @@ setEExitCode=1
 scriptExitCode=0
 ```
 
-Windows 侧三行快照待首次采集，下表依据脚本源码 `demos/cmd/07_errors.bat`、`demos/cmd/01_hello_io.bat`、`demos/powershell5/*.ps1`、`demos/powershell7/*.ps1`。
+Windows 侧三份任务 07 快照（`demos/cmd/07_errors.bat.out.txt`、`demos/powershell5/07_errors.ps1.out.txt`、`demos/powershell7/07_errors.ps1.out.txt`）与上图逐字一致——四行契约值没有任何平台浮动。
 
 ## 错误模型五维对照
 
@@ -63,7 +63,7 @@ try {
 }
 ```
 
-cmd 逐条检查 `ERRORLEVEL`，注意必须开延迟展开才能在块内读到刷新后的值（摘自 `demos/cmd/07_errors.bat`，快照待首次采集）：
+cmd 逐条检查 `ERRORLEVEL`，注意必须开延迟展开才能在块内读到刷新后的值（摘自 `demos/cmd/07_errors.bat`，快照实测 `caughtError=true`、`afterFailure=continued`）：
 
 ```bat
 setlocal EnableDelayedExpansion
@@ -99,7 +99,7 @@ setEExitCode=$?
 Write-Output "setEExitCode=$LASTEXITCODE"
 ```
 
-powershell5/7 的 Windows 版同构（`& powershell -NoProfile -Command ...`，快照待首次采集）。cmd 没有「遇错即停」，只能把失败命令放进子 `cmd /c` 再读 `!ERRORLEVEL!`（bat 源码注释原话：*no set -e in cmd*）。python 的「遇错即停」是语言默认：未捕获异常即退出码 1，本任务用 `check=True` 把它显式接住。
+powershell7 与 pwsh 脚本逐字节相同（子进程同样调 `pwsh`），powershell5 同构但子进程改调 `powershell`（`& powershell -NoProfile -Command ...`）——两份 Windows 快照均实测 `setEExitCode=1`。cmd 没有「遇错即停」，只能把失败命令放进子 `cmd /c` 再读 `!ERRORLEVEL!`（bat 源码注释原话：*no set -e in cmd*，快照实测同为 `setEExitCode=1`）。python 的「遇错即停」是语言默认：未捕获异常即退出码 1，本任务用 `check=True` 把它显式接住。
 
 ### PowerShell 的双轨制
 
@@ -110,9 +110,9 @@ bash -c 'ls /nonexistent-hello-shell' 2>$null | Out-Null
 Write-Output "childExitCode=$LASTEXITCODE"
 ```
 
-### 错误流分离：stderr 行不进快照
+### 错误流分离：Linux 快照缺席的 stderr 行，Windows 快照收回了它
 
-任务 01 每个实现都向 stderr 写了一行（bash/zsh/fish：`echo "stderr: ..." >&2`；pwsh：`[Console]::Error.WriteLine`；cmd：`echo ... 1>&2`，快照待首次采集；python：`print(..., file=sys.stderr)`）。而 Linux 采集只收 stdout，因此五份 01 快照里**都没有** stderr 那行——分流本身就是证据：
+任务 01 每个实现都向 stderr 写了一行（bash/zsh/fish：`echo "stderr: ..." >&2`；pwsh/powershell5/powershell7：`[Console]::Error.WriteLine`；cmd：`echo ... 1>&2`；python：`print(..., file=sys.stderr)`）。两侧采集器对这行的处理恰好相反，从两个方向证明了分流：Linux 采集只收 stdout，因此五份 01 快照里**都没有** stderr 那行；Windows 采集器（`scripts/collect-windows.ps1`）用 `2>&1` 把错误流并进输出，因此三份 Windows 01 快照里**都有**那行——它确实去了 stderr，才会被 `2>&1` 收回来：
 
 ```text
 # demos/bash/01_hello_io.sh.out.txt
@@ -121,19 +121,28 @@ childExitCode=1
 scriptExitCode=0
 ```
 
-（`stderr: this line goes to stderr` 被 `>&2` 送去了 stderr，不在快照内。）
+```text
+# demos/cmd/01_hello_io.bat.out.txt（首行是 rem 注释回显；stderr 行被 2>&1 收回）
+D:\a\hello-shell\hello-shell>rem 01_hello_io: stdout vs stderr streams and capturing a failing command exit code 
+stdout: hello from cmd
+stderr: this line goes to stderr 
+childExitCode=1
+scriptExitCode=0
+```
+
+（bash 快照里 `stderr: this line goes to stderr` 被 `>&2` 送去了 stderr，不在快照内；cmd 快照里同一行因 `2>&1` 合并而现身。powershell5 快照同样含 `stderr: this line goes to stderr`；powershell7 脚本未加前缀，快照为 `this line goes to stderr`。）
 
 ### 退出码数值由命令定义，不由 shell 定义
 
-对比任务 01 的 `childExitCode=` 行：bash/zsh/fish 三份快照是 `childExitCode=1`，pwsh/python 两份是 `childExitCode=2`。失败的都是同一条 `ls`，差别在容器里的实现：alpine 的 busybox `ls` 失败退出 1，debian 的 GNU `ls` 失败退出 2。shell 只是如实转述命令给出的数值——这也是为什么跨 shell 脚本不该硬编码「失败码 = 几」，只该判断「是否非零」。
+对比任务 01 的 `childExitCode=` 行：bash/zsh/fish 三份快照是 `childExitCode=1`，pwsh/python 两份是 `childExitCode=2`。失败的都是同一条 `ls`，差别在容器里的实现：alpine 的 busybox `ls` 失败退出 1，debian 的 GNU `ls` 失败退出 2。Windows 三体则统一是 `childExitCode=1`——失败命令换成了 `dir`（cmd 直接跑、powershell5/7 经 `cmd /c` 跑），而 `dir` 的失败码就是 1。shell 只是如实转述命令给出的数值——这也是为什么跨 shell 脚本不该硬编码「失败码 = 几」，只该判断「是否非零」。
 
 ## 小结
 
 | 结论 | 证据 |
 | --- | --- |
-| 四族模型：退出码（bash/zsh）、$status（fish）、ERRORLEVEL（cmd）、双轨制（PS5/7），外加异常（python） | 任务 07 各实现源码与五体一致的契约行 |
-| 「遇错即停」：bash/zsh `set -e`、PS `$ErrorActionPreference='Stop'`、python 默认即停；fish/cmd 无此设施 | `setEExitCode=1` 五体一致；cmd bat 源码注释 *no set -e in cmd*（快照待首次采集） |
-| stderr 与 stdout 分流是普遍能力 | 任务 01 各实现的 `>&2` / `1>&2` / `[Console]::Error.WriteLine` / `file=sys.stderr`；stderr 行缺席于快照 |
-| 退出码数值归命令所有 | 任务 01 `childExitCode=1`（busybox ls）vs `=2`（GNU ls） |
+| 四族模型：退出码（bash/zsh）、$status（fish）、ERRORLEVEL（cmd）、双轨制（PS5/7），外加异常（python） | 任务 07 各实现源码与八体一致的契约行 |
+| 「遇错即停」：bash/zsh `set -e`、PS `$ErrorActionPreference='Stop'`、python 默认即停；fish/cmd 无此设施 | `setEExitCode=1` 八体一致；cmd bat 源码注释 *no set -e in cmd*，快照实测同值 |
+| stderr 与 stdout 分流是普遍能力 | 各实现的 `>&2` / `1>&2` / `[Console]::Error.WriteLine` / `file=sys.stderr`；Linux 快照缺席 stderr 行，Windows 快照经 `2>&1` 收回该行，一缺一有互为镜像 |
+| 退出码数值归命令所有 | 任务 01 `childExitCode=1`（busybox ls、Windows dir）vs `=2`（GNU ls） |
 
 延伸阅读：[错误与信号统一骨架](/fundamentals/errors-signals)、[矩阵总览](/matrix/)、[实验说明](/labs/)。

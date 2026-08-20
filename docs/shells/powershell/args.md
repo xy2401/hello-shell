@@ -77,7 +77,9 @@ nValue=3
 
 与 bash/zsh/fish/python 的 03 快照逐行一致（仅 `invocation` 后缀不同）；
 `demos/powershell5/03_args_parsing.ps1` 与 `demos/powershell7/` 版同为手工
-遍历写法，Windows 侧输出**快照待首次采集**，行为以脚本源码为据。
+遍历写法，Windows 侧快照已采集且与 Linux 版逐行相同
+（`demos/powershell5/03_args_parsing.ps1.out.txt` 第 1 行同为
+`invocation=03_args_parsing.ps1`，第 2 行 `argCount=5`）。
 
 ## param() 块：生产代码的正确姿势
 

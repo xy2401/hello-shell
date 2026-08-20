@@ -1,6 +1,6 @@
 # 版本政策
 
-> 本页结论：Linux 侧镜像一律「tag+digest 双锁定、禁止 latest/edge/nightly」，锁定值提交在 `.env.versions`；zsh 与 fish 无官方独立镜像，统一以 digest 锁定的 alpine 为基底 apk 安装；Windows 侧（cmd / PowerShell 5 / PowerShell 7）无镜像可锁，用 `demos/<shell>/00_env.*.out.txt` 快照留痕，并接受 windows-latest runner 的版本漂移风险；升级走「改 `.env.versions` → 重跑采集 → 审查差异 → 更新文档」四步。
+> 本页结论：Linux 侧镜像一律「tag+digest 双锁定、禁止 latest/edge/nightly」，锁定值提交在 `.env.versions`；zsh 与 fish 无官方独立镜像，统一以 digest 锁定的 alpine 为基底 apk 安装；Windows 侧（cmd / PowerShell 5 / PowerShell 7）无镜像可锁，用 `demos/<shell>/00_env.*.out.txt` 快照留痕，接受 windows-latest runner 的版本漂移风险；快照已由 collect-windows-outputs workflow 首采入库，此后经 workflow_dispatch 手动重采；升级走「改 `.env.versions` → 重跑采集 → 审查差异 → 更新文档」四步。
 
 ## 锁定规则
 
@@ -25,17 +25,18 @@ zsh 与 fish 无官方独立镜像，统一以 digest 锁定的 alpine 为基底
 
 ## Windows 侧：无镜像可锁
 
-cmd / PowerShell 5 / PowerShell 7 使用 GitHub **windows-latest runner 内置运行体**，没有可锁的镜像：
+cmd / PowerShell 5 / PowerShell 7 使用 GitHub **windows-latest runner 内置 / 预装的运行体**（cmd 与 PowerShell 5 内置，PowerShell 7 预装），没有可锁的镜像：
 
 - 版本以 `demos/<shell>/00_env.*.out.txt` 快照留痕（`demos/cmd/`、`demos/powershell5/`、`demos/powershell7/` 各自的 `00_env`）。
-- **漂移风险**：windows-latest runner 的内置运行体版本会随 GitHub 更新而变化，快照可能随下次采集漂移。读取 Windows 侧结论时，请以最近一次 `00_env` 快照为准。
-- 采集方式与「待首次采集」的标注规则见[证据政策](/reference/evidence-policy)。
+- **首采已入库**：collect-windows-outputs workflow 已在 windows-latest runner 上完成首采，27 份 Windows 侧快照（cmd / PowerShell 5 / PowerShell 7 各 9 份）已提交入库。
+- **漂移风险**：windows-latest runner 无镜像可锁，运行体版本会随 GitHub 更新而变化，快照可能随下次采集漂移。读取 Windows 侧结论时，请以最近一次 `00_env` 快照为准。
+- **持续机制**：怀疑漂移或需要更新快照时，经 workflow_dispatch 手动触发 workflow 重采，更新后的 `demos/**/*.out.txt` 自动提交入库，再按下方升级流程审查差异。采集与标注规则见[证据政策](/reference/evidence-policy)。
 
 ## 升级流程
 
 锁定要升级时，严格走四步，避免「版本变了但结论没跟上」：
 
 1. **更新 `.env.versions`**：替换为新 tag 并重新实测 digest，同时更新 `checkedAt` 日期。
-2. **重跑采集**：`npm run collect-outputs`（Linux）；Windows 侧经 collect-windows-outputs workflow 重跑。
+2. **重跑采集**：`npm run collect-outputs`（Linux）；Windows 侧经 workflow_dispatch 手动触发 collect-windows-outputs workflow 重跑。
 3. **审查输出差异**：逐条 `git diff demos/**/*.out.txt`，确认行为变化是「预期内升级」还是「需要记录的差异」。
 4. **更新文档**：把受影响的分卷页、矩阵页、本页锁定表一并更新，保持结论与新输出一致。

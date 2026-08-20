@@ -43,7 +43,7 @@ npm run collect-outputs   # node scripts/run-docker-demos.js：容器内运行�
 - CI：GitHub Actions 工作流 `collect-windows-outputs`（`.github/workflows/collect-windows-outputs.yml`，手动触发），在 `windows-latest` runner 上运行 `scripts/collect-windows.ps1` 并自动提交更新后的 `demos/**/*.out.txt`；
 - 本地（需 Windows）：`pwsh scripts/collect-windows.ps1`。
 
-Windows runner 内置运行体版本会随 GitHub 更新漂移，以 `00_env` 快照留痕（版本政策见 [reference](/reference/evidence-policy)）。当前 `demos/cmd`、`demos/powershell5`、`demos/powershell7` 尚无 `.out.txt`，下文的 Windows 对照均标注「Windows 快照待首次采集」。
+Windows runner 内置运行体版本会随 GitHub 更新漂移，以 `00_env` 快照留痕（版本政策见 [reference](/reference/evidence-policy)）。`demos/cmd`、`demos/powershell5`、`demos/powershell7` 的 27 份 `.out.txt` 已全部入库（各 9 份），下文的 Windows 对照均以这些快照为据。
 
 ## 任务 00：环境指纹
 
@@ -70,7 +70,30 @@ shell=pwsh
 platform=linux
 ```
 
-cmd / PowerShell 5 / PowerShell 7（Windows）：Windows 快照待首次采集。
+cmd / PowerShell 5 / PowerShell 7（Windows）三份快照已入库，关键行：
+
+```text
+# demos/cmd/00_env.bat.out.txt（另含一行 echo 回显）
+version=Microsoft Windows [Version 10.0.26100.33158]
+shell=cmd
+platform=windows
+```
+
+```text
+# demos/powershell5/00_env.ps1.out.txt
+version=PowerShell 5.1.26100.33158
+shell=powershell5
+platform=windows
+```
+
+```text
+# demos/powershell7/00_env.ps1.out.txt
+version=PowerShell 7.6.4
+shell=powershell7
+platform=windows
+```
+
+版本号随 runner 漂移（采集时点：cmd/PS5 内核版本 26100.33158，PS7 为 7.6.4）。
 
 ## 任务 01：I/O 与退出码
 
@@ -90,7 +113,7 @@ childExitCode=2
 scriptExitCode=0
 ```
 
-bash/zsh/fish 的失败命令是 `ls` 不存在的目录（退出码 1）；pwsh 与 Python 版按平台选择失败命令——Linux 走 `bash -c 'ls ...'` 得 2，Windows 走 `cmd /c dir` 得 1（源码注释原话：cmd dir=1，bash ls=2，具体值随平台），所以 `demos/python/01_hello_io.py.out.txt` 同为 `childExitCode=2`，而未来 Windows 快照预计为 1（Windows 快照待首次采集）。
+bash/zsh/fish 的失败命令是 `ls` 不存在的目录（退出码 1）；pwsh 与 Python 版按平台选择失败命令——Linux 走 `bash -c 'ls ...'` 得 2，Windows 走 `cmd /c dir` 得 1（源码注释原话：cmd dir=1，bash ls=2，具体值随平台），所以 `demos/python/01_hello_io.py.out.txt` 同为 `childExitCode=2`。三份 Windows 快照已入库并证实推断：`demos/cmd/01_hello_io.bat.out.txt`、`demos/powershell5/01_hello_io.ps1.out.txt`、`demos/powershell7/01_hello_io.ps1.out.txt` 均为 `childExitCode=1`（stderr 行在快照中可见，分流同样成立）。
 
 ## 任务 02：变量与引号
 
@@ -112,7 +135,7 @@ interpolated=value-is-42
 starLiteral=a*b*c
 ```
 
-输出一致但机制不同：bash 靠未加引号展开的默认分词（`set -- $words`），zsh 需 `${=words}` 显式开启分词。fish/pwsh/python 快照同为这四行；cmd/PowerShell 5/PowerShell 7（Windows）：Windows 快照待首次采集。
+输出一致但机制不同：bash 靠未加引号展开的默认分词（`set -- $words`），zsh 需 `${=words}` 显式开启分词。fish/pwsh/python 快照同为这四行；Windows 三份快照（`demos/cmd/02_variables_quoting.bat.out.txt`、`demos/powershell5/02_variables_quoting.ps1.out.txt`、`demos/powershell7/02_variables_quoting.ps1.out.txt`）已入库，四行与 Linux 侧逐字相同——cmd 用 `for` 分词，PowerShell 用 `-split`。
 
 ## 任务 03：入参解析
 
@@ -138,7 +161,7 @@ verboseFlag=true
 nValue=3
 ```
 
-`secondArg=bob smith` 完整保形是两个运行体都守住了引号边界。各 shell 入参模型的系统差异（`$0`/`$args[0]` 是否占脚本名等）见 [入参矩阵](/matrix/args-matrix)。cmd / PowerShell 5 / PowerShell 7（Windows）：Windows 快照待首次采集。
+`secondArg=bob smith` 完整保形是两个运行体都守住了引号边界。各 shell 入参模型的系统差异（`$0`/`$args[0]` 是否占脚本名等）见 [入参矩阵](/matrix/args-matrix）。Windows 三份快照已入库：`demos/powershell5`、`demos/powershell7` 的 03 快照与上方 pwsh 版逐字相同；`demos/cmd/03_args_parsing.bat.out.txt` 的 `argCount=5`、`firstArg=alice`、`secondArg=bob smith`、`verboseFlag=true`、`nValue=3` 亦一致，仅 `invocation=3`（`call "%~f0"` 自调用下 `%~nx0` 的取值）与其余各体的脚本名形态不同。
 
 ## 任务 04：控制流
 
@@ -158,7 +181,7 @@ paidCount=3
 loopFiles=3
 ```
 
-bash/zsh/python 快照与上面两份逐字相同（对照 `demos/bash/04_control_flow.sh.out.txt`）。cmd / PowerShell 5 / PowerShell 7（Windows）：Windows 快照待首次采集。
+bash/zsh/python 快照与上面两份逐字相同（对照 `demos/bash/04_control_flow.sh.out.txt`）。Windows 三份快照（`demos/cmd/04_control_flow.bat.out.txt`、`demos/powershell5/04_control_flow.ps1.out.txt`、`demos/powershell7/04_control_flow.ps1.out.txt`）已入库，同为这三行——八体一致。
 
 ## 任务 05：函数与作用域
 
@@ -185,7 +208,7 @@ exitCodeReturn=7
 afterCall=outer
 ```
 
-捕获 7 的机制：bash/zsh 读 `$?`，fish 读 `$status`，pwsh 由子进程 `exit 7` 后读 `$LASTEXITCODE`。cmd / PowerShell 5 / PowerShell 7（Windows）：Windows 快照待首次采集。
+捕获 7 的机制：bash/zsh 读 `$?`，fish 读 `$status`，pwsh 由子进程 `exit 7` 后读 `$LASTEXITCODE`。Windows 三份快照（`demos/cmd/05_functions_scope.bat.out.txt`、`demos/powershell5/05_functions_scope.ps1.out.txt`、`demos/powershell7/05_functions_scope.ps1.out.txt`）已入库，同为这三行；cmd 的 7 走 `call :label` 子例程 + `exit /b 7` 后读 `!ERRORLEVEL!`，ps5/ps7 与 pwsh 同为子进程 `exit 7` → `$LASTEXITCODE`。
 
 ## 任务 06：管道与文件
 
@@ -215,7 +238,7 @@ requestLines=2
 statusCounts=paid:3,pending:1,refunded:1
 ```
 
-bash/zsh 的 `statusCounts` 由 `tail | cut | sort | uniq -c | awk` 文本管道得出，pwsh 由 `Import-Csv | Group-Object` 对象管道得出，python 用字典计数得出——三路同果。cmd / PowerShell 5 / PowerShell 7（Windows）：Windows 快照待首次采集。
+bash/zsh 的 `statusCounts` 由 `tail | cut | sort | uniq -c | awk` 文本管道得出，pwsh 由 `Import-Csv | Group-Object` 对象管道得出，python 用字典计数得出——三路同果。Windows 三份快照已入库：`demos/powershell5/06_pipes_files.ps1.out.txt`、`demos/powershell7/06_pipes_files.ps1.out.txt` 四行逐字相同；`demos/cmd/06_pipes_files.bat.out.txt` 有一处实测差异——`requestLines=4` 而非 2，因为 cmd 的 `find` 大小写不敏感且做子串匹配，`"request"` 中的 `st` 也命中了 `app started`/`app stopped`（以快照为准）。
 
 ## 任务 07：错误处理
 
@@ -237,7 +260,7 @@ setEExitCode=1
 scriptExitCode=0
 ```
 
-bash/zsh 用 `false || caught=true` 与子 shell `set -e`；pwsh 用 `try/catch` + `-ErrorAction Stop` 与子进程 `$ErrorActionPreference='Stop'`（源码注释原话：catch 之后脚本照常继续，不会像 bash 的 set -e 那样中断）。cmd 版以 `!ERRORLEVEL!`（延迟展开）判断失败、以 `cmd /c` 子进程模拟失败即停——`demos/cmd` 的 Windows 快照待首次采集；PowerShell 5 / PowerShell 7（Windows）同样待采集。
+bash/zsh 用 `false || caught=true` 与子 shell `set -e`；pwsh 用 `try/catch` + `-ErrorAction Stop` 与子进程 `$ErrorActionPreference='Stop'`（源码注释原话：catch 之后脚本照常继续，不会像 bash 的 set -e 那样中断）。cmd 版以 `!ERRORLEVEL!`（延迟展开）判断失败、以 `cmd /c` 子进程模拟失败即停——快照（`demos/cmd/07_errors.bat.out.txt`）证实四行与 Linux 侧逐字相同；`demos/powershell5/07_errors.ps1.out.txt`、`demos/powershell7/07_errors.ps1.out.txt` 同为这四行。
 
 ## 任务 08：综合实战
 
@@ -261,7 +284,7 @@ verify=ok
 report=prepared=3,renamed=1,unchanged=2
 ```
 
-`data/` 下 3 个文件：1 个 `.log` 被改名，其余 2 个保持不变，`verify=ok` 表示校验通过（无残留 `.log`、无缺失 `.log.bak`）。zsh/fish/python 快照同为这五行。cmd / PowerShell 5 / PowerShell 7（Windows）：Windows 快照待首次采集。
+`data/` 下 3 个文件：1 个 `.log` 被改名，其余 2 个保持不变，`verify=ok` 表示校验通过（无残留 `.log`、无缺失 `.log.bak`）。zsh/fish/python 快照同为这五行。Windows 三份快照（`demos/cmd/08_real_world.bat.out.txt`、`demos/powershell5/08_real_world.ps1.out.txt`、`demos/powershell7/08_real_world.ps1.out.txt`）已入库，同为这五行——八体一致。
 
 ## 延伸阅读
 

@@ -1,6 +1,6 @@
 # 通配矩阵：谁来展开 `*`，无匹配怎么办，`**` 谁能递归
 
-> 本页结论：通配展开分两个阵营——bash/zsh/fish 由 **shell 在命令执行前展开**，命令行里的 `*` 到达脚本时已是文件名列表；PowerShell/cmd 的命令行**不做通配展开**，`*` 原样传递，由 `Get-ChildItem -Filter`、`dir`、`for` 这类命令自行处理；python 根本没有 shell 层通配，需显式调用 `glob`/`os.listdir`。无匹配时的行为是最大分野：bash 把模式原样传给命令、zsh 默认直接报错（NOMATCH，可用 `(N)` 限定符改为返回空）、fish 展开为空、cmd 的 `for` 一轮都不进。递归 `**` 只有 zsh/fish 默认可用，bash 要先 `shopt -s globstar`。任务 06 的 `globList=app.log,config.csv,readme.txt` 在五份 Linux 快照里逐字一致。
+> 本页结论：通配展开分两个阵营——bash/zsh/fish 由 **shell 在命令执行前展开**，命令行里的 `*` 到达脚本时已是文件名列表；PowerShell/cmd 的命令行**不做通配展开**，`*` 原样传递，由 `Get-ChildItem -Filter`、`dir`、`for` 这类命令自行处理；python 根本没有 shell 层通配，需显式调用 `glob`/`os.listdir`。无匹配时的行为是最大分野：bash 把模式原样传给命令、zsh 默认直接报错（NOMATCH，可用 `(N)` 限定符改为返回空）、fish 展开为空、cmd 的 `for` 一轮都不进。递归 `**` 只有 zsh/fish 默认可用，bash 要先 `shopt -s globstar`。任务 06 的 `globList=app.log,config.csv,readme.txt` 在八份快照里逐字一致。
 
 ## 统一实验
 
@@ -14,7 +14,7 @@ requestLines=2
 statusCounts=paid:3,pending:1,refunded:1
 ```
 
-Windows 侧三行快照待首次采集，下表依据脚本源码 `demos/cmd/06_pipes_files.bat`、`demos/powershell5/06_pipes_files.ps1`、`demos/powershell7/06_pipes_files.ps1`。
+Windows 侧快照已入库：powershell5/powershell7 两份快照与上图逐字一致；cmd 快照的 `globList=app.log,config.csv,readme.txt`、`logFiles=1`、`statusCounts=paid:3,pending:1,refunded:1` 三行同样吻合，唯独 `requestLines=4` 偏离契约值 2——`find` 直读 LF 行尾的 fixture 时行为异常（同一脚本里经 `type` 管道中转的 `statusCounts` 仍精确）。该行不属于本矩阵的通配维度，但按快照如实记录。
 
 ## 通配四维对照
 
@@ -65,7 +65,7 @@ pwsh 的命令行里没有通配展开这一步，`*.log` 是作为 `-Filter` �
 $logFiles = (Get-ChildItem $dataDir -Filter *.log | Measure-Object).Count
 ```
 
-cmd 的 `for` 文件集自带通配，脚本注释明确它是为「无匹配」场景兜底的写法（摘自 `demos/cmd/06_pipes_files.bat`，快照待首次采集）：
+cmd 的 `for` 文件集自带通配，脚本注释明确它是为「无匹配」场景兜底的写法（摘自 `demos/cmd/06_pipes_files.bat`）：
 
 ```bat
 rem count *.log files with a file-set loop (robust when nothing matches)
@@ -73,7 +73,7 @@ set "LOGC=0"
 for %%f in ("%DATA%\*.log") do set /a LOGC+=1
 ```
 
-无匹配时 `for` 循环体一次都不执行，`LOGC` 保持 0——这正是 cmd 对付空匹配的方式。powershell5/7 的写法与 pwsh 同构（`Get-ChildItem ... -Filter *.log`，快照待首次采集）。
+无匹配时 `for` 循环体一次都不执行，`LOGC` 保持 0——这正是 cmd 对付空匹配的方式；有匹配时快照实测 `logFiles=1`，与其余七体一致。powershell5/7 的写法与 pwsh 同构（`Get-ChildItem ... -Filter *.log`），两份快照的 `globList`、`logFiles` 行与 Linux 侧逐字相同。
 
 python 侧连「通配符」都不存在：列举就是 `os.listdir`，过滤就是 `endswith`（摘自 `demos/python/06_pipes_files.py`）：
 
@@ -105,8 +105,8 @@ log_files = sum(1 for name in names if name.endswith(".log"))
 
 | 结论 | 证据 |
 | --- | --- |
-| bash/zsh/fish 是 shell 展开，PowerShell/cmd 是命令自展开，python 无 shell 通配 | bash `for f in /fixtures/data/*`、zsh 数组展开、fish `count` vs pwsh `-Filter`、cmd `for` 文件集、python `os.listdir`；`globList` 五体一致 |
-| 无匹配：bash 原样 / zsh 报错（`(N)` 转空）/ fish 空 / PowerShell 与 cmd 空集合不报错 | 各运行体既定语义；cmd 源码注释 `robust when nothing matches`（快照待首次采集） |
+| bash/zsh/fish 是 shell 展开，PowerShell/cmd 是命令自展开，python 无 shell 通配 | bash `for f in /fixtures/data/*`、zsh 数组展开、fish `count` vs pwsh `-Filter`、cmd `for` 文件集、python `os.listdir`；`globList` 八体一致 |
+| 无匹配：bash 原样 / zsh 报错（`(N)` 转空）/ fish 空 / PowerShell 与 cmd 空集合不报错 | 各运行体既定语义；cmd 源码注释 `robust when nothing matches`，有匹配分支由快照 `logFiles=1` 实证 |
 | 递归 `**`：zsh/fish 默认、bash 需 globstar、其余走参数或 API | 同上列写法对照 |
 
 延伸阅读：[管道与文件实验](/labs/)、[引号矩阵](/matrix/quoting-matrix)（引号如何冻结 `*`）、[Shell vs Python 边界](/compare/shell-vs-python)。

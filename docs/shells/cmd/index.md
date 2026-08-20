@@ -29,7 +29,7 @@ cmd 是 Windows 操作系统的一部分，不需要也无法安装：
 | 宿主 | GitHub Actions `windows-latest` runner 内置 |
 | 调用方式 | `cmd /c demos\cmd\NN_xxx.bat` |
 | 版本采集 | `demos/cmd/00_env.bat` 用内置命令 `ver` 捕获版本行 |
-| 输出快照 | `demos/cmd/00_env.bat.out.txt`（**Windows 快照待首次采集**） |
+| 输出快照 | `demos/cmd/00_env.bat.out.txt`，第 3 行 `version=Microsoft Windows [Version 10.0.26100.33158]` |
 
 `00_env.bat` 的核心逻辑（摘自 `demos/cmd/00_env.bat`）：
 
@@ -43,8 +43,12 @@ echo platform=windows
 ```
 
 采集由 `.github/workflows/collect-windows-outputs.yml` 在 windows-latest 上
-执行 `scripts/collect-windows.ps1` 完成；快照首次落库前，本卷涉及 Windows
-输出行为之处均以脚本源码为据，并标注「Windows 快照待首次采集」。
+执行 `scripts/collect-windows.ps1` 完成；`demos/cmd/*.bat.out.txt` 九份快照
+已全部落库，快照证实 `ver` 行被完整捕获（`00_env.bat.out.txt` 第 3 行：
+`version=Microsoft Windows [Version 10.0.26100.33158]`，即 Server 2025
+世代的构建号）。注意 cmd 快照的前两行总是一个空行加一条带回显的
+`rem` 注释——因为每个 `.bat` 的首行是注释、`@echo off` 在第二行才生效，
+这是 cmd 快照区别于其他 shell 快照的外观特征。
 
 ## 无镜像锁定：漂移政策
 
@@ -55,7 +59,8 @@ Linux 侧的 bash/zsh/fish/python/pwsh 都在容器里运行，镜像以 tag + d
 
 本仓库的应对：
 
-1. 每次采集把 `ver` 输出写进 `00_env.bat.out.txt`，快照即版本留痕；
+1. 每次采集把 `ver` 输出写进 `00_env.bat.out.txt`，快照即版本留痕
+   （当前留痕为构建号 `10.0.26100.33158`）；
 2. 脚本只使用冻结多年的稳定语法（`for /f`、`call :label`、延迟展开），
    不依赖任何新近行为，漂移风险极低；
 3. 完整规则见 [版本与漂移政策](/reference/version-policy)。

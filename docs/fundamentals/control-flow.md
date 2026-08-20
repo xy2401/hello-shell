@@ -1,6 +1,6 @@
 # 控制流：条件、循环与遍历
 
-> 本页结论：条件与循环的语法各家差异极大，但语义高度收敛——任务 04 的三个验证点在五个 Linux 运行体上输出逐字相同：`sum123=6`、`paidCount=3`、`loopFiles=3`。统一模型是三件事：条件判断（命令退出码或布尔表达式）、循环（枚举集合或读流）、遍历（glob、cmdlet 还是标准库 API）。差异点集中在坑位：zsh 的 `status` 是保留字、bash 管道尾段跑在子 shell 里计不了数。
+> 本页结论：条件与循环的语法各家差异极大，但语义高度收敛——任务 04 的三个验证点在全部八个运行体上输出逐字相同：`sum123=6`、`paidCount=3`、`loopFiles=3`（Windows 三份快照已入库）。统一模型是三件事：条件判断（命令退出码或布尔表达式）、循环（枚举集合或读流）、遍历（glob、cmdlet 还是标准库 API）。差异点集中在坑位：zsh 的 `status` 是保留字、bash 管道尾段跑在子 shell 里计不了数。
 
 ## 统一模型
 
@@ -100,7 +100,8 @@ Python 则用 `csv.DictReader` 按列名取值（`row["status"] == "paid"`），
 | `demos/fish/04_control_flow.fish.out.txt` | 同上 |
 | `demos/pwsh/04_control_flow.ps1.out.txt` | 同上 |
 | `demos/python/04_control_flow.py.out.txt` | 同上 |
-| `demos/cmd/04_control_flow.bat`、`demos/powershell5/`、`demos/powershell7/04_control_flow.ps1` | 源码在库，Windows 快照待首次采集 |
+| `demos/cmd/04_control_flow.bat.out.txt` | 同上三行（`for /l` 求和、`for /f` 读 CSV；含 echo 回显行） |
+| `demos/powershell5/04_control_flow.ps1.out.txt`、`demos/powershell7/04_control_flow.ps1.out.txt` | 同上三行，与 Linux 侧逐字相同 |
 
 ## 延伸阅读
 

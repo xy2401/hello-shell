@@ -63,7 +63,7 @@ dir "%FIXTURES%\no-such-dir" >nul 2>nul
 if !ERRORLEVEL! neq 0 set "CAUGHT=true"
 ```
 
-「失败即停」在 cmd 里只能靠子进程 `cmd /c "..."` 后读 `!ERRORLEVEL!` 模拟（同文件第 15–16 行）。`demos/cmd` 的 Windows 快照待首次采集。
+「失败即停」在 cmd 里只能靠子进程 `cmd /c "..."` 后读 `!ERRORLEVEL!` 模拟（同文件第 15–16 行）。cmd 快照（`demos/cmd/07_errors.bat.out.txt`）同为四行 `caughtError=true` / `afterFailure=continued` / `setEExitCode=1` / `scriptExitCode=0`（另含一行 echo 回显）。
 
 ## 光谱第二档：终止性/非终止性错误（PowerShell）
 
@@ -78,7 +78,7 @@ try {
 }
 ```
 
-`setEExitCode` 的测量则换个角度：子 pwsh 进程里设 `$ErrorActionPreference='Stop'`，未捕获的终止性错误使子进程以非零码退出，父进程从 `$LASTEXITCODE` 读到 1（快照 `setEExitCode=1`）。全局变量 `$ErrorActionPreference` 与逐 cmdlet 的 `-ErrorAction` 的关系、`$?` 与 `$LASTEXITCODE` 的分工，见 [PowerShell 分卷 pitfalls](/shells/powershell/pitfalls)。`demos/powershell5`、`demos/powershell7` 的 Windows 快照待首次采集（Linux 侧 pwsh 快照如上）。
+`setEExitCode` 的测量则换个角度：子 PowerShell 进程里设 `$ErrorActionPreference='Stop'`，未捕获的终止性错误使子进程以非零码退出，父进程从 `$LASTEXITCODE` 读到 1（快照 `setEExitCode=1`）。全局变量 `$ErrorActionPreference` 与逐 cmdlet 的 `-ErrorAction` 的关系、`$?` 与 `$LASTEXITCODE` 的分工，见 [PowerShell 分卷 pitfalls](/shells/powershell/pitfalls)。`demos/powershell5/07_errors.ps1.out.txt`、`demos/powershell7/07_errors.ps1.out.txt` 已入库，四行与 Linux 侧 pwsh 快照逐字相同（ps5 版子进程用 `powershell`、ps7 版用 `pwsh`）。
 
 ## 光谱第三档：异常（Python）
 
@@ -105,8 +105,8 @@ Ctrl+C（SIGINT）与 SIGTERM 会中断前台脚本，POSIX shell 可用 `trap` 
 | `demos/fish/07_errors.fish.out.txt` | `caughtError=true`（`if not` 捕获） |
 | `demos/pwsh/07_errors.ps1.out.txt` | `caughtError=true`（`try/catch` + `-ErrorAction Stop`） |
 | `demos/python/07_errors.py.out.txt` | `caughtError=true`（`except CalledProcessError`） |
-| `demos/cmd/07_errors.bat` | 源码在库（`!ERRORLEVEL!` 延迟展开），Windows 快照待首次采集 |
-| `demos/powershell5/07_errors.ps1`、`demos/powershell7/07_errors.ps1` | 源码在库，Windows 快照待首次采集 |
+| `demos/cmd/07_errors.bat.out.txt` | `caughtError=true`（`!ERRORLEVEL!` 延迟展开）、`setEExitCode=1`（`cmd /c` 子进程） |
+| `demos/powershell5/07_errors.ps1.out.txt`、`demos/powershell7/07_errors.ps1.out.txt` | 四行与 Linux 侧逐字相同（`try/catch` + `-ErrorAction Stop`） |
 
 ## 延伸阅读
 

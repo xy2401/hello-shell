@@ -18,8 +18,11 @@
 这也是本仓库 Windows 采集器显式用 ASCII 编码写 `*.out.txt` 的原因
 （见 `scripts/collect-windows.ps1`），避免编码差异污染快照对比。
 
-> PS5/PS7 的 Windows 输出快照待首次采集，本节以脚本源码与两代官方
-> 默认行为为据。
+> Windows 快照已采集入库（`demos/powershell5/`、`demos/powershell7/`
+> 各 9 份）：02～08 七个任务两代输出逐行一致，证实基础行为无分叉。
+> 编码默认值本身属两代官方行为差异，demo 输出均为纯 ASCII 且经采集器
+> 统一以 ASCII 写盘（见 `scripts/collect-windows.ps1`），快照中不会
+> 直接呈现 UTF-16/代码页差异。
 
 ## 陷阱二：布尔输出 True vs true
 
@@ -39,8 +42,10 @@ Write-Output "verboseFlag=$($verboseFlag.ToString().ToLower())"
 ```
 
 对照 `demos/pwsh/03_args_parsing.ps1.out.txt` 中的 `verboseFlag=true`，
-与 bash/zsh/fish/cmd/python 各版口径一致。cmd 侧没有布尔类型，直接用
-字符串 `true`/`false` 变量，反而没有这个问题。
+与 bash/zsh/fish/cmd/python 各版口径一致；Windows 侧两代快照同为
+`verboseFlag=true`（`demos/powershell5/03_args_parsing.ps1.out.txt`
+第 5 行），证明 `.ToLower()` 归一在 PS5.1 上同样有效。cmd 侧没有布尔
+类型，直接用字符串 `true`/`false` 变量，反而没有这个问题。
 
 ## 陷阱三：cmdlet 失败不设置 $LASTEXITCODE
 
@@ -63,9 +68,12 @@ Get-Content '/nonexistent'      # 报错，但 $LASTEXITCODE 仍为上一次的�
 Write-Output "setEExitCode=$LASTEXITCODE"
 ```
 
-实测 `demos/pwsh/07_errors.ps1.out.txt`：`setEExitCode=1`。
+实测 `demos/pwsh/07_errors.ps1.out.txt`：`setEExitCode=1`；Windows 侧
+两代快照逐行相同（`demos/powershell5/07_errors.ps1.out.txt` 与
+`demos/powershell7/07_errors.ps1.out.txt` 第 3 行均为 `setEExitCode=1`）。
 同理 05 任务的「返回 7」也是子 pwsh `exit 7` 实现的——函数本身无法
-交出退出码。各 shell 的失败信号对照见
+交出退出码，Windows 快照同为 `exitCodeReturn=7`（05 快照第 2 行）。
+各 shell 的失败信号对照见
 [错误处理矩阵](/matrix/error-handling-matrix)。
 
 ## 陷阱四：路径分隔符跨平台用 Join-Path
@@ -95,6 +103,10 @@ unchanged=2
 verify=ok
 report=prepared=3,renamed=1,unchanged=2
 ```
+
+Windows 分支同样通过实测：`demos/powershell7/08_real_world.ps1.out.txt`
+（走 `$env:TEMP` 路径）输出与上面逐行相同，`verify=ok`（第 4 行）；
+PS5.1 的同名快照亦然。
 
 顺带一提：PS7 里多数 cmdlet 的路径参数其实正斜杠也能收，但
 `.NET API`（`[System.IO.File]::…`）与原生命令不一定，统一 `Join-Path`

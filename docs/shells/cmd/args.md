@@ -6,7 +6,7 @@
 
 | 变量 | 含义 |
 | --- | --- |
-| `%0` | 脚本自身（调用时用的路径/名字） |
+| `%0` | 脚本自身（调用时用的路径/名字）；注意 `shift` 会连带改写它，见下文 |
 | `%1` … `%9` | 第 1～9 个参数 |
 | `%*` | 全部参数拼成的一串原文 |
 
@@ -65,10 +65,10 @@ goto loop
 注意细节：`-n` 分支要先 `shift` 再取 `%~1` 才能拿到选项的值 `3`；
 `goto` 跳出的循环全靠标签手工控制，没有 `while`/`break` 可写。
 
-按源码推演，输出应为（**Windows 快照待首次采集**）：
+实测快照（`demos/cmd/03_args_parsing.bat.out.txt` 第 3～8 行）：
 
 ```text
-invocation=03_args_parsing.bat
+invocation=3
 argCount=5
 firstArg=alice
 secondArg=bob smith
@@ -76,8 +76,15 @@ verboseFlag=true
 nValue=3
 ```
 
-同一组入参，Linux 侧各 Shell 与 Python 的快照已落库且逐行一致（仅
-`invocation` 后缀不同），如 `demos/bash/03_args_parsing.sh.out.txt`：
+注意首行：按源码推演原本预期 `invocation=03_args_parsing.bat`，快照却是
+`3`——这正是 cmd 入参模型的一个暗坑。脚本在 shift 循环**之后**才
+`echo invocation=%~nx0`，而 cmd 的 `shift` 挪动 `%1..%9` 的同时会把
+`%1` 复制进 `%0`（官方文档：shift 改变 `%0` 到 `%9` 的值），五次 shift
+之后 `%0` 已经变成最后一个参数 `3`。教训：要报告脚本名，必须在进入
+shift 循环之前就把 `%~nx0` 存进变量。
+
+同一组入参，其余七种实现的快照逐行一致且 `invocation` 均为脚本名
+（仅后缀不同），如 `demos/bash/03_args_parsing.sh.out.txt`：
 
 ```text
 invocation=03_args_parsing.sh
@@ -87,6 +94,9 @@ secondArg=bob smith
 verboseFlag=true
 nValue=3
 ```
+
+唯独 cmd 因 `%0` 被 shift 冲掉而输出 `invocation=3`，这是八种实现里
+唯一的分叉点。
 
 ## 原始性小结
 

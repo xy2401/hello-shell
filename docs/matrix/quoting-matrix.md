@@ -1,6 +1,6 @@
 # 引号矩阵：单双引号语义、插值与阻止展开
 
-> 本页结论：引号语义可以收敛成一张表——bash/zsh/fish 与 PowerShell 都是「双引号插值、单引号字面」，cmd 只有双引号且只被部分命令当引号认，python 单双等价、插值只能走 f-string。真正拉开差距的是引号之外：bash 未加引号的展开**默认分词**，zsh **默认不分词**，fish 变量天生是列表、没有分词这一步，PowerShell/cmd 字符串是标量、要拆得用 `-split` 或 `for`。只要值带上引号（或运行体根本没有展开机制），`a*b*c` 永远是字面量——任务 02 的 `starLiteral=a*b*c` 在五份 Linux 快照里全票通过。
+> 本页结论：引号语义可以收敛成一张表——bash/zsh/fish 与 PowerShell 都是「双引号插值、单引号字面」，cmd 只有双引号且只被部分命令当引号认，python 单双等价、插值只能走 f-string。真正拉开差距的是引号之外：bash 未加引号的展开**默认分词**，zsh **默认不分词**，fish 变量天生是列表、没有分词这一步，PowerShell/cmd 字符串是标量、要拆得用 `-split` 或 `for`。只要值带上引号（或运行体根本没有展开机制），`a*b*c` 永远是字面量——任务 02 的 `starLiteral=a*b*c` 在八份快照里全票通过。
 
 ## 统一实验
 
@@ -14,7 +14,7 @@ interpolated=value-is-42
 starLiteral=a*b*c
 ```
 
-Windows 侧三行快照待首次采集，下表依据脚本源码 `demos/cmd/02_variables_quoting.bat`、`demos/powershell5/02_variables_quoting.ps1`、`demos/powershell7/02_variables_quoting.ps1`。
+Windows 侧三份快照（`demos/cmd/02_variables_quoting.bat.out.txt`、`demos/powershell5/02_variables_quoting.ps1.out.txt`、`demos/powershell7/02_variables_quoting.ps1.out.txt`）打出逐字相同的同样四行契约值，与 Linux 侧完全一致。
 
 ## 引号六维对照
 
@@ -66,7 +66,7 @@ python 的「插值」是显式的 f-string（摘自 `demos/python/02_variables_
 print(f"interpolated=value-is-{num}")
 ```
 
-五条语法路径，同一行契约输出 `interpolated=value-is-42`。
+五条语法路径（PowerShell 三家共用 `"$var"` 一条），八份快照统一落同一行契约输出 `interpolated=value-is-42`。
 
 ### 单引号字面量与 cmd 的例外
 
@@ -110,7 +110,7 @@ rem demos\cmd\02_variables_quoting.bat —— cmd 用 for 分词器数 token
 for %%w in (!WORDS!) do set /a COUNT+=1
 ```
 
-五份快照统一落 `wordCount=3`。bash 的 `set -- $words` 若改成 `set -- "$words"` 就只有 1 个词——这就是「引号阻止分词」的开关；zsh 默认站在关的那一侧，bash 默认站在开的那一侧。
+八份快照统一落 `wordCount=3`。bash 的 `set -- $words` 若改成 `set -- "$words"` 就只有 1 个词——这就是「引号阻止分词」的开关；zsh 默认站在关的那一侧，bash 默认站在开的那一侧。
 
 ### 阻止通配展开：引号是统一解
 
@@ -121,14 +121,14 @@ glob="a*b*c"  # quoted expansion: the * stays literal, no pathname expansion
 echo "starLiteral=$glob"
 ```
 
-fish 同理（`# quoting: a quoted '*' stays literal and is never glob-expanded`）。对 PowerShell/cmd/python 而言这题不存在——字符串里的 `*` 天生不是通配符（PowerShell 的通配只发生在 cmdlet 的通配参数位，见[通配矩阵](/matrix/globbing-matrix)）。五份快照 `starLiteral=a*b*c` 全票通过。
+fish 同理（`# quoting: a quoted '*' stays literal and is never glob-expanded`）。对 PowerShell/cmd/python 而言这题不存在——字符串里的 `*` 天生不是通配符（PowerShell 的通配只发生在 cmdlet 的通配参数位，见[通配矩阵](/matrix/globbing-matrix)）。八份快照 `starLiteral=a*b*c` 全票通过。
 
 ## 小结
 
 | 结论 | 证据 |
 | --- | --- |
-| 「双插值、单字面」是 shell 界主流，cmd 与 python 是两个例外 | bash/zsh/fish/pwsh 任务 02 源码；cmd 仅双引号且仅部分命令认（bat 源码，快照待首次采集）；python 单双等价、插值走 f-string |
-| 分词默认值：bash 开、zsh 关、其余无此步骤 | bash `set -- $words` 得 3 词 vs zsh `${=words}` 显式分词；`wordCount=3` 五体一致 |
-| 引号内无通配 | `starLiteral=a*b*c` 五份快照逐字一致 |
+| 「双插值、单字面」是 shell 界主流，cmd 与 python 是两个例外 | bash/zsh/fish/pwsh 任务 02 源码与快照；cmd 仅双引号且仅部分命令认（任务 02 快照四行与 Linux 侧逐字一致）；python 单双等价、插值走 f-string |
+| 分词默认值：bash 开、zsh 关、其余无此步骤 | bash `set -- $words` 得 3 词 vs zsh `${=words}` 显式分词；`wordCount=3` 八体一致 |
+| 引号内无通配 | `starLiteral=a*b*c` 八份快照逐字一致 |
 
 延伸阅读：[变量与引号统一骨架](/fundamentals/quoting-variables)、[通配矩阵](/matrix/globbing-matrix)、[实验说明](/labs/)。

@@ -4,8 +4,10 @@
 
 对照基准：本仓库九个统一任务各有
 bash/zsh/fish/cmd/PowerShell（PS5 与 PS7）与 Python 实现；Linux 侧
-（bash/zsh/fish/pwsh/python）输出快照已落库，Windows 侧（cmd/PS5/PS7）
-行为以脚本源码为据、**快照待首次采集**。
+（bash/zsh/fish/pwsh/python）与 Windows 侧（cmd/PS5/PS7）输出快照均已
+入库，Windows 27 份由 CI 在 `windows-latest` 上采集，位于
+`demos/cmd`、`demos/powershell5`、`demos/powershell7` 各脚本旁的
+`.out.txt`。
 
 ## 一、Shell 顺手处
 

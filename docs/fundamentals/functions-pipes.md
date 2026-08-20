@@ -90,6 +90,8 @@ requestLines=2
 statusCounts=paid:3,pending:1,refunded:1
 ```
 
+Windows 三份快照已入库：`demos/powershell5/06_pipes_files.ps1.out.txt`、`demos/powershell7/06_pipes_files.ps1.out.txt` 与上面逐字相同；`demos/cmd/06_pipes_files.bat.out.txt` 有一处真实差异——`requestLines=4` 而非 2：cmd 的 `find` 默认大小写不敏感且做子串匹配，`"request"` 里的 `st` 也会命中 `app started`/`app stopped` 两行。这是快照入库后以实测为准修正的唯一验证点。
+
 ### POSIX 文本管道：cut | sort | uniq -c
 
 bash/zsh 把「按 status 列统计」写成一条文本流水线——跳过表头、切出第 4 列、排序、计数、格式化：
@@ -125,7 +127,10 @@ Python 版把整条管道翻译成显式代码：`sorted(os.listdir(...))`、`na
 | `demos/pwsh/05_functions_scope.ps1.out.txt` | `exitCodeReturn=7`（子进程 `exit 7` → `$LASTEXITCODE`） |
 | `demos/python/05_functions_scope.py.out.txt` | `exitCodeReturn=7`（`subprocess` 的 `returncode`） |
 | `demos/bash/06_pipes_files.sh.out.txt` 等五份 06 快照 | `statusCounts=paid:3,pending:1,refunded:1` |
-| `demos/cmd/05_functions_scope.bat`、`06_pipes_files.bat`、`powershell5/`、`powershell7/` 对应脚本 | 源码在库，Windows 快照待首次采集 |
+| `demos/cmd/05_functions_scope.bat.out.txt` | `exitCodeReturn=7`（`call :label` + `exit /b 7` → `!ERRORLEVEL!`）、`afterCall=outer`（`setlocal`/`endlocal`） |
+| `demos/powershell5/05_functions_scope.ps1.out.txt`、`demos/powershell7/05_functions_scope.ps1.out.txt` | 三行与 Linux 侧逐字相同（子进程 `exit 7` → `$LASTEXITCODE`） |
+| `demos/cmd/06_pipes_files.bat.out.txt` | `statusCounts=paid:3,pending:1,refunded:1`；但 `requestLines=4`（`find` 大小写不敏感子串匹配，与其余七体的 2 不同） |
+| `demos/powershell5/06_pipes_files.ps1.out.txt`、`demos/powershell7/06_pipes_files.ps1.out.txt` | 四行与 Linux 侧逐字相同 |
 
 ## 延伸阅读
 

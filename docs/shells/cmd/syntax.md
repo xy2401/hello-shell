@@ -46,7 +46,8 @@ echo wordCount=!COUNT!
 
 `%%w` 是批处理中 `for` 变量的写法（交互命令行里是单个 `%w`）；
 `set /a` 是算术赋值。`echo interpolated=value-is-!NUM!` 输出
-`interpolated=value-is-42`（Windows 快照待首次采集，行为以脚本源码为据）。
+`interpolated=value-is-42`——快照证实
+（`demos/cmd/02_variables_quoting.bat.out.txt` 第 5 行）。
 
 ## for /f：读文件与命令输出
 

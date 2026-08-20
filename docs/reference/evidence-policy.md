@@ -1,6 +1,6 @@
 # 证据政策
 
-> 本页结论：本站只认两级证据——E1 官方文档、E2 本仓库可复现实验输出（`demos/**/*.out.txt`）；每条结论必须标注证据来源；Windows 侧快照由 CI workflow 采集，标注「待首次采集」的结论一律不得写成已验证。
+> 本页结论：本站只认两级证据——E1 官方文档、E2 本仓库可复现实验输出（`demos/**/*.out.txt`）；每条结论必须标注证据来源；Windows 侧快照由 collect-windows-outputs workflow（workflow_dispatch 手动触发）采集，首采已入库；「待首次采集」是首采入库前的历史标注，表示当时尚无快照佐证。
 
 ## 证据分级
 
@@ -19,11 +19,12 @@
 
 ## Windows 快照与「待首次采集」
 
-- Windows 侧（cmd / PowerShell 5 / PowerShell 7）没有可锁镜像（见[版本政策](/reference/version-policy)），其 `*.out.txt` 快照由 GitHub Actions 的 **collect-windows-outputs** workflow 在 windows-latest runner 上采集后提交入库。
-- 快照尚未入库时，相关结论必须标注「**待首次采集**」。
-- **「待首次采集」≠ 已验证**：此类结论不得写成「已验证 / 实测 / 真实输出为……」，不得进入矩阵页的对照单元格作为既成事实，只能以占位状态呈现，直到 workflow 首次采集的快照入库。
+- Windows 侧（cmd / PowerShell 5 / PowerShell 7）没有可锁镜像（见[版本政策](/reference/version-policy)），其 `*.out.txt` 快照由 GitHub Actions 的 **collect-windows-outputs** workflow 在 windows-latest runner 上采集，经 workflow_dispatch 手动触发，采集后自动提交入库。
+- **首采已完成**：该 workflow 已完成首采，27 份 Windows 侧快照（cmd / PowerShell 5 / PowerShell 7 各 9 份，含各自 `00_env`）已入库。Windows runner 无镜像可锁，版本漂移以 `00_env` 快照留痕，此后经 workflow_dispatch 重采刷新。
+- **「待首次采集」是历史标注**：首采入库前，无快照佐证的结论一律标注「待首次采集」，不得写成「已验证 / 实测 / 真实输出为……」，不得进入矩阵页的对照单元格作为既成事实。快照入库后，此类结论应逐步对照入库快照核实并移除标注；标注尚存之处，上述约束仍然适用。
 
 ## 复现与失效
 
 - 任何人可用 `npm run collect-outputs` 本地重跑 Linux 侧采集，并与入库快照对照，验证 E2 证据可复现。
+- Windows 侧重采由 collect-windows-outputs workflow 经 workflow_dispatch 手动触发，新快照自动提交入库后，按[版本政策](/reference/version-policy)的升级流程审查差异。
 - 运行体升级后，旧快照可能失效——按[版本政策](/reference/version-policy)的升级流程重跑采集、审查差异、同步结论。

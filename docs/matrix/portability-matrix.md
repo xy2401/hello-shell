@@ -10,12 +10,12 @@
 | zsh | 与 bash 有实质差异：数组 1 基、默认不分词、`(N)` 限定符等，脚本不能照抄 | 无法原生运行 | LF | 包管理器安装（本站 `apk add zsh`） | alpine 基底 digest 锁定；快照 `version=zsh 5.9 (x86_64-alpine-linux-musl)` |
 | fish | 与 POSIX 语法完全断裂（`set`/`if ... end`），bash 脚本无法迁移 | 无法原生运行 | LF | 包管理器安装（本站 `apk add fish`） | alpine 基底 digest 锁定；快照 `version=fish, version 4.0.2` |
 | pwsh（Linux） | 官方 Linux 发行（debian 基底镜像） | **同一套语法直通 Windows**（见 powershell7 行） | LF | 官方容器镜像 | `mcr.microsoft.com/powershell:7.5-debian-12` tag+digest 双锁；快照 `version=PowerShell 7.5.0` |
-| cmd | 不适用 | Windows 专属，随系统内置 | **必须 CRLF**；代码页相关字符需避开 | 系统自带（windows-latest runner 内置） | 无镜像可锁；`ver` 输出快照待首次采集 |
-| powershell5 | 不适用 | Windows 专属，随系统内置 | **无 BOM 的 UTF-8 会被按 ANSI 读取**——本站 powershell5 脚本全部保持 ASCII | 系统自带（runner 内置） | 版本随 runner 漂移，以 00_env 快照留痕；快照待首次采集 |
-| powershell7 | 不适用（Linux 侧见 pwsh 行） | windows-latest runner 预装 | 同 pwsh；支持 UTF-8 脚本（本站 powershell7 脚本含中文注释） | runner 预装 / MSI / Store | 版本随 runner 漂移，以 00_env 快照留痕；快照待首次采集 |
+| cmd | 不适用 | Windows 专属，随系统内置 | **必须 CRLF**；代码页相关字符需避开 | 系统自带（windows-latest runner 内置） | 无镜像可锁；`ver` 输出实测 `version=Microsoft Windows [Version 10.0.26100.33158]` |
+| powershell5 | 不适用 | Windows 专属，随系统内置 | **无 BOM 的 UTF-8 会被按 ANSI 读取**——本站 powershell5 脚本全部保持 ASCII | 系统自带（runner 内置） | 版本随 runner 漂移，以 00_env 快照留痕：`version=PowerShell 5.1.26100.33158` |
+| powershell7 | 不适用（Linux 侧见 pwsh 行） | windows-latest runner 预装 | 同 pwsh；支持 UTF-8 脚本（本站 powershell7 脚本含中文注释） | runner 预装 / MSI / Store | 版本随 runner 漂移，以 00_env 快照留痕：`version=PowerShell 7.6.4` |
 | python | 语言层跨发行版 | **语言层完全跨平台**；但调用平台命令会重新引入依赖 | LF | 官方镜像 / 各平台安装包 | `python:3.12-slim` tag+digest 双锁；快照 `version=Python 3.12.14` |
 
-Windows 侧三行快照待首次采集，相关结论以脚本源码与仓库基础设施为据。
+Windows 侧 00_env 快照已入库（`demos/{cmd,powershell5,powershell7}/00_env.*.out.txt`），上表版本为采集时 windows-latest runner 的实测值，随 runner 漂移。
 
 ## 逐维度证据
 
@@ -31,7 +31,7 @@ if ($IsWindows) {
 }
 ```
 
-「一份脚本、两个平台」在本仓库是已落地的事实，不是承诺。
+「一份脚本、两个平台」在本仓库是已落地的事实，不是承诺：powershell7 任务 02–08 的快照契约行与 pwsh 的 Linux 快照逐字一致（如 `globList=app.log,config.csv,readme.txt`、`caughtError=true` 两侧相同），唯一随平台变化的是 00_env 的 `shell=` 行与 01 的问候语。
 
 ### POSIX 三兄弟：无法原生跑 Windows，且互不兼容
 
@@ -83,7 +83,7 @@ POWERSHELL_IMAGE=mcr.microsoft.com/powershell:7.5-debian-12@sha256:7ab5bd5ca6f95
 
 其中 zsh/fish 无官方独立镜像，以 digest 锁定的 alpine 为基底 `apk add`（`demos/zsh/Dockerfile`、`demos/fish/Dockerfile` 各一行 `RUN apk add --no-cache zsh|fish`）。采集时脚本与 fixtures 只读挂载进容器（`scripts/run-docker-demos.js`：`-v ... :ro`），写入只发生在容器内 `/tmp`。
 
-Windows 侧没有镜像可锁：cmd / PowerShell 5 是 windows-latest runner 内置，PowerShell 7 是 runner 预装，版本随 GitHub 更新漂移，以各 `00_env` 快照留痕（当前**快照待首次采集**）。政策细节见[版本政策](/reference/version-policy)。
+Windows 侧没有镜像可锁：cmd / PowerShell 5 是 windows-latest runner 内置，PowerShell 7 是 runner 预装，版本随 GitHub 更新漂移，以各 `00_env` 快照留痕（首次采集已完成，实测值见上表版本证据列）。政策细节见[版本政策](/reference/version-policy)。
 
 ## 小结
 
