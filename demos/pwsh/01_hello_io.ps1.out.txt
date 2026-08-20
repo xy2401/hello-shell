@@ -1,0 +1,3 @@
+hello from pwsh
+childExitCode=2
+scriptExitCode=0

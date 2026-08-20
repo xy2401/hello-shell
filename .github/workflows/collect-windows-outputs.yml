@@ -1,0 +1,25 @@
+name: collect-windows-outputs
+
+on:
+  workflow_dispatch:
+
+jobs:
+  collect:
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: 检出项目代码
+        uses: actions/checkout@v4
+
+      - name: 运行 Windows Shell 输出采集（cmd / PowerShell 5 / PowerShell 7）
+        run: pwsh -NoProfile -File scripts/collect-windows.ps1
+
+      - name: 自动提交更新后的 demos/ 同级 *.out.txt
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(auto): update Windows shell *.out.txt files [skip ci]"
+          file_pattern: "demos/**/*.out.txt"

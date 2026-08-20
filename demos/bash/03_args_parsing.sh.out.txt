@@ -1,0 +1,6 @@
+invocation=03_args_parsing.sh
+argCount=5
+firstArg=alice
+secondArg=bob smith
+verboseFlag=true
+nValue=3

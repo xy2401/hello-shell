@@ -1,0 +1,3 @@
+stdout: hello from bash
+childExitCode=1
+scriptExitCode=0

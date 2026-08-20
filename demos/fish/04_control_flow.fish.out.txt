@@ -1,0 +1,3 @@
+sum123=6
+paidCount=3
+loopFiles=3

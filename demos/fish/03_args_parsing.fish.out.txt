@@ -1,0 +1,6 @@
+invocation=03_args_parsing.fish
+argCount=5
+firstArg=alice
+secondArg=bob smith
+verboseFlag=true
+nValue=3

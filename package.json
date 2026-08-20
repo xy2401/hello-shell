@@ -1,0 +1,23 @@
+{
+  "name": "hello-shell",
+  "version": "1.0.0",
+  "description": "Shell 与命令行统一任务矩阵：bash/zsh/fish/cmd/PowerShell 同任务对照与真实输出快照 (Shell & Command Line Task Matrix)",
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.16.0"
+  },
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "collect-outputs": "node scripts/run-docker-demos.js",
+    "check:project": "node scripts/check-project.js",
+    "check": "npm run check:project && npm run docs:build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.0.0",
+    "vitepress": "^1.0.0",
+    "vue": "^3.4.0"
+  }
+}

@@ -1,0 +1,3 @@
+functionResult=42
+exitCodeReturn=7
+afterCall=outer

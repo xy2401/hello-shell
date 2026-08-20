@@ -1,0 +1,6 @@
+orderId,customer,amount,status
+1001,alice,120.50,paid
+1002,bob,80.00,paid
+1003,carol,45.90,pending
+1004,dave,300.00,paid
+1005,erin,12.30,refunded

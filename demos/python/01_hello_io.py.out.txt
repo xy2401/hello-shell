@@ -1,0 +1,3 @@
+stdout: hello from python
+childExitCode=2
+scriptExitCode=0

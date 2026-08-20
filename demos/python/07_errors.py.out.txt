@@ -1,0 +1,4 @@
+caughtError=true
+afterFailure=continued
+setEExitCode=1
+scriptExitCode=0

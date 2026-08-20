@@ -1,0 +1,3 @@
+version=PowerShell 7.5.0
+shell=pwsh
+platform=linux

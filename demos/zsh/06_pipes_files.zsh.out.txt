@@ -1,0 +1,4 @@
+globList=app.log,config.csv,readme.txt
+logFiles=1
+requestLines=2
+statusCounts=paid:3,pending:1,refunded:1

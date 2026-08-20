@@ -1,0 +1,3 @@
+version=zsh 5.9 (x86_64-alpine-linux-musl)
+shell=zsh
+platform=linux
