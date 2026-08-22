@@ -5,6 +5,7 @@ export default defineConfig({
   description:
     'Shell 与命令行统一任务矩阵：bash/zsh/fish/cmd/PowerShell 同任务对照与真实输出快照 (Shell & Command Line Task Matrix)',
   lang: 'zh-CN',
+  base: process.env.NODE_ENV === 'production' ? '/hello-shell/' : '/',
   cleanUrls: true,
   themeConfig: {
     nav: [
