@@ -13,9 +13,7 @@ export default defineConfig({
       { text: '基础原理', link: '/fundamentals/' },
       { text: 'Shell 分卷', link: '/shells/bash/' },
       { text: '矩阵', link: '/matrix/' },
-      { text: '对比', link: '/compare/shell-vs-python' },
       { text: '实验', link: '/labs/' },
-      { text: '在线终端', link: '/playground/' },
       { text: '参考', link: '/reference/version-policy' },
     ],
     sidebar: {
@@ -87,12 +85,6 @@ export default defineConfig({
           ],
         },
       ],
-      '/compare/': [
-        {
-          text: '对比',
-          items: [{ text: 'Shell vs Python', link: '/compare/shell-vs-python' }],
-        },
-      ],
       '/matrix/': [
         {
           text: '矩阵',
@@ -110,12 +102,6 @@ export default defineConfig({
         {
           text: '实验',
           items: [{ text: '实验总览', link: '/labs/' }],
-        },
-      ],
-      '/playground/': [
-        {
-          text: '在线终端',
-          items: [{ text: 'Shell Playground', link: '/playground/' }],
         },
       ],
       '/reference/': [
