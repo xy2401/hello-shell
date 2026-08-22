@@ -90,6 +90,7 @@ export default defineConfig({
           text: '矩阵',
           items: [
             { text: '矩阵总览', link: '/matrix/' },
+            { text: 'Shell vs Python', link: '/matrix/shell-vs-python' },
             { text: '入参矩阵', link: '/matrix/args-matrix' },
             { text: '引号矩阵', link: '/matrix/quoting-matrix' },
             { text: '通配矩阵', link: '/matrix/globbing-matrix' },
