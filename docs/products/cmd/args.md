@@ -110,4 +110,4 @@ nValue=3
 
 超过 9 个参数的场景在 cmd 里必须全程 `shift` 循环；选项带值（`-n 3`）
 要自己处理「吃下一个参数」。八种实现的逐列对照见
-[入参矩阵](/matrix/args-matrix)，动手复现见 [labs](/matrix/experiment/)。
+[入参矩阵](/matrix/args-matrix)，动手复现见 [labs](/playground/)。

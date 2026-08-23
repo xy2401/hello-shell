@@ -119,4 +119,4 @@ Windows 侧快照同样佐证：`demos/powershell7/01_hello_io.ps1.out.txt`
 - [常见陷阱](/products/powershell/pitfalls)：编码/BOM、布尔输出、
   `$LASTEXITCODE`、路径分隔符；
 - 横向对照：[入参矩阵](/matrix/args-matrix)、
-  [错误处理矩阵](/matrix/error-handling-matrix)、[labs](/matrix/experiment/)。
+  [错误处理矩阵](/matrix/error-handling-matrix)、[labs](/playground/)。

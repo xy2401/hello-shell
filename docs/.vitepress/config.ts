@@ -23,15 +23,21 @@ export default defineConfig({
   cleanUrls: true,
   themeConfig: {
     nav: [
-      // 前 5 个 Shell 全部平铺（bash/zsh/fish/cmd/powershell）
-      { text: 'Bash', link: '/products/bash/' },
-      { text: 'zsh', link: '/products/zsh/' },
-      { text: 'fish', link: '/products/fish/' },
-      { text: 'cmd', link: '/products/cmd/' },
-      { text: 'PowerShell', link: '/products/powershell/' },
+      { text: '首页', link: '/' },
+      {
+        text: '产品',
+        items: [
+          { text: '产品总览', link: '/products/' },
+          { text: 'Bash', link: '/products/bash/' },
+          { text: 'zsh', link: '/products/zsh/' },
+          { text: 'fish', link: '/products/fish/' },
+          { text: 'cmd', link: '/products/cmd/' },
+          { text: 'PowerShell', link: '/products/powershell/' },
+        ],
+      },
       { text: '对比矩阵', link: '/matrix/' },
-      { text: '试验场', link: '/matrix/experiment/' },
-      { text: '参考文档', link: '/reference/version-policy' },
+      { text: '试验场', link: '/playground/' },
+      { text: '参考资料', link: '/reference/' },
     ],
     sidebar: {
       '/products/bash/': shellSidebar('bash', 'bash'),
@@ -51,10 +57,36 @@ export default defineConfig({
           ],
         },
       ],
-      '/matrix/experiment/': [
+      '/playground/': [
         {
           text: '实验手册',
-          items: [{ text: '实验总览', link: '/matrix/experiment/' }],
+          items: [{ text: '实验总览', link: '/playground/' }],
+        },
+      ],
+      '/matrix/': [
+        {
+          text: '对比矩阵',
+          items: [
+            { text: '矩阵总览', link: '/matrix/' },
+            { text: '变量与引号', link: '/matrix/quoting-variables' },
+            { text: '控制流', link: '/matrix/control-flow' },
+            { text: '函数与管道', link: '/matrix/functions-pipes' },
+            { text: '错误与信号', link: '/matrix/errors-signals' },
+            { text: '入参矩阵', link: '/matrix/args-matrix' },
+            { text: '可移植性矩阵', link: '/matrix/portability-matrix' },
+            { text: 'Shell vs Python', link: '/matrix/comparison/shell-vs-python' },
+          ],
+        },
+      ],
+      '/reference/': [
+        {
+          text: '参考资料',
+          items: [
+            { text: '参考资料总览', link: '/reference/' },
+            { text: '快速上手', link: '/reference/getting-started' },
+            { text: '版本政策', link: '/reference/version-policy' },
+            { text: '证据政策', link: '/reference/evidence-policy' },
+          ],
         },
       ],
     },

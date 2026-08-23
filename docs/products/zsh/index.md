@@ -50,6 +50,6 @@ platform=linux
 
 ## 相关页面
 
-- [实验说明](/matrix/experiment/)：如何在本地复现这 9 个任务的采集；
-- [内核、Shell 与 GUI](/guide/kernel-shell-gui)：zsh 在三层模型中的位置；
+- [实验说明](/playground/)：如何在本地复现这 9 个任务的采集；
+- [内核、Shell 与 GUI](/#shell-foundation)：zsh 在三层模型中的位置；
 - [Shell vs Python](/matrix/comparison/shell-vs-python)：Shell 脚本的能力边界在哪里。

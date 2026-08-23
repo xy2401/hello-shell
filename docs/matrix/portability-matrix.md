@@ -95,4 +95,4 @@ Windows 侧没有镜像可锁：cmd / PowerShell 5 是 windows-latest runner 内
 | `.bat` 必须 CRLF；PS5 惧怕无 BOM UTF-8，PS7 默认 UTF-8 | `file` 实测：cmd 脚本 CRLF、powershell5 脚本纯 ASCII、powershell7/pwsh 脚本 UTF-8 |
 | Linux 运行体 tag+digest 双锁；Windows 运行体随 runner 漂移、快照留痕 | `.env.versions`、`demos/{zsh,fish}/Dockerfile`、`scripts/run-docker-demos.js` |
 
-延伸阅读：[版本政策](/reference/version-policy)、[证据政策](/reference/evidence-policy)、[快速上手](/guide/getting-started)、[实验说明](/matrix/experiment/)。
+延伸阅读：[版本政策](/reference/version-policy)、[证据政策](/reference/evidence-policy)、[快速上手](/reference/getting-started)、[实验说明](/playground/)。

@@ -141,7 +141,7 @@ PS5/PS7 编码差异——每多一种 shell，跨平台成本乘以一份维护
 | 08 综合实战 | 中 | 高 | Windows 三套脚本 vs python 一份跨平台 |
 
 规律很清楚：**离进程与管道越近的任务 shell 越舒服，离数据结构与
-工程化越近的任务 Python 越舒服**。入门顺序与练习见 [labs](/matrix/experiment/)，
+工程化越近的任务 Python 越舒服**。入门顺序与练习见 [labs](/playground/)，
 各 shell 的逐卷细节见 [cmd 分卷](/products/cmd/) 与
 [PowerShell 分卷](/products/powershell/)，基础概念见
-[入门指南](/guide/getting-started)。
+[入门指南](/reference/getting-started)。

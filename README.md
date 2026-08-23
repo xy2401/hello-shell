@@ -25,13 +25,11 @@ hello-shell/
 │   ├── powershell7/            # PowerShell 7（Windows runner 预装）
 │   └── shared/fixtures/        # 统一输入数据
 ├── docs/                       # VitePress 文档站（唯一文档入口）
-│   ├── guide/                  # 内核/Shell/GUI 概念、快速上手
-│   ├── fundamentals/           # 统一语义骨架（变量/控制流/函数/管道/错误/入参）
-│   ├── shells/                 # bash/ zsh/ fish/ cmd/ powershell/ 分卷
-│   ├── compare/                # Shell vs Python 边界
+│   ├── index.md                # 首页与统一语义骨架
+│   ├── products/               # bash/ zsh/ fish/ cmd/ powershell/ 分卷
 │   ├── matrix/                 # 横向对比大屏（入参/引号/通配/错误/可移植性）
-│   ├── labs/                   # 统一任务实验说明
-│   └── reference/              # 版本政策、证据政策
+│   ├── playground/             # 统一任务实验说明
+│   └── reference/              # 快速上手、版本政策、证据政策
 ├── scripts/                    # run-docker-demos.js（Linux 采集）、collect-windows.ps1（Windows 采集）、check-project.js
 ├── .github/workflows/          # collect-docker-outputs / collect-windows-outputs / docs
 ├── .env.versions               # Linux 镜像 tag+digest 双锁定

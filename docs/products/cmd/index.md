@@ -79,4 +79,4 @@ Linux 侧的 bash/zsh/fish/python/pwsh 都在容器里运行，镜像以 tag + d
 | `07_errors.bat` | 错误处理 | `ERRORLEVEL` 分支、子 cmd 退出码 |
 | `08_real_world.bat` | 综合实战 | `copy`、`ren *.log *.log.bak`、校验 |
 
-动手复现见 [labs](/matrix/experiment/)。
+动手复现见 [labs](/playground/)。
