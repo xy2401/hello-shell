@@ -85,6 +85,7 @@ export default defineConfig({
             { text: '入参矩阵', link: '/matrix/args-matrix' },
             { text: '可移植性矩阵', link: '/matrix/portability-matrix' },
             { text: 'Shell vs Python', link: '/matrix/comparison/shell-vs-python' },
+            { text: 'Docker 与命令工具', link: '/matrix/docker-tools' },
           ],
         },
       ],

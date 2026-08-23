@@ -1,0 +1,7 @@
+---
+status: documented
+capturedAt: null
+dockerImage: "native-windows-runner"
+exitCode: -1
+---
+RESULT: not executed — partial catalog entry, not full tooling evidence.

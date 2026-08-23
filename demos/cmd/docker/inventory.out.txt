@@ -1,0 +1,7 @@
+---
+status: documented
+capturedAt: null
+dockerImage: "native-windows-runner"
+exitCode: -1
+---
+PENDING: cmd 的 builtins 与 PATH executable 清单尚未由 Windows runner 采集。

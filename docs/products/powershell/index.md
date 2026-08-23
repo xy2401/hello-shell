@@ -1,5 +1,7 @@
 # PowerShell
 
+<DockerTooling product="powershell" />
+
 > 本页结论：PowerShell 是构建在 .NET 之上的对象管道 shell——管道里流动的是对象而不是文本；本卷把 Windows 内置的 PS5.1 与跨平台的 PS7 同卷对照，PS7 的 Linux 行为有 `demos/pwsh/*.out.txt` 快照为证，Windows 侧 PS5.1 与 PS7 的快照（`demos/powershell5/`、`demos/powershell7/` 各 9 份）也已采集入库。
 
 ## 定位：管道里流的是对象

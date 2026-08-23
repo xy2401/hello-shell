@@ -1,0 +1,7 @@
+---
+status: documented
+capturedAt: null
+dockerImage: "unresolved"
+exitCode: -1
+---
+PENDING: bash 的 builtins 与 PATH executable 清单尚未由 Docker 采集。

@@ -2,7 +2,7 @@
 // 用法：npm run collect-outputs（需要 Docker）
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
+import { execFileSync, execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -38,6 +38,37 @@ function run(cmd) {
   return execSync(cmd, { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
 }
 
+function runFile(command, args) {
+  return execFileSync(command, args, { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+}
+
+function evidence(content, image) {
+  return `---\nstatus: verified\ncapturedAt: "${new Date().toISOString()}"\ndockerImage: "${image}"\nexitCode: 0\n---\n${content.trim()}\n`;
+}
+
+function collectTooling(s) {
+  if (!['bash', 'zsh', 'fish', 'pwsh'].includes(s.shell)) return;
+  const evidenceDir = path.join(demosDir, s.shell === 'pwsh' ? 'powershell' : s.shell, 'docker');
+  fs.mkdirSync(evidenceDir, { recursive: true });
+  const inspect = runFile('docker', ['image', 'inspect', s.image, '--format', 'id={{.Id}} os={{.Os}} arch={{.Architecture}} size={{.Size}}']);
+  const pathInventory = runFile('docker', ['run', '--rm', s.image, 'sh', '-lc', 'echo "PATH=$PATH"; for d in $(echo "$PATH" | tr : " "); do [ -d "$d" ] || continue; for f in "$d"/*; do [ -f "$f" ] && [ -x "$f" ] && basename "$f"; done; done | sort -u']);
+  const builtinArgs = s.shell === 'bash' ? ['bash', '-lc', 'compgen -b | sort']
+    : s.shell === 'zsh' ? ['zsh', '-fc', 'print -l ${(k)builtins} | sort']
+    : s.shell === 'fish' ? ['fish', '-c', 'builtin --names | sort']
+    : ['pwsh', '-NoProfile', '-Command', 'Get-Command -CommandType Cmdlet,Function | Sort-Object Name | ForEach-Object Name'];
+  const builtins = runFile('docker', ['run', '--rm', s.image, ...builtinArgs]);
+  fs.writeFileSync(path.join(evidenceDir, 'inventory.out.txt'), evidence(`${inspect}\n## builtins/cmdlets\n${builtins}\n## PATH executables\n${pathInventory}`, s.image));
+  const demoDir = path.join(demosDir, s.shell);
+  const session = ['00_env', '06_pipes_files', '08_real_world'].map(prefix => {
+    const file = fs.readdirSync(demoDir).find(name => name.startsWith(prefix) && name.endsWith('.out.txt'));
+    return file ? `## ${file}\n${fs.readFileSync(path.join(demoDir, file), 'utf8').trim()}` : '';
+  }).filter(Boolean).join('\n\n');
+  fs.writeFileSync(path.join(evidenceDir, 'session.out.txt'), evidence(session, s.image));
+  const outputCount = fs.readdirSync(demoDir).filter(name => name.endsWith('.out.txt')).length;
+  const assertions = outputCount === 9 ? 'PASS taskSnapshots: 9\nRESULT: all assertions passed' : `FAIL taskSnapshots: expected=9 actual=${outputCount}`;
+  fs.writeFileSync(path.join(evidenceDir, 'assert.out.txt'), evidence(assertions, s.image));
+}
+
 let total = 0;
 console.log('🚀 hello-shell Linux 输出采集（容器化，镜像 tag+digest 双锁定）');
 
@@ -70,5 +101,7 @@ for (const s of linuxShells) {
     console.log(`✅ [${s.shell}] ${script} → ${path.relative(rootDir, outFile)}`);
   }
 }
+
+for (const s of linuxShells) collectTooling(s);
 
 console.log(`🎉 采集完成：${total} 个任务输出`);

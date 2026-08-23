@@ -1,5 +1,7 @@
 # zsh 分卷
 
+<DockerTooling product="zsh" />
+
 > 本页结论：zsh 是「交互增强 + 大体兼容 bash」的 POSIX 系 Shell，也是 macOS 自 Catalina 起的默认登录 Shell。它默认不对变量展开分词、数组下标从 1 开始、glob 带限定符，这三点正是与 bash 的主要差异。本卷全部行为结论来自 alpine 3.22 内装 zsh 5.9 容器中采集的真实输出快照（`demos/zsh/*.out.txt`），学习路径为 [syntax](./syntax) → [args](./args) → [pitfalls](./pitfalls)。
 
 ## 一句话定位

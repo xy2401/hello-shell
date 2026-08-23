@@ -9,7 +9,7 @@ jobs:
     timeout-minutes: 60
 
     permissions:
-      contents: write
+      contents: read
 
     steps:
       - name: 检出项目代码
@@ -25,13 +25,35 @@ jobs:
         run: npm ci
 
       - name: 运行 Linux Shell 容器化输出采集
-        run: npm run collect-outputs
+        run: npm run collect:docker
 
       - name: 验证项目与 VitePress 生产构建
         run: npm run check
 
-      - name: 自动提交更新后的 demos/ 同级 *.out.txt
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: 上传待审查的 Linux Docker 证据
+        uses: actions/upload-artifact@v4
         with:
-          commit_message: "chore(auto): update Linux shell *.out.txt files [skip ci]"
-          file_pattern: "demos/**/*.out.txt"
+          name: hello-shell-linux-docker-evidence-${{ github.run_id }}
+          path: |
+            .env.versions
+            demos/**/docker/*.out.txt
+          include-hidden-files: true
+          if-no-files-found: error
+
+  collect-windows-native:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: 采集 cmd、Windows PowerShell 5 与 PowerShell 7
+        run: pwsh -NoProfile -File scripts/collect-windows.ps1
+      - name: 上传待审查的 Windows 原生证据
+        uses: actions/upload-artifact@v4
+        with:
+          name: hello-shell-windows-native-evidence-${{ github.run_id }}
+          path: |
+            demos/cmd/docker/*.out.txt
+            demos/powershell/docker/native.*.out.txt
+          if-no-files-found: error

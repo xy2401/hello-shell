@@ -1,0 +1,7 @@
+---
+status: documented
+capturedAt: null
+dockerImage: "unresolved"
+exitCode: -1
+---
+PENDING: fish 工具会话尚未采集；现有 demos/fish/00..08 快照仍是行为证据。

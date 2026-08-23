@@ -1,0 +1,7 @@
+---
+status: documented
+capturedAt: null
+dockerImage: "unresolved"
+exitCode: -1
+---
+PENDING: zsh 工具会话尚未采集；现有 demos/zsh/00..08 快照仍是行为证据。
