@@ -2,7 +2,7 @@
 
 > **Shell 与命令行统一任务矩阵：同一任务，八种写法，真实输出对照 (Shell & Command Line Task Matrix)**
 
-`hello-shell` 是面向开发者与运维的 Shell 横向对比知识库，属于 `hello-*` 系列开源学习矩阵（已落地 `hello-lang`、`hello-sql`、`hello-mq`，`hello-shell` 为第四块）。用同一组统一任务在 bash、zsh、fish、cmd、PowerShell 5、PowerShell 7（Windows/Linux）中分别实现并采集真实输出，解释「什么是内核、什么是 Shell、什么是 GUI」，并划清 Shell 脚本与图灵完备语言（Python 对照）的能力边界。
+`hello-shell` 是面向开发者与运维的 Shell 横向对比项目，属于 `hello-*` 系列开源学习矩阵（已落地 `hello-lang`、`hello-sql`、`hello-mq`，`hello-shell` 为第四块）。用同一组统一任务在 bash、zsh、fish、cmd、PowerShell 5、PowerShell 7（Windows/Linux）中分别实现并采集真实输出，解释「什么是内核、什么是 Shell、什么是 GUI」，并划清 Shell 脚本与图灵完备语言（Python 对照）的能力边界。
 
 ## 核心特色
 
