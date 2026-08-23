@@ -12,6 +12,7 @@ function shellSidebar(id: string, name: string) {
         { text: `${name} 语法`, link: `/products/${id}/syntax` },
         { text: `${name} 入参`, link: `/products/${id}/args` },
         { text: `${name} 坑位`, link: `/products/${id}/pitfalls` },
+        { text: 'Docker 工具', link: `/products/${id}/DockerTooling` },
       ],
     },
   ]

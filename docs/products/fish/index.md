@@ -1,6 +1,5 @@
 # fish 分卷
 
-<DockerTooling product="fish" />
 
 > 本页结论：fish 是「开箱即用」的现代交互 Shell——语法高亮、自动建议、合理默认一应俱全，但**语法与 POSIX 不兼容**：没有 `$( )`、没有 `done`/`esac`、没有 `$?`，命令替换用括号、一切变量用 `set`、块以 `end` 收尾、退出码读 `$status`。它适合交互与自管工具脚本，不适合直接搬 bash 脚本。本卷全部行为结论来自 alpine 3.22 内装 fish 4.0.2 容器中采集的真实输出快照（`demos/fish/*.out.txt`），学习路径为 [syntax](./syntax) → [args](./args) → [pitfalls](./pitfalls)。
 
