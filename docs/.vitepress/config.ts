@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: 'hello-shell',
-  description:
+  description: &apos;Shell 命令与脚本统一知识库（8 大运行体 · 9 任务 · 双平台采集 · 对比矩阵）&apos;
     'Shell 与命令行统一任务矩阵：bash/zsh/fish/cmd/PowerShell 同任务对照与真实输出快照 (Shell & Command Line Task Matrix)',
   lang: 'zh-CN',
   base: process.env.NODE_ENV === 'production' ? '/hello-shell/' : '/',
