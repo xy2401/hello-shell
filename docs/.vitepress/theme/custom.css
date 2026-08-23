@@ -1,0 +1,39 @@
+:where(.VPNavBarMenuLink, .VPNavScreenMenuLink, .VPMenu a)[href*="/products/"]::before,
+.VPSidebarItem.level-0:has(a[href*="/products/"]) > .item .text::before {
+  width: 1.1rem;
+  height: 1.1rem;
+  background-image: var(--shell-product-logo);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  content: '';
+  display: inline-block;
+  flex: 0 0 auto;
+  margin-right: 0.35rem;
+  vertical-align: -0.2rem;
+}
+
+:where(.VPNavBarMenuLink, .VPNavScreenMenuLink, .VPMenu a)[href*="/products/bash/"],
+.VPSidebarItem.level-0:has(a[href*="/products/bash/"]) {
+  --shell-product-logo: url('./assets/bash.svg');
+}
+
+:where(.VPNavBarMenuLink, .VPNavScreenMenuLink, .VPMenu a)[href*="/products/zsh/"],
+.VPSidebarItem.level-0:has(a[href*="/products/zsh/"]) {
+  --shell-product-logo: url('./assets/zsh.svg');
+}
+
+:where(.VPNavBarMenuLink, .VPNavScreenMenuLink, .VPMenu a)[href*="/products/fish/"],
+.VPSidebarItem.level-0:has(a[href*="/products/fish/"]) {
+  --shell-product-logo: url('./assets/fish.svg');
+}
+
+:where(.VPNavBarMenuLink, .VPNavScreenMenuLink, .VPMenu a)[href*="/products/cmd/"],
+.VPSidebarItem.level-0:has(a[href*="/products/cmd/"]) {
+  --shell-product-logo: url('./assets/cmd.svg');
+}
+
+:where(.VPNavBarMenuLink, .VPNavScreenMenuLink, .VPMenu a)[href*="/products/powershell/"],
+.VPSidebarItem.level-0:has(a[href*="/products/powershell/"]) {
+  --shell-product-logo: url('./assets/powershell.svg');
+}

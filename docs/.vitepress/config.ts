@@ -1,5 +1,7 @@
 import { defineConfig } from 'vitepress'
 
+const base = process.env.NODE_ENV === 'production' ? '/hello-shell/' : '/'
+
 function shellSidebar(id: string, name: string) {
   return [
     {
@@ -19,22 +21,17 @@ export default defineConfig({
   description:
     'Shell 与命令行统一任务矩阵：bash/zsh/fish/cmd/PowerShell 同任务对照与真实输出快照 (Shell & Command Line Task Matrix)',
   lang: 'zh-CN',
-  base: process.env.NODE_ENV === 'production' ? '/hello-shell/' : '/',
+  base,
   cleanUrls: true,
+  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }]],
   themeConfig: {
+    logo: '/logo.svg',
     nav: [
-      { text: '首页', link: '/' },
-      {
-        text: '产品',
-        items: [
-          { text: '产品总览', link: '/products/' },
-          { text: 'Bash', link: '/products/bash/' },
-          { text: 'zsh', link: '/products/zsh/' },
-          { text: 'fish', link: '/products/fish/' },
-          { text: 'cmd', link: '/products/cmd/' },
-          { text: 'PowerShell', link: '/products/powershell/' },
-        ],
-      },
+      { text: 'Bash', link: '/products/bash/' },
+      { text: 'zsh', link: '/products/zsh/' },
+      { text: 'fish', link: '/products/fish/' },
+      { text: 'cmd', link: '/products/cmd/' },
+      { text: 'PowerShell', link: '/products/powershell/' },
       { text: '对比矩阵', link: '/matrix/' },
       { text: '试验场', link: '/playground/' },
       { text: '参考资料', link: '/reference/' },
