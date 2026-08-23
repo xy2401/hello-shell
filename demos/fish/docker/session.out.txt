@@ -1,7 +1,23 @@
 ---
-status: documented
-capturedAt: null
-dockerImage: "unresolved"
-exitCode: -1
+status: verified
+capturedAt: "2026-08-23T15:16:21.340Z"
+dockerImage: "hello-shell-fish:local"
+exitCode: 0
 ---
-PENDING: fish 工具会话尚未采集；现有 demos/fish/00..08 快照仍是行为证据。
+## 00_env.fish.out.txt
+version=fish, version 4.0.2
+shell=fish
+platform=linux
+
+## 06_pipes_files.fish.out.txt
+globList=app.log,config.csv,readme.txt
+logFiles=1
+requestLines=2
+statusCounts=paid:3,pending:1,refunded:1
+
+## 08_real_world.fish.out.txt
+prepared=3
+renamed=1
+unchanged=2
+verify=ok
+report=prepared=3,renamed=1,unchanged=2

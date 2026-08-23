@@ -1,7 +1,8 @@
 ---
-status: documented
-capturedAt: null
-dockerImage: "unresolved"
-exitCode: -1
+status: verified
+capturedAt: "2026-08-23T15:16:21.340Z"
+dockerImage: "hello-shell-fish:local"
+exitCode: 0
 ---
-RESULT: not executed — partial catalog entry, not full tooling evidence.
+PASS taskSnapshots: 9
+RESULT: all assertions passed

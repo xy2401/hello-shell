@@ -1,7 +1,23 @@
 ---
-status: documented
-capturedAt: null
-dockerImage: "unresolved"
-exitCode: -1
+status: verified
+capturedAt: "2026-08-23T15:16:20.807Z"
+dockerImage: "hello-shell-zsh:local"
+exitCode: 0
 ---
-PENDING: zsh 工具会话尚未采集；现有 demos/zsh/00..08 快照仍是行为证据。
+## 00_env.zsh.out.txt
+version=zsh 5.9 (x86_64-alpine-linux-musl)
+shell=zsh
+platform=linux
+
+## 06_pipes_files.zsh.out.txt
+globList=app.log,config.csv,readme.txt
+logFiles=1
+requestLines=2
+statusCounts=paid:3,pending:1,refunded:1
+
+## 08_real_world.zsh.out.txt
+prepared=3
+renamed=1
+unchanged=2
+verify=ok
+report=prepared=3,renamed=1,unchanged=2

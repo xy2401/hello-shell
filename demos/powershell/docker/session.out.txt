@@ -1,7 +1,23 @@
 ---
-status: documented
-capturedAt: null
-dockerImage: "unresolved"
-exitCode: -1
+status: verified
+capturedAt: "2026-08-23T15:16:22.623Z"
+dockerImage: "mcr.microsoft.com/powershell:7.5-debian-12@sha256:7ab5bd5ca6f95a3351fa0c6a1205237d57048c94542355aab55519a0861a9b25"
+exitCode: 0
 ---
-PENDING: powershell 工具会话尚未采集；现有 demos/powershell/00..08 快照仍是行为证据。
+## 00_env.ps1.out.txt
+version=PowerShell 7.5.0
+shell=pwsh
+platform=linux
+
+## 06_pipes_files.ps1.out.txt
+globList=app.log,config.csv,readme.txt
+logFiles=1
+requestLines=2
+statusCounts=paid:3,pending:1,refunded:1
+
+## 08_real_world.ps1.out.txt
+prepared=3
+renamed=1
+unchanged=2
+verify=ok
+report=prepared=3,renamed=1,unchanged=2
