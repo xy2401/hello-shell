@@ -24,7 +24,7 @@ starLiteral=a*b*c
 
 `wordCount=3` 是分词的预期用法；但同样的规则落到文件名上就是事故——值为 `my report.txt` 的变量不加引号会拆成两个词，值里带 `*` 时还会被展开成文件列表。`03_args_parsing.sh` 的解析循环处处加引号（`case "$1"`、`positional+=("$1")`、`nValue="$2"`），输出中 `secondArg=bob smith` 完整保留，正是加引号的结果。
 
-**规避**：展开一律加双引号；确需分词时像 demo 一样显式写出来并加注释。通用规则见 [变量与引用](/concepts/quoting-variables)。
+**规避**：展开一律加双引号；确需分词时像 demo 一样显式写出来并加注释。通用规则见 [变量与引用](/matrix/quoting-variables)。
 
 ## 陷阱 2：set -e 不是全局保险丝
 
@@ -49,7 +49,7 @@ scriptExitCode=0
 
 两个事实：`||` 右侧的兜底让失败被捕获且脚本继续（`afterFailure=continued`）；`set -e` 开启在子 shell 里，失败只终止子 shell（`setEExitCode=1`），父脚本照常走到 `scriptExitCode=0`。
 
-**规避**：不要假设 `set -e` 覆盖一切；关键步骤显式 `cmd || exit 1` / `cmd || fallback`，子 shell 的失败要用 `$?` 主动接住。详见 [错误与信号](/concepts/errors-signals)。
+**规避**：不要假设 `set -e` 覆盖一切；关键步骤显式 `cmd || exit 1` / `cmd || fallback`，子 shell 的失败要用 `$?` 主动接住。详见 [错误与信号](/matrix/errors-signals)。
 
 ## 陷阱 3：退出码只有 8 位，且 $? 立即被覆盖
 

@@ -18,7 +18,7 @@ COMMAND.COM：
 
 本卷四页：[语法基础](/products/cmd/syntax)、[入参解析](/products/cmd/args)、
 [常见陷阱](/products/cmd/pitfalls)。九个统一任务与其他 Shell 的横向对照见
-[任务矩阵](/matrix/args-matrix)与 [fundamentals](/concepts/)。
+[任务矩阵](/matrix/args-matrix)与 [入参矩阵](/matrix/args-matrix/)。
 
 ## 运行环境：windows-latest runner 内置
 

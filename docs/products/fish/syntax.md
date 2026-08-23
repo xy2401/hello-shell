@@ -31,7 +31,7 @@ interpolated=value-is-42
 starLiteral=a*b*c
 ```
 
-注意 `(fish --version | string split \n)[1]`：括号子命令输出按行成为列表，`[1]` 直接取第一项——fish 列表下标从 1 开始。fish 内置 `string`、`count`、`math` 等命令，替代了大量外部 `sed/awk/wc` 组合。通用引用规则见 [变量与引用](/concepts/quoting-variables)。
+注意 `(fish --version | string split \n)[1]`：括号子命令输出按行成为列表，`[1]` 直接取第一项——fish 列表下标从 1 开始。fish 内置 `string`、`count`、`math` 等命令，替代了大量外部 `sed/awk/wc` 组合。通用引用规则见 [变量与引用](/matrix/quoting-variables)。
 
 ## 条件：if test 与 string match
 
@@ -53,7 +53,7 @@ if not run_fails
 end
 ```
 
-控制流的统一语义见 [控制流](/concepts/control-flow)。
+控制流的统一语义见 [控制流](/matrix/control-flow)。
 
 ## 循环：for/while 都以 end 收尾
 
@@ -111,7 +111,7 @@ exitCodeReturn=7
 afterCall=outer
 ```
 
-与 bash/zsh 版的 `functionResult=42`、`exitCodeReturn=7`、`afterCall=outer` 逐行一致：回值走 stdout、回状态走退出码、局部变量不泄漏，这一函数模型三家通用。详见 [函数与管道](/concepts/functions-pipes)。
+与 bash/zsh 版的 `functionResult=42`、`exitCodeReturn=7`、`afterCall=outer` 逐行一致：回值走 stdout、回状态走退出码、局部变量不泄漏，这一函数模型三家通用。详见 [函数与管道](/matrix/functions-pipes)。
 
 ## 管道与文件
 
@@ -166,7 +166,7 @@ setEExitCode=1
 scriptExitCode=0
 ```
 
-`$status` 必须在失败命令后**立即**存入变量——下一条命令一执行就被覆盖，见 [真实陷阱](./pitfalls)。统一模型见 [错误与信号](/concepts/errors-signals)。
+`$status` 必须在失败命令后**立即**存入变量——下一条命令一执行就被覆盖，见 [真实陷阱](./pitfalls)。统一模型见 [错误与信号](/matrix/errors-signals)。
 
 ## fish 独特处速记
 

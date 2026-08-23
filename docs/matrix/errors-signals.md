@@ -112,4 +112,4 @@ Ctrl+C（SIGINT）与 SIGTERM 会中断前台脚本，POSIX shell 可用 `trap` 
 
 - [错误处理矩阵](/matrix/error-handling-matrix)：`set -e` / `trap` / `$ErrorActionPreference` / `try-except` 横向对照
 - [统一任务实验总览 · 任务 07](/matrix/experiment/#任务-04-控制流#任务-07-错误处理)
-- [函数与管道](/concepts/functions-pipes)：退出码作为函数返回通道的用法
+- [函数与管道](/matrix/functions-pipes)：退出码作为函数返回通道的用法

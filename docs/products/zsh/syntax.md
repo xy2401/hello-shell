@@ -29,7 +29,7 @@ interpolated=value-is-42
 starLiteral=a*b*c
 ```
 
-bash 版同一任务用 `set -- $words` 得到 3 个位置参数，zsh 版则必须 `${=words}` 显式分词再装进数组，用 `${#wordArray}` 取长度——结果同为 `wordCount=3`，路径完全不同。引用通用规则见 [变量与引用](/concepts/quoting-variables)。
+bash 版同一任务用 `set -- $words` 得到 3 个位置参数，zsh 版则必须 `${=words}` 显式分词再装进数组，用 `${#wordArray}` 取长度——结果同为 `wordCount=3`，路径完全不同。引用通用规则见 [变量与引用](/matrix/quoting-variables)。
 
 ## 条件
 
@@ -49,7 +49,7 @@ case "$1" in
 esac
 ```
 
-控制流的统一语义见 [控制流](/concepts/control-flow)。
+控制流的统一语义见 [控制流](/matrix/control-flow)。
 
 ## 循环：管道尾部落回当前 shell
 
@@ -96,7 +96,7 @@ fail_with_seven() {
 }
 ```
 
-输出同为 `functionResult=42`、`exitCodeReturn=7`、`afterCall=outer`（`demos/zsh/05_functions_scope.zsh.out.txt`）。详见 [函数与管道](/concepts/functions-pipes)。
+输出同为 `functionResult=42`、`exitCodeReturn=7`、`afterCall=outer`（`demos/zsh/05_functions_scope.zsh.out.txt`）。详见 [函数与管道](/matrix/functions-pipes)。
 
 ## 管道与文件：glob 直接进数组
 
@@ -136,7 +136,7 @@ setEExitCode=1
 scriptExitCode=0
 ```
 
-统一模型见 [错误与信号](/concepts/errors-signals)。
+统一模型见 [错误与信号](/matrix/errors-signals)。
 
 ## zsh 独特处速记
 

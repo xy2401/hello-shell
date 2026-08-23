@@ -28,7 +28,7 @@ interpolated=value-is-42
 starLiteral=a*b*c
 ```
 
-`set -- $words` 未加引号，`a b c` 被拆成 3 个位置参数，故 `wordCount=3`；`"$glob"` 加了引号，`*` 保持字面量。引用与分词的通用规则见 [变量与引用](/concepts/quoting-variables)。
+`set -- $words` 未加引号，`a b c` 被拆成 3 个位置参数，故 `wordCount=3`；`"$glob"` 加了引号，`*` 保持字面量。引用与分词的通用规则见 [变量与引用](/matrix/quoting-variables)。
 
 ## 条件
 
@@ -50,7 +50,7 @@ case "$1" in
 esac
 ```
 
-注意两处都引用了变量（`"$orderStatus"`、`"$1"`），原因见 [真实陷阱](./pitfalls)。控制流的统一语义见 [控制流](/concepts/control-flow)。
+注意两处都引用了变量（`"$orderStatus"`、`"$1"`），原因见 [真实陷阱](./pitfalls)。控制流的统一语义见 [控制流](/matrix/control-flow)。
 
 ## 循环
 
@@ -107,7 +107,7 @@ exitCodeReturn=7
 afterCall=outer
 ```
 
-`afterCall=outer` 证明函数内 `local globalVar="inner"` 只遮蔽函数内部，调用返回后全局值不受影响。详见 [函数与管道](/concepts/functions-pipes)。
+`afterCall=outer` 证明函数内 `local globalVar="inner"` 只遮蔽函数内部，调用返回后全局值不受影响。详见 [函数与管道](/matrix/functions-pipes)。
 
 ## 管道
 
@@ -154,7 +154,7 @@ setEExitCode=1
 scriptExitCode=0
 ```
 
-`set -e` 只杀掉了开启它的那个子 shell（退出码 1 被父 shell 用 `$?` 接住），父脚本自己走到 `scriptExitCode=0`。`set -e` 的盲区见 [真实陷阱](./pitfalls)；错误处理的统一模型见 [错误与信号](/concepts/errors-signals)。
+`set -e` 只杀掉了开启它的那个子 shell（退出码 1 被父 shell 用 `$?` 接住），父脚本自己走到 `scriptExitCode=0`。`set -e` 的盲区见 [真实陷阱](./pitfalls)；错误处理的统一模型见 [错误与信号](/matrix/errors-signals)。
 
 ## bash 独特处速记
 

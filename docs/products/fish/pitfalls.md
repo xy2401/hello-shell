@@ -66,4 +66,4 @@ set -l result $status
 - [fish 语法骨架](./syntax)
 - [fish 入参模型](./args)
 - [bash 真实陷阱](/products/bash/pitfalls)
-- [错误与信号](/concepts/errors-signals)
+- [错误与信号](/matrix/errors-signals)

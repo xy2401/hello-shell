@@ -16,7 +16,7 @@
 | 07 | errors | 捕获失败并继续、`set -e` 类语义的退出码 | `demos/<shell>/07_errors.<ext>.out.txt` |
 | 08 | real_world | 复制—改名—校验—报告批处理（`verify=ok`） | `demos/<shell>/08_real_world.<ext>.out.txt` |
 
-其中 `<shell>` 为 `bash`/`zsh`/`fish`/`pwsh`/`python`/`cmd`/`powershell5`/`powershell7`，`<ext>` 为对应脚本扩展名（`.sh`/`.zsh`/`.fish`/`.ps1`/`.py`/`.bat`）。骨架解读见 [统一语义骨架](/concepts/)，证据的采信规则见 [证据政策](/reference/evidence-policy)。
+其中 `<shell>` 为 `bash`/`zsh`/`fish`/`pwsh`/`python`/`cmd`/`powershell5`/`powershell7`，`<ext>` 为对应脚本扩展名（`.sh`/`.zsh`/`.fish`/`.ps1`/`.py`/`.bat`）。骨架解读见 [[八大核心语义](/matrix/quoting-variables/)，证据的采信规则见 [证据政策](/reference/evidence-policy)。
 
 ## 统一输入
 
@@ -117,7 +117,7 @@ bash/zsh/fish 的失败命令是 `ls` 不存在的目录（退出码 1）；pwsh
 
 ## 任务 02：变量与引号
 
-**目标**：验证带空格赋值、分词计数、插值、含 `*` 值保持字面四个点。模型解析见 [变量与引号](/concepts/quoting-variables)。
+**目标**：验证带空格赋值、分词计数、插值、含 `*` 值保持字面四个点。模型解析见 [变量与引号](/matrix/quoting-variables)。
 
 ```text
 # demos/bash/02_variables_quoting.sh.out.txt
@@ -165,7 +165,7 @@ nValue=3
 
 ## 任务 04：控制流
 
-**目标**：`for` 求和、逐行读 CSV 过滤、glob 遍历计数。模型与坑位解析见 [控制流](/concepts/control-flow)。
+**目标**：`for` 求和、逐行读 CSV 过滤、glob 遍历计数。模型与坑位解析见 [控制流](/matrix/control-flow)。
 
 ```text
 # demos/fish/04_control_flow.fish.out.txt
@@ -185,7 +185,7 @@ bash/zsh/python 快照与上面两份逐字相同（对照 `demos/bash/04_contro
 
 ## 任务 05：函数与作用域
 
-**目标**：区分值通道与退出码通道——`functionResult=42` 走值通道，`exitCodeReturn=7` 走退出码通道，`afterCall=outer` 验证局部作用域。解析见 [函数与管道](/concepts/functions-pipes)。
+**目标**：区分值通道与退出码通道——`functionResult=42` 走值通道，`exitCodeReturn=7` 走退出码通道，`afterCall=outer` 验证局部作用域。解析见 [函数与管道](/matrix/functions-pipes)。
 
 ```text
 # demos/bash/05_functions_scope.sh.out.txt
@@ -212,7 +212,7 @@ afterCall=outer
 
 ## 任务 06：管道与文件
 
-**目标**：glob 列举、通配计数、模式数行、按 CSV 列分组统计——同一条统计，文本管道、对象管道、显式代码三种写法。解析见 [函数与管道](/concepts/functions-pipes)。
+**目标**：glob 列举、通配计数、模式数行、按 CSV 列分组统计——同一条统计，文本管道、对象管道、显式代码三种写法。解析见 [函数与管道](/matrix/functions-pipes)。
 
 ```text
 # demos/bash/06_pipes_files.sh.out.txt
@@ -242,7 +242,7 @@ bash/zsh 的 `statusCounts` 由 `tail | cut | sort | uniq -c | awk` 文本管道
 
 ## 任务 07：错误处理
 
-**目标**：捕获一次失败并继续执行，测量「失败即停」语义对应的退出码。光谱模型见 [错误与信号](/concepts/errors-signals)。
+**目标**：捕获一次失败并继续执行，测量「失败即停」语义对应的退出码。光谱模型见 [错误与信号](/matrix/errors-signals)。
 
 ```text
 # demos/bash/07_errors.sh.out.txt
@@ -288,6 +288,6 @@ report=prepared=3,renamed=1,unchanged=2
 
 ## 延伸阅读
 
-- [统一语义骨架](/concepts/)：五个维度与 9 任务的映射
+- [[八大核心语义](/matrix/quoting-variables/)：五个维度与 9 任务的映射
 - 横向矩阵：[入参](/matrix/args-matrix) / [引号](/matrix/quoting-matrix) / [通配](/matrix/globbing-matrix) / [错误处理](/matrix/error-handling-matrix) / [可移植性](/matrix/portability-matrix)
 - [Shell vs Python](/matrix/comparison/shell-vs-python)、[证据政策](/reference/evidence-policy)

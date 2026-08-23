@@ -89,7 +89,7 @@ Python 则用 `csv.DictReader` 按列名取值（`row["status"] == "paid"`），
 
 ## glob 遍历：同一形态，不同实现
 
-`loopFiles=3` 的遍历写法：bash/zsh/fish 都用 glob（`for f in /fixtures/data/*`），PowerShell 用 `Get-ChildItem`，Python 用 `os.listdir`。glob 在控制流里的角色（展开成词表供循环消费）与它在[变量与引号](/concepts/quoting-variables)里的行为是同一套机制。
+`loopFiles=3` 的遍历写法：bash/zsh/fish 都用 glob（`for f in /fixtures/data/*`），PowerShell 用 `Get-ChildItem`，Python 用 `os.listdir`。glob 在控制流里的角色（展开成词表供循环消费）与它在[变量与引号](/matrix/quoting-variables)里的行为是同一套机制。
 
 ## 本页证据清单
 
@@ -106,5 +106,5 @@ Python 则用 `csv.DictReader` 按列名取值（`row["status"] == "paid"`），
 ## 延伸阅读
 
 - [统一任务实验总览 · 任务 04](/matrix/experiment/#任务-04-控制流#任务-04-控制流)
-- [变量与引号](/concepts/quoting-variables)（glob 展开规则）、[函数与管道](/concepts/functions-pipes)（管道子 shell 与对象管道）
+- [变量与引号](/matrix/quoting-variables)（glob 展开规则）、[函数与管道](/matrix/functions-pipes)（管道子 shell 与对象管道）
 - [Shell vs Python](/matrix/comparison/shell-vs-python)：当过滤逻辑复杂到要维护状态时，为什么该换 Python

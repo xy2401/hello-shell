@@ -15,22 +15,11 @@ export default defineConfig({
       { text: 'fish', link: '/products/fish/' },
       { text: 'cmd', link: '/products/cmd/' },
       { text: 'PowerShell', link: '/products/powershell/' },
-      { text: '指南', link: '/concepts/getting-started' },
-      { text: '基础概念', link: '/concepts/' },
       { text: '对比矩阵', link: '/matrix/' },
       { text: '试验场', link: '/matrix/experiment/' },
       { text: '参考文档', link: '/reference/version-policy' },
     ],
     sidebar: {
-      '/concepts/': [
-        {
-          text: '基础概念',
-          items: [
-            { text: '指南', link: '/concepts/getting-started' },
-            { text: '内核、Shell、GUI：三层概念', link: '/concepts/kernel-shell-gui' },
-            { text: 'Shell 基本语义骨架', link: '/concepts/shell-semantics' },
-          ],
-        },
       ],
       '/products/': [
         {

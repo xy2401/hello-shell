@@ -135,5 +135,5 @@ Python 版把整条管道翻译成显式代码：`sorted(os.listdir(...))`、`na
 ## 延伸阅读
 
 - [统一任务实验总览 · 任务 05](/matrix/experiment/#任务-04-控制流#任务-05-函数与作用域)、[任务 06](/matrix/experiment/#任务-04-控制流#任务-06-管道与文件)
-- [错误与信号](/concepts/errors-signals)：退出码在错误模型里的位置
+- [错误与信号](/matrix/errors-signals)：退出码在错误模型里的位置
 - [Shell vs Python](/matrix/comparison/shell-vs-python)、[可移植性矩阵](/matrix/portability-matrix)
