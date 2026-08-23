@@ -12,6 +12,7 @@ function shellSidebar(id: string, name: string) {
         { text: `${name} 语法`, link: `/products/${id}/syntax` },
         { text: `${name} 入参`, link: `/products/${id}/args` },
         { text: `${name} 坑位`, link: `/products/${id}/pitfalls` },
+        { text: `${name} 版本演进`, link: `/products/${id}/versions` },
         { text: 'Docker 工具', link: `/products/${id}/DockerTooling` },
       ],
     },
@@ -98,14 +99,18 @@ export default defineConfig({
             { text: '快速上手', link: '/reference/getting-started' },
             { text: '版本政策', link: '/reference/version-policy' },
             { text: '证据政策', link: '/reference/evidence-policy' },
+            { text: '官方资料基线', link: '/reference/sources' },
           ],
         },
       ],
     },
-    footer: {
-      message: 'Released under the MIT License.',
-      copyright: 'MIT License',
+    outline: {
+      level: [2, 3],
+      label: '本页目录',
     },
-    search: { provider: 'local' },
+    socialLinks: [],
+    search: {
+      provider: 'local',
+    },
   },
 })
