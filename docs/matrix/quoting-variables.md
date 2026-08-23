@@ -12,7 +12,7 @@
 4. **分词**：展开结果遇到空白会不会被拆成多个词？
 5. **glob**：展开结果里的 `*` `?` `[...]` 会不会被替换成文件名？
 
-任务 02（[实验总览](/playground/#任务-04-控制流#任务-02-变量与引号)）用四个验证点钉住这条流水线：`value`（带空格赋值）、`wordCount`（分词）、`interpolated`（插值）、`starLiteral`（glob 字面量）。
+任务 02（[统一任务实验](/matrix/experiments#任务-02-变量与引号)）用四个验证点钉住这条流水线：`value`（带空格赋值）、`wordCount`（分词）、`interpolated`（插值）、`starLiteral`（glob 字面量）。
 
 ## 证据：任务 02 输出八体一致
 
@@ -124,5 +124,5 @@ fish 双引号内变量直接展开（`echo "interpolated=value-is-$num"`），�
 ## 延伸阅读
 
 - [引号矩阵](/matrix/quoting-matrix)、[通配矩阵](/matrix/globbing-matrix)
-- [统一任务实验总览 · 任务 02](/playground/#任务-04-控制流#任务-02-变量与引号)
+- [统一任务实验总览 · 任务 02](/matrix/experiments#任务-02-变量与引号)
 - 各 shell 引号细节：[bash](/products/bash/syntax)、[zsh](/products/zsh/syntax)、[fish](/products/fish/syntax)、[cmd](/products/cmd/syntax)、[PowerShell](/products/powershell/syntax)

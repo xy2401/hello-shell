@@ -113,4 +113,4 @@ cmd/PS5/PS7/python）用同一种「手工循环解析」算法，才能横向�
 | 命名参数/类型/默认值 | `param()` 块（生产推荐） |
 | 与其他 shell 对齐的裸解析 | `while` 遍历 `$args`（本仓库 demo） |
 
-动手复现见 [labs](/playground/)。
+动手复现见 [统一任务实验](/matrix/experiments)。

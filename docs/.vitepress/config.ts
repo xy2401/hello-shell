@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import { fileURLToPath } from 'node:url'
 
 const base = process.env.NODE_ENV === 'production' ? '/hello-shell/' : '/'
 
@@ -24,6 +25,13 @@ export default defineConfig({
   base,
   cleanUrls: true,
   head: [['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }]],
+  vite: {
+    resolve: {
+      alias: {
+        'node:zlib': fileURLToPath(new URL('./theme/shims/zlib.ts', import.meta.url)),
+      },
+    },
+  },
   themeConfig: {
     logo: '/logo.svg',
     nav: [
@@ -56,8 +64,12 @@ export default defineConfig({
       ],
       '/playground/': [
         {
-          text: '实验手册',
-          items: [{ text: '实验总览', link: '/playground/' }],
+          text: '浏览器工作台',
+          items: [
+            { text: '工作台总览', link: '/playground/' },
+            { text: '浏览器 Bash', link: '/playground/bash' },
+            { text: '浏览器 Linux', link: '/playground/linux' },
+          ],
         },
       ],
       '/matrix/': [
@@ -65,6 +77,7 @@ export default defineConfig({
           text: '对比矩阵',
           items: [
             { text: '矩阵总览', link: '/matrix/' },
+            { text: '统一任务实验', link: '/matrix/experiments' },
             { text: '变量与引号', link: '/matrix/quoting-variables' },
             { text: '控制流', link: '/matrix/control-flow' },
             { text: '函数与管道', link: '/matrix/functions-pipes' },

@@ -122,4 +122,4 @@ PS5.1 的同名快照亦然。
 | 路径分隔符 | `Join-Path` + `$IsWindows` 分支，禁手拼 `\` |
 
 更多语法背景见 [语法基础](/products/powershell/syntax)，动手复现见
-[labs](/playground/)。
+[统一任务实验](/matrix/experiments)。

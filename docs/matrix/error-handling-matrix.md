@@ -145,4 +145,4 @@ scriptExitCode=0
 | stderr 与 stdout 分流是普遍能力 | 各实现的 `>&2` / `1>&2` / `[Console]::Error.WriteLine` / `file=sys.stderr`；Linux 快照缺席 stderr 行，Windows 快照经 `2>&1` 收回该行，一缺一有互为镜像 |
 | 退出码数值归命令所有 | 任务 01 `childExitCode=1`（busybox ls、Windows dir）vs `=2`（GNU ls） |
 
-延伸阅读：[错误与信号统一骨架](/matrix/errors-signals)、[矩阵总览](/matrix/)、[实验说明](/playground/)。
+延伸阅读：[错误与信号统一骨架](/matrix/errors-signals)、[矩阵总览](/matrix/)、[统一任务实验](/matrix/experiments)。

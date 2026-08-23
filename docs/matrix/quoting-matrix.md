@@ -131,4 +131,4 @@ fish 同理（`# quoting: a quoted '*' stays literal and is never glob-expanded`
 | 分词默认值：bash 开、zsh 关、其余无此步骤 | bash `set -- $words` 得 3 词 vs zsh `${=words}` 显式分词；`wordCount=3` 八体一致 |
 | 引号内无通配 | `starLiteral=a*b*c` 八份快照逐字一致 |
 
-延伸阅读：[变量与引号统一骨架](/matrix/quoting-variables)、[通配矩阵](/matrix/globbing-matrix)、[实验说明](/playground/)。
+延伸阅读：[变量与引号统一骨架](/matrix/quoting-variables)、[通配矩阵](/matrix/globbing-matrix)、[统一任务实验](/matrix/experiments)。

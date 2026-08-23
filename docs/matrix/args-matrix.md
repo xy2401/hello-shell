@@ -141,4 +141,4 @@ bash/zsh/fish 在把参数交给命令**之前**就完成变量替换与通配�
 | 带空格参数全员保得住 | 八份快照 `secondArg=bob smith`（cmd 靠 `%~2` 去引号、PS 靠单引号实参，均经快照验证） |
 | cmd 的 `%~nx0` 在 shift 循环后守不住脚本名 | cmd 任务 03 快照实测 `invocation=3`，八体唯一例外（源码推断为脚本文件名，以快照为准修正） |
 
-延伸阅读：[bash 入参](/products/bash/args)、[zsh 入参](/products/zsh/args)、[fish 入参](/products/fish/args)、[cmd 入参](/products/cmd/args)、[PowerShell 入参](/products/powershell/args)、[[入参矩阵](/matrix/args-matrix)。
+延伸阅读：[bash 入参](/products/bash/args)、[zsh 入参](/products/zsh/args)、[fish 入参](/products/fish/args)、[cmd 入参](/products/cmd/args)、[PowerShell 入参](/products/powershell/args)。

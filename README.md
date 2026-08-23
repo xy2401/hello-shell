@@ -28,7 +28,7 @@ hello-shell/
 │   ├── index.md                # 首页与统一语义骨架
 │   ├── products/               # bash/ zsh/ fish/ cmd/ powershell/ 分卷
 │   ├── matrix/                 # 横向对比大屏（入参/引号/通配/错误/可移植性）
-│   ├── playground/             # 统一任务实验说明
+│   ├── playground/             # 浏览器 Bash / Linux 工作台
 │   └── reference/              # 快速上手、版本政策、证据政策
 ├── scripts/                    # run-docker-demos.js（Linux 采集）、collect-windows.ps1（Windows 采集）、check-project.js
 ├── .github/workflows/          # collect-docker-outputs / collect-windows-outputs / docs

@@ -101,7 +101,7 @@ bash/zsh 把「按 status 列统计」写成一条文本流水线——跳过表
 statusCounts="$(tail -n +2 /fixtures/orders.csv | cut -d, -f4 | sort | uniq -c | awk '{ printf "%s%s:%s", sep, $2, $1; sep = "," }')"
 ```
 
-数行用 `grep -c request`（bash/zsh）或 `grep ... | wc -l`（fish：`command grep request /fixtures/data/app.log | wc -l | string trim`）。管道里流动的是**字节流**，每个工具各切一段——这是 shell 最锋利的刀，也是[任务 06](/playground/#任务-04-控制流#任务-06-管道与文件)要反复磨的地方。
+数行用 `grep -c request`（bash/zsh）或 `grep ... | wc -l`（fish：`command grep request /fixtures/data/app.log | wc -l | string trim`）。管道里流动的是**字节流**，每个工具各切一段——这是 shell 最锋利的刀，也是[任务 06](/matrix/experiments#任务-06-管道与文件)要反复磨的地方。
 
 ### PowerShell 对象管道：Import-Csv | Group-Object
 
@@ -134,6 +134,6 @@ Python 版把整条管道翻译成显式代码：`sorted(os.listdir(...))`、`na
 
 ## 延伸阅读
 
-- [统一任务实验总览 · 任务 05](/playground/#任务-04-控制流#任务-05-函数与作用域)、[任务 06](/playground/#任务-04-控制流#任务-06-管道与文件)
+- [统一任务实验总览 · 任务 05](/matrix/experiments#任务-05-函数与作用域)、[任务 06](/matrix/experiments#任务-06-管道与文件)
 - [错误与信号](/matrix/errors-signals)：退出码在错误模型里的位置
 - [Shell vs Python](/matrix/comparison/shell-vs-python)、[可移植性矩阵](/matrix/portability-matrix)
