@@ -1,7 +1,29 @@
 ---
-status: documented
-capturedAt: null
+status: verified
+capturedAt: "2026-08-23T15:17:02.3271157Z"
 dockerImage: "native-windows-runner"
-exitCode: -1
+exitCode: 0
 ---
-PENDING: cmd 工具会话尚未采集；现有 demos/cmd/00..08 快照仍是行为证据。
+## 00_env.bat.out.txt
+
+D:\a\hello-shell\hello-shell>rem 00_env: shell identity - version line, shell name, platform 
+version=Microsoft Windows [Version 10.0.26100.33296]
+shell=cmd
+platform=windows
+
+## 06_pipes_files.bat.out.txt
+
+D:\a\hello-shell\hello-shell>rem 06_pipes_files: dir /b listing, find counting through pipes, fixed-order status histogram 
+globList=app.log,config.csv,readme.txt
+logFiles=1
+requestLines=4
+statusCounts=paid:3,pending:1,refunded:1
+
+## 08_real_world.bat.out.txt
+
+D:\a\hello-shell\hello-shell>rem 08_real_world: copy fixture data to scratch, rename *.log to *.log.bak, count and verify 
+prepared=3
+renamed=1
+unchanged=2
+verify=ok
+report=prepared=3,renamed=1,unchanged=2

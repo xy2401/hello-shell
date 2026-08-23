@@ -1,0 +1,9 @@
+---
+status: verified
+capturedAt: "2026-08-23T15:18:45.8532893Z"
+dockerImage: "native-windows-runner"
+exitCode: 0
+---
+PASS powershell5.taskSnapshots: 9
+PASS powershell7.taskSnapshots: 9
+RESULT: all assertions passed

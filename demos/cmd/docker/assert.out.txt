@@ -1,7 +1,8 @@
 ---
-status: documented
-capturedAt: null
+status: verified
+capturedAt: "2026-08-23T15:17:02.3282002Z"
 dockerImage: "native-windows-runner"
-exitCode: -1
+exitCode: 0
 ---
-RESULT: not executed — partial catalog entry, not full tooling evidence.
+PASS taskSnapshots: 9
+RESULT: all assertions passed

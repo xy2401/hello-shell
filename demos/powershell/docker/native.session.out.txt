@@ -1,0 +1,41 @@
+---
+status: verified
+capturedAt: "2026-08-23T15:18:45.8525101Z"
+dockerImage: "native-windows-runner"
+exitCode: 0
+---
+## powershell5/00_env.ps1.out.txt
+version=PowerShell 5.1.26100.33296
+shell=powershell5
+platform=windows
+
+## powershell5/06_pipes_files.ps1.out.txt
+globList=app.log,config.csv,readme.txt
+logFiles=1
+requestLines=2
+statusCounts=paid:3,pending:1,refunded:1
+
+## powershell5/08_real_world.ps1.out.txt
+prepared=3
+renamed=1
+unchanged=2
+verify=ok
+report=prepared=3,renamed=1,unchanged=2
+
+## powershell7/00_env.ps1.out.txt
+version=PowerShell 7.6.5
+shell=powershell7
+platform=windows
+
+## powershell7/06_pipes_files.ps1.out.txt
+globList=app.log,config.csv,readme.txt
+logFiles=1
+requestLines=2
+statusCounts=paid:3,pending:1,refunded:1
+
+## powershell7/08_real_world.ps1.out.txt
+prepared=3
+renamed=1
+unchanged=2
+verify=ok
+report=prepared=3,renamed=1,unchanged=2

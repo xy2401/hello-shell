@@ -1,10 +1,10 @@
 ---
 status: verified
-capturedAt: "2026-08-23T15:17:02.3144471Z"
+capturedAt: "2026-08-23T15:18:45.8507718Z"
 dockerImage: "native-windows-runner"
 exitCode: 0
 ---
-## cmd help
+## Windows PowerShell 5
 System.Object[]
-## PATH executables
+## PowerShell 7
 System.Object[]
