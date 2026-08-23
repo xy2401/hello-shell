@@ -5,7 +5,7 @@ hero:
   name: "🔧 Hello Shell"
   text: "Shell 命令、脚本与对比实验"
   tagline: "8 大运行体 · 9 个统一任务 · 双平台真实采集 · 横向能力对比矩阵"
-  image: /logo.svg
+  image: /favicon.svg
   alt: Hello Shell - Shell 命令学习平台
   actions:
     - theme: brand

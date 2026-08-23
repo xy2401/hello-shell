@@ -33,7 +33,7 @@ export default defineConfig({
     },
   },
   themeConfig: {
-    logo: '/logo.svg',
+    logo: '/favicon.svg',
     nav: [
       { text: 'Bash', link: '/products/bash/' },
       { text: 'zsh', link: '/products/zsh/' },
