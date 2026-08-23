@@ -144,4 +144,4 @@ PS5/PS7 编码差异——每多一种 shell，跨平台成本乘以一份维护
 工程化越近的任务 Python 越舒服**。入门顺序与练习见 [labs](/matrix/experiment/)，
 各 shell 的逐卷细节见 [cmd 分卷](/products/cmd/) 与
 [PowerShell 分卷](/products/powershell/)，基础概念见
-[入门指南](/guide/getting-started/)。
+[入门指南](/guide/getting-started)。

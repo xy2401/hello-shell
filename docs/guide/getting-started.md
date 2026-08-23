@@ -78,5 +78,5 @@ demos/
 ## 下一步
 
 - [内核、Shell、GUI：三层概念](/guide/kernel-shell-gui)
-- [入门指南](/guide/getting-started/) 
+- [入门指南](/guide/getting-started)
 - [版本政策](/reference/version-policy) · [证据政策](/reference/evidence-policy)

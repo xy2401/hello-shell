@@ -16,7 +16,7 @@
 | 07 | errors | 捕获失败并继续、`set -e` 类语义的退出码 | `demos/<shell>/07_errors.<ext>.out.txt` |
 | 08 | real_world | 复制—改名—校验—报告批处理（`verify=ok`） | `demos/<shell>/08_real_world.<ext>.out.txt` |
 
-其中 `<shell>` 为 `bash`/`zsh`/`fish`/`pwsh`/`python`/`cmd`/`powershell5`/`powershell7`，`<ext>` 为对应脚本扩展名（`.sh`/`.zsh`/`.fish`/`.ps1`/`.py`/`.bat`）。骨架解读见 [[八大核心语义](/matrix/quoting-variables/)，证据的采信规则见 [证据政策](/reference/evidence-policy)。
+其中 `<shell>` 为 `bash`/`zsh`/`fish`/`pwsh`/`python`/`cmd`/`powershell5`/`powershell7`，`<ext>` 为对应脚本扩展名（`.sh`/`.zsh`/`.fish`/`.ps1`/`.py`/`.bat`）。骨架解读见 [[八大核心语义](/matrix/quoting-variables)，证据的采信规则见 [证据政策](/reference/evidence-policy)。
 
 ## 统一输入
 
@@ -161,7 +161,7 @@ verboseFlag=true
 nValue=3
 ```
 
-`secondArg=bob smith` 完整保形是两个运行体都守住了引号边界。各 shell 入参模型的系统差异（`$0`/`$args[0]` 是否占脚本名等）见 [入参矩阵](/matrix/args-matrix）。Windows 三份快照已入库：`demos/powershell5`、`demos/powershell7` 的 03 快照与上方 pwsh 版逐字相同；`demos/cmd/03_args_parsing.bat.out.txt` 的 `argCount=5`、`firstArg=alice`、`secondArg=bob smith`、`verboseFlag=true`、`nValue=3` 亦一致，仅 `invocation=3`（`call "%~f0"` 自调用下 `%~nx0` 的取值）与其余各体的脚本名形态不同。
+`secondArg=bob smith` 完整保形是两个运行体都守住了引号边界。各 shell 入参模型的系统差异（`$0`/`$args[0]` 是否占脚本名等）见 [入参矩阵](/matrix/args-matrix)。Windows 三份快照已入库：`demos/powershell5`、`demos/powershell7` 的 03 快照与上方 pwsh 版逐字相同；`demos/cmd/03_args_parsing.bat.out.txt` 的 `argCount=5`、`firstArg=alice`、`secondArg=bob smith`、`verboseFlag=true`、`nValue=3` 亦一致，仅 `invocation=3`（`call "%~f0"` 自调用下 `%~nx0` 的取值）与其余各体的脚本名形态不同。
 
 ## 任务 04：控制流
 
@@ -288,6 +288,6 @@ report=prepared=3,renamed=1,unchanged=2
 
 ## 延伸阅读
 
-- [[八大核心语义](/matrix/quoting-variables/)：五个维度与 9 任务的映射
+- [[八大核心语义](/matrix/quoting-variables)：五个维度与 9 任务的映射
 - 横向矩阵：[入参](/matrix/args-matrix) / [引号](/matrix/quoting-matrix) / [通配](/matrix/globbing-matrix) / [错误处理](/matrix/error-handling-matrix) / [可移植性](/matrix/portability-matrix)
 - [Shell vs Python](/matrix/comparison/shell-vs-python)、[证据政策](/reference/evidence-policy)

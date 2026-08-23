@@ -61,7 +61,7 @@ features:
   </div>
 </a>
 
-<a href="/compare/shell-vs-python" style="text-decoration: none;">
+<a href="/matrix/comparison/shell-vs-python" style="text-decoration: none;">
   <div style="background: var(--vp-c-bg-soft); border: 1px solid var(--vp-c-divider); padding: 20px; border-radius: 12px; height: 100%; transition: all 0.3s ease;">
     <h3 style="margin: 0 0 8px 0; color: var(--vp-c-brand-1);">🐍 Shell vs Python 边界分析</h3>
     <p style="margin: 0; font-size: 0.875rem; color: var(--vp-c-text-2);">什么场景该用 Shell？何时切换到 Python？语言互补性与能力边界详解</p>
@@ -155,10 +155,10 @@ npm run collect-outputs  # 容器内运行全部 9 个任务，刷新 *.out.txt 
 
 | 概念维度 | 核心要点 | 深入学习 |
 |---------|---------|---------|
-| **变量与引号** | `$var` vs `${var}` vs `{var} `分词 | [见 quoting](/matrix/quoting-variables/) |
-| **控制流** | for/while/if/glob 统一模型 | [见 control-flow](/matrix/control-flow/) |
-| **函数与管道** | 返回值通道 + 文本流 vs 对象流 | [见 functions](/matrix/functions-pipes/) |
-| **错误处理** | 退出码光谱、`set -e`vs`try-catch` | [见 errors](/matrix/errors-signals/) |
+| **变量与引号** | `$var` vs `${var}` vs `{var} `分词 | [见 quoting](/matrix/quoting-variables) |
+| **控制流** | for/while/if/glob 统一模型 | [见 control-flow](/matrix/control-flow) |
+| **函数与管道** | 返回值通道 + 文本流 vs 对象流 | [见 functions](/matrix/functions-pipes) |
+| **错误处理** | 退出码光谱、`set -e`vs`try-catch` | [见 errors](/matrix/errors-signals) |
 
 详见横向对比矩阵获取完整的八维分析。
 
