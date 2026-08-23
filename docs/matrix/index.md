@@ -68,4 +68,4 @@ nValue=3
 - 八个运行体单元格引用的输出均可在 `demos/<shell>/<任务>.<ext>.out.txt` 逐字复核；引用的脚本写法可在同名源码中复核。
 - cmd 快照首行是带提示符的 rem 注释回显（bat 第一行注释先于 `@echo off` 生效），契约行在其后，阅读时跳过即可。
 
-延伸阅读：[统一语义骨架](/fundamentals/)、[Shell vs Python 边界](/compare/shell-vs-python)、[实验说明](/labs/)。
+延伸阅读：[统一语义骨架](/concepts/)、[Shell vs Python 边界](/matrix/comparison/shell-vs-python)、[实验说明](/matrix/experiment/)。

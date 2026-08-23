@@ -109,4 +109,4 @@ log_files = sum(1 for name in names if name.endswith(".log"))
 | 无匹配：bash 原样 / zsh 报错（`(N)` 转空）/ fish 空 / PowerShell 与 cmd 空集合不报错 | 各运行体既定语义；cmd 源码注释 `robust when nothing matches`，有匹配分支由快照 `logFiles=1` 实证 |
 | 递归 `**`：zsh/fish 默认、bash 需 globstar、其余走参数或 API | 同上列写法对照 |
 
-延伸阅读：[管道与文件实验](/labs/)、[引号矩阵](/matrix/quoting-matrix)（引号如何冻结 `*`）、[Shell vs Python 边界](/compare/shell-vs-python)。
+延伸阅读：[管道与文件实验](/matrix/experiment/)、[引号矩阵](/matrix/quoting-matrix)（引号如何冻结 `*`）、[Shell vs Python 边界](/matrix/comparison/shell-vs-python)。

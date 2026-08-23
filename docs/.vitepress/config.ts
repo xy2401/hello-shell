@@ -9,109 +9,80 @@ export default defineConfig({
   cleanUrls: true,
   themeConfig: {
     nav: [
-      { text: '指南', link: '/guide/getting-started' },
-      { text: '基础原理', link: '/fundamentals/' },
-      { text: 'Shell 分卷', link: '/shells/bash/' },
-      { text: '矩阵', link: '/matrix/' },
-      { text: '实验', link: '/labs/' },
-      { text: '参考', link: '/reference/version-policy' },
+      // 前 5 个 Shell 全部平铺（bash/zsh/fish/cmd/powershell）
+      { text: 'Bash', link: '/products/bash/' },
+      { text: 'zsh', link: '/products/zsh/' },
+      { text: 'fish', link: '/products/fish/' },
+      { text: 'cmd', link: '/products/cmd/' },
+      { text: 'PowerShell', link: '/products/powershell/' },
+      { text: '指南', link: '/concepts/getting-started' },
+      { text: '基础概念', link: '/concepts/' },
+      { text: '对比矩阵', link: '/matrix/' },
+      { text: '试验场', link: '/matrix/experiment/' },
+      { text: '参考文档', link: '/reference/version-policy' },
     ],
     sidebar: {
-      '/guide/': [
+      '/concepts/': [
         {
-          text: '指南',
+          text: '基础概念',
           items: [
-            { text: '内核、Shell、GUI：三层概念', link: '/guide/kernel-shell-gui' },
-            { text: '快速上手', link: '/guide/getting-started' },
+            { text: '指南', link: '/concepts/getting-started' },
+            { text: '内核、Shell、GUI：三层概念', link: '/concepts/kernel-shell-gui' },
+            { text: 'Shell 基本语义骨架', link: '/concepts/shell-semantics' },
           ],
         },
       ],
-      '/fundamentals/': [
-        {
-          text: '基础原理',
-          items: [
-            { text: '总览', link: '/fundamentals/' },
-            { text: '变量与引号', link: '/fundamentals/quoting-variables' },
-            { text: '控制流', link: '/fundamentals/control-flow' },
-            { text: '函数与管道', link: '/fundamentals/functions-pipes' },
-            { text: '错误与信号', link: '/fundamentals/errors-signals' },
-          ],
-        },
-      ],
-      '/shells/': [
+      '/products/': [
         {
           text: 'bash',
           items: [
-            { text: 'bash 总览', link: '/shells/bash/' },
-            { text: 'bash 语法', link: '/shells/bash/syntax' },
-            { text: 'bash 入参', link: '/shells/bash/args' },
-            { text: 'bash 坑位', link: '/shells/bash/pitfalls' },
+            { text: 'bash 总览', link: '/products/bash/' },
+            { text: 'bash 语法', link: '/products/bash/syntax' },
+            { text: 'bash 入参', link: '/products/bash/args' },
+            { text: 'bash 坑位', link: '/products/bash/pitfalls' },
           ],
         },
         {
           text: 'zsh',
           items: [
-            { text: 'zsh 总览', link: '/shells/zsh/' },
-            { text: 'zsh 语法', link: '/shells/zsh/syntax' },
-            { text: 'zsh 入参', link: '/shells/zsh/args' },
-            { text: 'zsh 坑位', link: '/shells/zsh/pitfalls' },
+            { text: 'zsh 总览', link: '/products/zsh/' },
+            { text: 'zsh 语法', link: '/products/zsh/syntax' },
+            { text: 'zsh 入参', link: '/products/zsh/args' },
+            { text: 'zsh 坑位', link: '/products/zsh/pitfalls' },
           ],
         },
         {
           text: 'fish',
           items: [
-            { text: 'fish 总览', link: '/shells/fish/' },
-            { text: 'fish 语法', link: '/shells/fish/syntax' },
-            { text: 'fish 入参', link: '/shells/fish/args' },
-            { text: 'fish 坑位', link: '/shells/fish/pitfalls' },
+            { text: 'fish 总览', link: '/products/fish/' },
+            { text: 'fish 语法', link: '/products/fish/syntax' },
+            { text: 'fish 入参', link: '/products/fish/args' },
+            { text: 'fish 坑位', link: '/products/fish/pitfalls' },
           ],
         },
         {
           text: 'cmd',
           items: [
-            { text: 'cmd 总览', link: '/shells/cmd/' },
-            { text: 'cmd 语法', link: '/shells/cmd/syntax' },
-            { text: 'cmd 入参', link: '/shells/cmd/args' },
-            { text: 'cmd 坑位', link: '/shells/cmd/pitfalls' },
+            { text: 'cmd 总览', link: '/products/cmd/' },
+            { text: 'cmd 语法', link: '/products/cmd/syntax' },
+            { text: 'cmd 入参', link: '/products/cmd/args' },
+            { text: 'cmd 坑位', link: '/products/cmd/pitfalls' },
           ],
         },
         {
-          text: 'powershell',
+          text: 'PowerShell',
           items: [
-            { text: 'PowerShell 总览', link: '/shells/powershell/' },
-            { text: 'PowerShell 语法', link: '/shells/powershell/syntax' },
-            { text: 'PowerShell 入参', link: '/shells/powershell/args' },
-            { text: 'PowerShell 坑位', link: '/shells/powershell/pitfalls' },
+            { text: 'PowerShell 总览', link: '/products/powershell/' },
+            { text: 'PowerShell 语法', link: '/products/powershell/syntax' },
+            { text: 'PowerShell 入参', link: '/products/powershell/args' },
+            { text: 'PowerShell 坑位', link: '/products/powershell/pitfalls' },
           ],
         },
       ],
-      '/matrix/': [
+      '/matrix/experiment/': [
         {
-          text: '矩阵',
-          items: [
-            { text: '矩阵总览', link: '/matrix/' },
-            { text: 'Shell vs Python', link: '/matrix/shell-vs-python' },
-            { text: '入参矩阵', link: '/matrix/args-matrix' },
-            { text: '引号矩阵', link: '/matrix/quoting-matrix' },
-            { text: '通配矩阵', link: '/matrix/globbing-matrix' },
-            { text: '错误处理矩阵', link: '/matrix/error-handling-matrix' },
-            { text: '可移植性矩阵', link: '/matrix/portability-matrix' },
-          ],
-        },
-      ],
-      '/labs/': [
-        {
-          text: '实验',
-          items: [{ text: '实验总览', link: '/labs/' }],
-        },
-      ],
-      '/reference/': [
-        {
-          text: '参考',
-          items: [
-            { text: '版本政策', link: '/reference/version-policy' },
-            { text: '证据政策', link: '/reference/evidence-policy' },
-          ],
+          text: '实验手册',
+          items: [{ text: '实验总览', link: '/matrix/experiment/' }],
         },
       ],
     },
