@@ -175,6 +175,19 @@ async function ensureTerminal() {
   resizeObserver.observe(terminalHost.value);
 }
 
+async function decompressIfNeeded(buf: ArrayBuffer): Promise<ArrayBuffer> {
+  const u8 = new Uint8Array(buf);
+  // Gzip magic header 0x1f 0x8b
+  if (u8.length >= 2 && u8[0] === 0x1f && u8[1] === 0x8b) {
+    if (typeof DecompressionStream !== 'undefined') {
+      const ds = new DecompressionStream('gzip');
+      const stream = new Response(buf).body!.pipeThrough(ds);
+      return await new Response(stream).arrayBuffer();
+    }
+  }
+  return buf;
+}
+
 async function loadChunks(manifest: Manifest, baseUrl: string): Promise<Uint8Array> {
   const chunks = manifest.chunks;
   totalChunks.value = chunks.length;
@@ -193,6 +206,9 @@ async function loadChunks(manifest: Manifest, baseUrl: string): Promise<Uint8Arr
       }
       const buf = await res.arrayBuffer();
       buffers[index] = buf;
+      const rawBuf = await res.arrayBuffer();
+      const decompressedBuf = await decompressIfNeeded(rawBuf);
+      buffers[index] = decompressedBuf;
       completed++;
       downloadedChunks.value = completed;
       downloadProgress.value = Math.round((completed / chunks.length) * 100);
@@ -266,8 +282,6 @@ async function startContainer() {
 
     terminal?.loadAddon(master);
 
-    // 启动 Worker
-    worker = new Worker(`${baseUrl}runtime/c2w/engine/worker.js`);
     // 启动 Worker (附带时间戳防 CDN / 浏览器旧版本缓存)
     worker = new Worker(`${baseUrl}runtime/c2w/engine/worker.js?t=${Date.now()}`);
 
