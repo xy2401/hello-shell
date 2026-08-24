@@ -268,6 +268,8 @@ async function startContainer() {
 
     // 启动 Worker
     worker = new Worker(`${baseUrl}runtime/c2w/engine/worker.js`);
+    // 启动 Worker (附带时间戳防 CDN / 浏览器旧版本缓存)
+    worker = new Worker(`${baseUrl}runtime/c2w/engine/worker.js?t=${Date.now()}`);
 
     worker.postMessage({
       type: 'init',
