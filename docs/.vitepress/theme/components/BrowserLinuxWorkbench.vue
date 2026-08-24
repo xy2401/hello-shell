@@ -1,12 +1,12 @@
 <template>
   <ClientOnly>
-    <section class="runtime-workbench" aria-label="浏览器 Linux 工作台">
+    <section class="runtime-workbench" aria-label="V86 工作台">
       <header class="runtime-header">
         <div>
           <p>V86 · X86 EMULATION · BUILDROOT LINUX</p>
-          <h2>浏览器 Linux 工作台</h2>
+          <h2>V86 工作台</h2>
         </div>
-        <span class="runtime-status" :class="status"><i />{{ statusLabel }}</span>
+        <span class="runtime-status" :class="status"><i></i>{{ statusLabel }}</span>
       </header>
 
       <div v-if="status === 'idle' || status === 'error'" class="runtime-launcher">

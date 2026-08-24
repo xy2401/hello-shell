@@ -1,12 +1,12 @@
 <template>
   <ClientOnly>
-    <section class="runtime-workbench" aria-label="浏览器多 Shell 容器工作台">
+    <section class="runtime-workbench" aria-label="container2wasm 工作台">
       <header class="runtime-header">
         <div>
           <p>CONTAINER2WASM · ALPINE 3.22 · MULTI-SHELL RUNTIME</p>
-          <h2>浏览器多 Shell 容器工作台</h2>
+          <h2>container2wasm 工作台</h2>
         </div>
-        <span class="runtime-status" :class="status"><i />{{ statusLabel }}</span>
+        <span class="runtime-status" :class="status"><i></i>{{ statusLabel }}</span>
       </header>
 
       <div v-if="status === 'idle' || status === 'error' || status === 'not_ready'" class="runtime-launcher">

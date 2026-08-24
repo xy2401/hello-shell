@@ -1,12 +1,12 @@
 <template>
   <ClientOnly>
-    <section class="runtime-workbench" aria-label="浏览器 Bash 工作台">
+    <section class="runtime-workbench" aria-label="JUST-BASH 工作台">
       <header class="runtime-header">
         <div>
           <p>JUST-BASH 3.4.2 · XTERM.JS</p>
-          <h2>浏览器 Bash 工作台</h2>
+          <h2>JUST-BASH 工作台</h2>
         </div>
-        <span class="runtime-status" :class="status"><i />{{ statusLabel }}</span>
+        <span class="runtime-status" :class="status"><i></i>{{ statusLabel }}</span>
       </header>
 
       <div v-if="status === 'idle' || status === 'error'" class="runtime-launcher">
