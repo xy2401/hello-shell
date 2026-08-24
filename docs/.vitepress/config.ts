@@ -25,22 +25,6 @@ function crossOriginIsolationPlugin() {
   }
 }
 
-function shellSidebar(id: string, name: string) {
-  return [
-    {
-      text: name,
-      items: [
-        { text: `${name} 总览`, link: `/products/${id}/` },
-        { text: `${name} 语法`, link: `/products/${id}/syntax` },
-        { text: `${name} 入参`, link: `/products/${id}/args` },
-        { text: `${name} 坑位`, link: `/products/${id}/pitfalls` },
-        { text: `${name} 版本演进`, link: `/products/${id}/versions` },
-        { text: 'Docker 工具', link: `/products/${id}/DockerTooling` },
-      ],
-    },
-  ]
-}
-
 export default defineConfig({
   title: 'Hello Shell',
   titleTemplate: ':title | Shell 手册',
@@ -76,11 +60,56 @@ export default defineConfig({
       { text: '参考资料', link: '/reference/' },
     ],
     sidebar: {
-      '/products/bash/': shellSidebar('bash', 'bash'),
-      '/products/zsh/': shellSidebar('zsh', 'zsh'),
-      '/products/fish/': shellSidebar('fish', 'fish'),
-      '/products/cmd/': shellSidebar('cmd', 'cmd'),
-      '/products/powershell/': shellSidebar('powershell', 'PowerShell'),
+      '/products/bash/': [
+        { text: 'bash', items: [
+          { text: '概览', link: '/products/bash/' },
+          { text: '语法与语义', link: '/products/bash/syntax' },
+          { text: '参数与位置变量', link: '/products/bash/args' },
+          { text: '常见坑位', link: '/products/bash/pitfalls' },
+          { text: '版本演进', link: '/products/bash/versions' },
+          { text: 'Docker 验证', link: '/products/bash/DockerTooling' },
+        ] },
+      ],
+      '/products/zsh/': [
+        { text: 'zsh', items: [
+          { text: '概览', link: '/products/zsh/' },
+          { text: '语法与展开', link: '/products/zsh/syntax' },
+          { text: '参数与选项', link: '/products/zsh/args' },
+          { text: '常见坑位', link: '/products/zsh/pitfalls' },
+          { text: '版本演进', link: '/products/zsh/versions' },
+          { text: 'Docker 验证', link: '/products/zsh/DockerTooling' },
+        ] },
+      ],
+      '/products/fish/': [
+        { text: 'fish', items: [
+          { text: '概览', link: '/products/fish/' },
+          { text: '语法与交互', link: '/products/fish/syntax' },
+          { text: '参数与选项', link: '/products/fish/args' },
+          { text: '常见坑位', link: '/products/fish/pitfalls' },
+          { text: '版本演进', link: '/products/fish/versions' },
+          { text: 'Docker 验证', link: '/products/fish/DockerTooling' },
+        ] },
+      ],
+      '/products/cmd/': [
+        { text: 'cmd', items: [
+          { text: '概览', link: '/products/cmd/' },
+          { text: '批处理语法', link: '/products/cmd/syntax' },
+          { text: '参数与变量', link: '/products/cmd/args' },
+          { text: '常见坑位', link: '/products/cmd/pitfalls' },
+          { text: '版本演进', link: '/products/cmd/versions' },
+          { text: 'Docker 验证', link: '/products/cmd/DockerTooling' },
+        ] },
+      ],
+      '/products/powershell/': [
+        { text: 'PowerShell', items: [
+          { text: '概览', link: '/products/powershell/' },
+          { text: '语法与管道', link: '/products/powershell/syntax' },
+          { text: '参数与对象', link: '/products/powershell/args' },
+          { text: '常见坑位', link: '/products/powershell/pitfalls' },
+          { text: '版本演进', link: '/products/powershell/versions' },
+          { text: 'Docker 验证', link: '/products/powershell/DockerTooling' },
+        ] },
+      ],
       '/products/': [
         {
           text: 'Shell 目录',
