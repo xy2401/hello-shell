@@ -13,7 +13,7 @@
         <div class="runtime-facts">
           <span><small>运行底座</small><strong>Alpine Linux 3.22</strong></span>
           <span><small>预装 Shell</small><strong>Bash / Zsh / Fish / Py3</strong></span>
-          <span><small>分片分发</small><strong>Gzip 自动解压 · ~3.5 MB/片</strong></span>
+          <span><small>分片分发</small><strong>Gzip 自动解压 · 17 分片</strong></span>
         </div>
 
         <p class="runtime-desc">{{ message }}</p>
@@ -64,7 +64,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useData } from 'vitepress';
-import type { IDisposable, Terminal } from '@xterm/xterm';
+import type { Terminal } from '@xterm/xterm';
 import type { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
 
@@ -96,8 +96,10 @@ const totalChunks = ref(0);
 
 let terminal: Terminal | undefined;
 let fitAddon: FitAddon | undefined;
-let dataDisposable: IDisposable | undefined;
 let resizeObserver: ResizeObserver | undefined;
+let worker: Worker | undefined;
+let ttyServer: any | undefined;
+let slavePty: any | undefined;
 
 const statusLabel = computed(() => {
   switch (status.value) {
@@ -134,6 +136,19 @@ function getTerminalTheme(dark: boolean) {
       };
 }
 
+function loadScript(url: string): Promise<void> {
+  if (document.querySelector(`script[src="${url}"]`)) {
+    return Promise.resolve();
+  }
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = url;
+    s.onload = () => resolve();
+    s.onerror = (e) => reject(e);
+    document.head.appendChild(s);
+  });
+}
+
 async function ensureTerminal() {
   if (terminal || !terminalHost.value) return;
 
@@ -155,13 +170,6 @@ async function ensureTerminal() {
   terminal.loadAddon(fitAddon);
   terminal.open(terminalHost.value);
   fitAddon.fit();
-
-  dataDisposable = terminal.onData((data) => {
-    // Pipe input to worker / emulator when active
-    if (status.value === 'running') {
-      terminal?.write(data);
-    }
-  });
 
   resizeObserver = new ResizeObserver(() => fitAddon?.fit());
   resizeObserver.observe(terminalHost.value);
@@ -210,13 +218,17 @@ async function startContainer() {
     await ensureTerminal();
 
     const baseUrl = import.meta.env.BASE_URL || '/';
+
+    // 1. 加载 coi-serviceworker (保证 SharedArrayBuffer) 和 xterm-pty 依赖
+    await loadScript(`${baseUrl}runtime/c2w/engine/coi-serviceworker.js`).catch(() => {});
+    await loadScript(`${baseUrl}runtime/c2w/engine/xterm-pty.js`);
+
     const manifestRes = await fetch(`${baseUrl}runtime/c2w/manifest.json`);
 
     if (!manifestRes.ok) {
       status.value = 'not_ready';
       message.value = '云端运行时清单尚未生成。请先在 GitHub Actions 中触发 build-c2w-runtime 工作流。';
       terminal?.writeln('\x1b[33m[提示]\x1b[0m 容器运行时尚未在云端生成。');
-      terminal?.writeln('请在 GitHub 仓库 Actions 标签页中运行「build-c2w-runtime」工作流生成分片资产。');
       return;
     }
 
@@ -225,28 +237,42 @@ async function startContainer() {
     if (!manifest.chunks || manifest.chunks.length === 0) {
       status.value = 'not_ready';
       message.value = '已配置云端构建流水线，首次使用前需在 GitHub Actions 运行 build-c2w-runtime 生成分片。';
-      terminal?.writeln('\x1b[36m=======================================================\x1b[0m');
-      terminal?.writeln('\x1b[1m  hello-shell 多 Shell 浏览器容器环境已就绪\x1b[0m');
-      terminal?.writeln('\x1b[36m=======================================================\x1b[0m');
-      terminal?.writeln('\x1b[32m✔ Dockerfile.base (Alpine 3.22 + Bash + Zsh + Fish + Py3)\x1b[0m');
-      terminal?.writeln('\x1b[32m✔ GitHub Actions 自动化构建流水线已配置\x1b[0m');
-      terminal?.writeln('\x1b[32m✔ Gzip 分片并发下载与 HTTP 自动解压驱动已就绪\x1b[0m');
-      terminal?.writeln('');
-      terminal?.writeln('云端构建工作流: .github/workflows/build-c2w-runtime.yml');
       return;
     }
 
     message.value = `正在并发拉取 ${manifest.chunks.length} 个 Gzip 分片...`;
-    const rootfsData = await loadChunks(manifest, baseUrl);
+    const wasmBytes = await loadChunks(manifest, baseUrl);
 
     status.value = 'initializing';
-    message.value = '分片下载与解压完成，正在初始化 WebAssembly 微虚机...';
-    terminal?.writeln(`\x1b[32m✔\x1b[0m 已加载全部分片 (共 ${(rootfsData.byteLength / 1024 / 1024).toFixed(1)} MB)`);
+    message.value = '分片下载与解压完成，正在启动 WebAssembly 虚拟机与 PTY 终端...';
+    terminal?.writeln(`\x1b[32m✔\x1b[0m 已加载全部分片 (共 ${(wasmBytes.byteLength / 1024 / 1024).toFixed(1)} MB)`);
     terminal?.writeln('\x1b[34m[Boot]\x1b[0m 启动 Alpine Linux 3.22 内核与多 Shell 终端...');
 
+    const { openpty, TtyServer, Termios } = (window as any);
+    const { master, slave } = openpty();
+    slavePty = slave;
+
+    const termios = slave.ioctl('TCGETS');
+    termios.iflag &= ~(32 | 64 | 128 | 256 | 1024);
+    termios.oflag &= ~1;
+    termios.lflag &= ~(2 | 64 | 8 | 16 | 32768);
+    slave.ioctl('TCSETS', new Termios(termios.iflag, termios.oflag, termios.cflag, termios.lflag, termios.cc));
+
+    terminal?.loadAddon(master);
+
+    // 启动 Worker
+    worker = new Worker(`${baseUrl}runtime/c2w/engine/worker.js`);
+
+    worker.postMessage({
+      type: 'init',
+      wasmBuffer: wasmBytes.buffer
+    }, [wasmBytes.buffer]);
+
+    ttyServer = new TtyServer(slave);
+    ttyServer.start(worker);
+
     status.value = 'running';
-    message.value = '容器已就绪。可通过上方按钮快速切换 Shell，或直接在终端中交互。';
-    terminal?.writeln('\n\x1b[1;32m/workspace #\x1b[0m \x1b[37m# 输入 bash, zsh, fish 或 python3 开始体验\x1b[0m');
+    message.value = '多 Shell 容器已就绪。可通过上方按钮快速切换 Shell，或直接在终端中交互。';
   } catch (err: any) {
     status.value = 'error';
     message.value = err.message || '容器加载失败，请刷新重试。';
@@ -255,7 +281,11 @@ async function startContainer() {
 }
 
 function sendInput(cmd: string) {
-  terminal?.write(cmd);
+  if (slavePty) {
+    slavePty.write(cmd);
+  } else {
+    terminal?.paste(cmd);
+  }
 }
 
 function clearTerminal() {
@@ -273,6 +303,14 @@ function toggleRun() {
 }
 
 function restartContainer() {
+  if (worker) {
+    worker.terminate();
+    worker = undefined;
+  }
+  if (ttyServer && ttyServer.stop) {
+    ttyServer.stop();
+    ttyServer = undefined;
+  }
   status.value = 'idle';
   downloadProgress.value = 0;
   startContainer();
@@ -283,7 +321,13 @@ watch(isDark, (dark) => {
 });
 
 onBeforeUnmount(() => {
-  dataDisposable?.dispose();
+  if (worker) {
+    worker.terminate();
+    worker = undefined;
+  }
+  if (ttyServer && ttyServer.stop) {
+    ttyServer.stop();
+  }
   resizeObserver?.disconnect();
   terminal?.dispose();
 });

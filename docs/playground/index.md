@@ -58,6 +58,10 @@
 * **运行原理**：通过 Emscripten/WASI 将单一语言/Shell 直接交叉编译为独立的 `.wasm` 二进制文件。
 * **核心优势**：体积适中（~3-15 MB）、直接分发免编译、保留该运行体核心特性（如 Python 数据科学库、Zsh 通配符与下标 1 起点、Fish 语法高亮）。
 * **局限边界**：各个 Shell 环境相互孤立，无法在同一个终端内通过管道自由调度。
+* **关于 PowerShell 的 Wasm 现状**：
+  * ⚠️ **非微软官方产品**：微软官方（`PowerShell/PowerShell`）**从未发布过官方独立的轻量 `powershell.wasm` 解释器**。
+  * ⚠️ **底层重型依赖**：PowerShell 深度绑定 .NET CoreCLR 运行时（包含 JIT 编译器、GC 垃圾回收器以及庞大的 BCL 程序集）。社区虽有基于 Blazor/.NET Wasm 的嵌入式实验，但体积动辄 50~70 MB，且在浏览器纯 Wasm 沙箱中缺失操作系统 P/Invoke、文件系统与外部子进程管道能力。
+  * ⚠️ **完整运行方案**：若要在浏览器中体验 100% 真实且包含全部 cmdlets 的 PowerShell 7，目前成熟方案为 **`container2wasm` (AMD64 容器，~140 MB)** 或 **服务端 WebTTY (`ttyd` + Docker)**。
 
 ### 5. 容器转 WebAssembly（如 `container2wasm` / c2w）
 * **运行原理**：将标准 Docker 镜像与 QEMU-WASM 包装，在浏览器 WebWorker 内运行多线程 Linux 容器。
