@@ -248,9 +248,10 @@ async function startContainer() {
     terminal?.writeln('\x1b[34m[Boot]\x1b[0m 启动 Alpine Linux 3.22 内核与多 Shell 终端...');
 
     if (typeof SharedArrayBuffer === 'undefined') {
-      terminal?.writeln('\x1b[33m[环境提示]\x1b[0m 当前浏览器窗口未开启 SharedArrayBuffer。');
-      terminal?.writeln('已在后台完成 ServiceWorker 跨域隔离注册，请刷新页面后再次点击启动。');
-      throw new Error('未检测到 SharedArrayBuffer 支持（请刷新页面后重试）');
+      terminal?.writeln('\x1b[33m[环境提示]\x1b[0m 当前预览环境（如 Codespaces 端口转发代理或内嵌 iframe）未开放 SharedArrayBuffer。');
+      terminal?.writeln('container2wasm 的多线程 PTY 终端依赖浏览器的 Cross-Origin Isolation 安全隔离支持。');
+      terminal?.writeln('建议在独立顶级域名（如生产站 Cloudflare Pages）或本地直连环境下使用，或体验上方免隔离的「轻量 Bash」与「v86 Linux」工作台。');
+      throw new Error('当前代理环境未开启 SharedArrayBuffer 跨域隔离支持');
     }
 
     const { openpty, TtyServer, Termios } = (window as any);
