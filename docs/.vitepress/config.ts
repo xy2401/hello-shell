@@ -25,8 +25,10 @@ export default defineConfig({
     'Shell 与命令行统一任务矩阵：bash/zsh/fish/cmd/PowerShell 同任务对照与真实输出快照 (Shell & Command Line Task Matrix)',
   lang: 'zh-CN',
   base,
-  cleanUrls: true,
-  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }]],
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }],
+    ['script', { src: `${base}runtime/c2w/engine/coi-serviceworker.js` }],
+  ],
   vite: {
     server: {
       headers: {

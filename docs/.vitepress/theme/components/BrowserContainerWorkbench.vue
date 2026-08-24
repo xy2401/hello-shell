@@ -219,8 +219,6 @@ async function startContainer() {
 
     const baseUrl = import.meta.env.BASE_URL || '/';
 
-    // 1. 加载 coi-serviceworker (保证 SharedArrayBuffer) 和 xterm-pty 依赖
-    await loadScript(`${baseUrl}runtime/c2w/engine/coi-serviceworker.js`).catch(() => {});
     // 加载 xterm-pty 终端主从协议库
     await loadScript(`${baseUrl}runtime/c2w/engine/xterm-pty.js`);
 
@@ -248,6 +246,12 @@ async function startContainer() {
     message.value = '分片下载与解压完成，正在启动 WebAssembly 虚拟机与 PTY 终端...';
     terminal?.writeln(`\x1b[32m✔\x1b[0m 已加载全部分片 (共 ${(wasmBytes.byteLength / 1024 / 1024).toFixed(1)} MB)`);
     terminal?.writeln('\x1b[34m[Boot]\x1b[0m 启动 Alpine Linux 3.22 内核与多 Shell 终端...');
+
+    if (typeof SharedArrayBuffer === 'undefined') {
+      terminal?.writeln('\x1b[33m[环境提示]\x1b[0m 当前浏览器窗口未开启 SharedArrayBuffer。');
+      terminal?.writeln('已在后台完成 ServiceWorker 跨域隔离注册，请刷新页面后再次点击启动。');
+      throw new Error('未检测到 SharedArrayBuffer 支持（请刷新页面后重试）');
+    }
 
     const { openpty, TtyServer, Termios } = (window as any);
     const { master, slave } = openpty();
