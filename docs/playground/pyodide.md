@@ -17,4 +17,4 @@ pageClass: shell-runtime-page
 
 ---
 
-*其他工作台*：[JUST-BASH](./just-bash) · [BusyBox](./busybox) · [WebContainer](./webcontainer) · [V86](./v86) · [container2wasm](./container2wasm)
+*其他工作台*：[JUST-BASH](./just-bash) · [BusyBox](./busybox) · [V86](./v86) · [container2wasm](./container2wasm)

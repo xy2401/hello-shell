@@ -17,4 +17,4 @@ pageClass: shell-runtime-page
 - 它是 TypeScript 实现的 Bash 兼容解释器，不是 GNU Bash 或 Linux 内核，也不支持 systemd、Docker、宿主设备或任意原生 ELF 程序。
 - 首次打开会下载锁定的 `just-bash@3.4.2` 浏览器代码，后续由浏览器缓存。
 
-完整 Linux 体验请进入 [V86 工作台](./v86) 或 [container2wasm 工作台](./container2wasm)。
+其他工作台：[BusyBox](./busybox) · [Pyodide](./pyodide) · [V86](./v86) · [container2wasm](./container2wasm)。

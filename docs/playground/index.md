@@ -9,14 +9,9 @@
     <span>基于 TypeScript 执行 Bash 语法、管道、重定向和常见 Unix 工具，打开即用。</span>
   </a>
   <a href="./busybox">
-    <small>正统 POSIX · 1MB WASI</small>
+    <small>正统 POSIX · 纯本地 WASI</small>
     <strong>BusyBox</strong>
-    <span>Wasmer 官方预编译 C 语言标准工具箱，毫秒级启动 ash 与 100+ 经典命令。</span>
-  </a>
-  <a href="./webcontainer">
-    <small>Node.js 微系统 · 秒启</small>
-    <strong>WebContainer</strong>
-    <span>StackBlitz 官方驱动，浏览器内运行完整 Node.js、npm 与 jsh 交互终端。</span>
+    <span>纯本地 600KB WASI 模块，毫秒级启动标准 ash 与 100+ POSIX 经典工具。</span>
   </a>
   <a href="./pyodide">
     <small>官方 WASM · 对照终端</small>
@@ -109,19 +104,13 @@
 
 1. **日常语法学习与快速验证**：
    * 优先使用 **[JUST-BASH](./just-bash)**：零等待、极省流量，适合快速验证管道、参数引用、循环与常见文本工具。
-2. **内核行为与真实系统观察**：
 2. **正统 C 语言 POSIX 工具链验证**：
-   * 使用 **[BusyBox](./busybox)**：1MB 官方预编译 WASI 模块，原生体验 `ash` 与 100+ 经典 Unix 工具。
-3. **Node.js 命令行与前端脚本生态**：
-   * 使用 **[WebContainer](./webcontainer)**：毫秒级进入真实的 Node.js 环境，在 `jsh` 终端中运行 `npm` 与 JS 脚本。
-4. **Shell vs Python 语法横向对照**：
+   * 使用 **[BusyBox](./busybox)**：纯本地 600KB WASI 模块，原生体验 `ash` 与 100+ 经典 Unix 工具。
+3. **Shell vs Python 语法横向对照**：
    * 使用 **[Pyodide](./pyodide)**：官方 CPython 3.12 原生终端，快速对照各任务在 Python 3 中的标准库与数据结构实现。
-5. **内核行为与真实系统观察**：
+4. **内核行为与真实系统观察**：
    * 使用 **[V86](./v86)**：直观查看 Linux 启动过程、目录层次、环境变量与真实进程树。
-3. **多 Shell 切换与完整工具链体验**：
-6. **多 Shell 切换与完整工具链体验**：
+5. **多 Shell 切换与完整工具链体验**：
    * 使用 **[container2wasm](./container2wasm)**：在同一容器中自由体验 Bash、Zsh、Fish、Python 3 及 jq 等现代命令行工具。
-4. **跨 Shell 矩阵与生产级实验**：
+6. **跨 Shell 矩阵与生产级实验**：
    * 跨 Shell 的 9 个统一任务、真实输出快照和基于 Docker 的本地运行方法，请参考 [对比矩阵 · 统一任务实验](/matrix/experiments)。
-7. **跨 Shell 矩阵与生产级实验**：
-   * 跨 Shell 的 9 个统一任务、真实输出快照和基于 Docker 的本地运行方法，请参考 [对比矩阵 · 统一任务实验](/matrix/experiments)

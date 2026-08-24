@@ -3,7 +3,7 @@
     <section class="runtime-workbench" aria-label="BusyBox 工作台">
       <header class="runtime-header">
         <div>
-          <p>BUSYBOX · WASMER SDK · 1MB STANDALONE POSIX TOOLKIT</p>
+          <p>BUSYBOX · WASI-SH · 600KB PURE LOCAL WASM</p>
           <h2>BusyBox 工作台</h2>
         </div>
         <span class="runtime-status" :class="status"><i></i>{{ statusLabel }}</span>
@@ -16,8 +16,8 @@
 
       <div v-if="status === 'idle' || status === 'error'" class="runtime-launcher">
         <div class="runtime-facts">
-          <span><small>工具集</small><strong>BusyBox 官方标准构建</strong></span>
-          <span><small>体积</small><strong>约 1 MB WASI 单模块</strong></span>
+          <span><small>运行模式</small><strong>100% 纯本地 WASI</strong></span>
+          <span><small>包体积</small><strong>约 600 KB（零外部依赖）</strong></span>
           <span><small>默认 Shell</small><strong>ash (Almquist Shell)</strong></span>
         </div>
         <p>{{ message }}</p>
@@ -29,7 +29,7 @@
           <span>{{ message }}</span>
           <div class="toolbar-actions">
             <button type="button" :disabled="status !== 'running'" @click="runToolsHelp">支持工具集</button>
-            <button type="button" :disabled="status !== 'running'" @click="runSystemInfo">系统指纹</button>
+            <button type="button" :disabled="status !== 'running'" @click="runSystemInfo">系统信息</button>
             <button type="button" :disabled="status !== 'running'" @click="runPipeTest">管道测试</button>
             <button type="button" @click="clearTerminal">清屏</button>
             <button type="button" :disabled="status === 'loading'" @click="restart">重置终端</button>
@@ -53,14 +53,13 @@ type RuntimeStatus = 'idle' | 'loading' | 'running' | 'error';
 const { isDark } = useData();
 const terminalHost = ref<HTMLElement>();
 const status = ref<RuntimeStatus>('idle');
-const message = ref('Wasmer SDK 官方预编译的 1MB 单体 BusyBox WASI 模块，内置 100+ 常用 POSIX 工具。');
+const message = ref('纯本地 WASI 驱动的 BusyBox ash 终端，600KB 免网络开箱即用。');
 const runtimeError = ref('');
 
 let terminal: Terminal | undefined;
 let fitAddon: FitAddon | undefined;
 let resizeObserver: ResizeObserver | undefined;
-let stdinWriter: any | undefined;
-let instance: any | undefined;
+let session: any | undefined;
 
 const statusLabel = computed(() => ({
   idle: '未启动',
@@ -113,69 +112,48 @@ async function startBusybox() {
   try {
     runtimeError.value = '';
     status.value = 'loading';
-    message.value = '正在加载 Wasmer 核心运行时...';
+    message.value = '正在加载本地 BusyBox WASI 引擎...';
     await nextTick();
     await ensureTerminal();
 
-    const baseUrl = import.meta.env.BASE_URL || '/';
-    const { init, Wasmer } = await import('@wasmer/sdk');
-    
-    // 直接以 ArrayBuffer 字节加载，避免任何 MIME Type 警告或流式加载格式冲突
-    const resp = await fetch(`${baseUrl}runtime/wasmer/wasmer_js_bg.wasm`);
-    if (!resp.ok) {
-      throw new Error(`加载 wasmer_js_bg.wasm 失败: HTTP ${resp.status}`);
-    }
-    const wasmBytes = await resp.arrayBuffer();
+    const { spawn } = await import('wasi-sh');
 
-    const workerUrl = new URL(`${baseUrl}runtime/wasmer/worker.mjs`, window.location.href).href;
-    const sdkUrl = new URL(`${baseUrl}runtime/wasmer/index.mjs`, window.location.href).href;
+    const cols = String(terminal?.cols || 80);
+    const rows = String(terminal?.rows || 24);
 
-    await init({
-      module: wasmBytes,
-      workerUrl: workerUrl,
-      sdkUrl: sdkUrl,
+    session = await spawn({
+      env: {
+        COLUMNS: cols,
+        LINES: rows,
+        TERM: 'xterm-256color',
+        PATH: '/bin:/usr/bin',
+        PS1: 'busybox:\\w\\$ ',
+      },
     });
-
-    message.value = '正在拉取 busybox 预编译模块 (~1MB)...';
-    const pkg = await Wasmer.fromRegistry('busybox/busybox');
-    
-    instance = await pkg.entrypoint.run({
-      args: ['sh'],
-    });
-
-    stdinWriter = instance.stdin.getWriter();
 
     const textDecoder = new TextDecoder();
 
-    instance.stdout.pipeTo(
-      new WritableStream({
-        write(chunk) {
-          const text = typeof chunk === 'string' ? chunk : textDecoder.decode(chunk);
-          terminal?.write(text);
-        },
-      })
-    );
+    session.onOutput((chunk: Uint8Array | string) => {
+      const text = typeof chunk === 'string' ? chunk : textDecoder.decode(chunk);
+      terminal?.write(text);
+    });
 
-    instance.stderr.pipeTo(
-      new WritableStream({
-        write(chunk) {
-          const text = typeof chunk === 'string' ? chunk : textDecoder.decode(chunk);
-          terminal?.write(`\x1b[31m${text}\x1b[0m`);
-        },
-      })
-    );
-
-    terminal?.onData((data) => {
-      stdinWriter?.write(data);
+    terminal?.onData((data: string) => {
+      session?.write(data);
     });
 
     if (terminalHost.value) {
-      resizeObserver = new ResizeObserver(() => fitAddon?.fit());
+      resizeObserver = new ResizeObserver(() => {
+        fitAddon?.fit();
+        if (terminal && session) {
+          session.resize(terminal.cols, terminal.rows);
+        }
+      });
       resizeObserver.observe(terminalHost.value);
     }
 
     status.value = 'running';
-    message.value = 'BusyBox 纯 WASI 环境就绪。可直接在终端中执行 ash 及常用 POSIX 命令。';
+    message.value = 'BusyBox 纯本地 WASI 环境就绪。可直接在终端中执行 ash 及常用 POSIX 命令。';
   } catch (err: any) {
     status.value = 'error';
     const detail = err?.stack || err?.message || String(err);
@@ -186,8 +164,8 @@ async function startBusybox() {
 }
 
 function runCommand(cmd: string) {
-  if (stdinWriter) {
-    stdinWriter.write(cmd);
+  if (session) {
+    session.write(cmd);
   }
 }
 
@@ -210,13 +188,18 @@ function clearTerminal() {
 async function restart() {
   status.value = 'idle';
   terminal?.clear();
-  stdinWriter = undefined;
-  instance = undefined;
+  if (session) {
+    try { session.end(); } catch {}
+    session = undefined;
+  }
   startBusybox();
 }
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect();
+  if (session) {
+    try { session.end(); } catch {}
+  }
   terminal?.dispose();
 });
 </script>
