@@ -257,8 +257,6 @@ async function startContainer() {
     const wasmBytes = await loadChunks(manifest, baseUrl);
 
     status.value = 'initializing';
-    message.value = '分片下载与解压完成，正在启动 WebAssembly 虚拟机与 PTY 终端...';
-    terminal?.writeln(`\x1b[32m✔\x1b[0m 已加载全部分片 (共 ${(wasmBytes.byteLength / 1024 / 1024).toFixed(1)} MB)`);
     message.value = '分片下载与解压完成，正在校验并启动 WebAssembly 虚拟机...';
 
     if (!WebAssembly.validate(wasmBytes)) {
