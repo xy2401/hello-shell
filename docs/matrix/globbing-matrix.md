@@ -110,3 +110,10 @@ log_files = sum(1 for name in names if name.endswith(".log"))
 | 递归 `**`：zsh/fish 默认、bash 需 globstar、其余走参数或 API | 同上列写法对照 |
 
 延伸阅读：[管道与文件实验](/matrix/experiments#任务-06-管道与文件)、[引号矩阵](/matrix/quoting-matrix)（引号如何冻结 `*`）、[Shell vs Python 边界](/matrix/comparison/shell-vs-python)。
+
+## 浏览器实验
+
+<ShellLessonTrigger case-id="task-06" label="载入任务 06：文件与 glob" />
+<ShellLessonTrigger case-id="pitfall-zsh-nomatch" label="载入 Zsh NOMATCH 坑位" />
+
+<ShellLessonLab :case-ids="['task-06', 'pitfall-zsh-nomatch']" default-variant="bash" />

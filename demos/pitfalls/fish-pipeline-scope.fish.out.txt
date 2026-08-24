@@ -1,0 +1,2 @@
+afterPipeline=0
+afterCapture=2

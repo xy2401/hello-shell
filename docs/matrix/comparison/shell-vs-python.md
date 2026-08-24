@@ -145,3 +145,13 @@ PS5/PS7 编码差异——每多一种 shell，跨平台成本乘以一份维护
 各 shell 的逐卷细节见 [cmd 分卷](/products/cmd/) 与
 [PowerShell 分卷](/products/powershell/)，基础概念见
 [入门指南](/reference/getting-started)。
+
+## 浏览器实验
+
+在同一个实验区切换 Bash 与 Python，可以直接比较脚本和输出；涉及子进程的 Python 任务会转到完整容器。
+
+<ShellLessonTrigger case-id="task-02" label="载入变量与引号" />
+<ShellLessonTrigger case-id="task-04" label="载入控制流" />
+<ShellLessonTrigger case-id="task-06" label="载入管道与文件" />
+
+<ShellLessonLab :case-ids="['task-02', 'task-04', 'task-06']" default-variant="python" />

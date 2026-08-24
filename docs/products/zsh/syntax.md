@@ -154,3 +154,13 @@ scriptExitCode=0
 - [zsh 入参模型](./args)
 - [zsh 真实陷阱](./pitfalls)
 - [/matrix/args-matrix](/matrix/args-matrix)：八种运行体的入参差异横向对照
+
+## 浏览器实验
+
+以下案例会预载到 container2wasm；页面不会自动执行脚本。
+
+<ShellLessonTrigger case-id="task-02" variant="zsh" label="载入变量与引号" />
+<ShellLessonTrigger case-id="task-04" variant="zsh" label="载入控制流" />
+<ShellLessonTrigger case-id="task-06" variant="zsh" label="载入管道与文件" />
+
+<ShellLessonLab :case-ids="['task-02', 'task-04', 'task-06']" default-variant="zsh" />

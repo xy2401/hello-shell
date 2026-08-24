@@ -14,6 +14,17 @@
         <pre>{{ runtimeError }}</pre>
       </div>
 
+      <aside v-if="presetVariant" class="preset-card">
+        <div>
+          <small>教程案例已预载（不会自动执行）</small>
+          <strong>{{ presetCaseTitle }} · {{ presetVariant.label }}</strong>
+          <span>{{ presetVariant.sourceFileName }}</span>
+        </div>
+        <button type="button" :disabled="status !== 'running' || presetLoaded" @click="loadPresetIntoTerminal">
+          {{ presetLoaded ? '已载入终端' : status === 'running' ? '载入到终端' : '启动后可载入' }}
+        </button>
+      </aside>
+
       <div v-if="status === 'idle' || status === 'error' || status === 'not_ready'" class="runtime-launcher">
         <div class="runtime-facts">
           <span><small>运行底座</small><strong>Alpine Linux 3.22</strong></span>
@@ -67,10 +78,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useData } from 'vitepress';
 import type { Terminal } from '@xterm/xterm';
 import type { FitAddon } from '@xterm/addon-fit';
+import { getLabCase, getLabVariant, type LabVariant } from '../data/labCatalog';
 import '@xterm/xterm/css/xterm.css';
 
 type RuntimeStatus = 'idle' | 'downloading' | 'initializing' | 'running' | 'paused' | 'not_ready' | 'error';
@@ -99,6 +111,10 @@ const runtimeError = ref('');
 const downloadProgress = ref(0);
 const downloadedChunks = ref(0);
 const totalChunks = ref(0);
+const presetCaseId = ref('');
+const presetVariant = ref<LabVariant>();
+const presetCaseTitle = ref('');
+const presetLoaded = ref(false);
 
 let terminal: Terminal | undefined;
 let fitAddon: FitAddon | undefined;
@@ -352,6 +368,32 @@ function sendInput(cmd: string) {
   }
 }
 
+function encodeBase64(value: string): string {
+  const bytes = new TextEncoder().encode(value);
+  let binary = '';
+  for (let index = 0; index < bytes.length; index += 1) binary += String.fromCharCode(bytes[index]);
+  return btoa(binary);
+}
+
+function loadPresetIntoTerminal() {
+  const variant = presetVariant.value;
+  if (!variant || !presetCaseId.value || status.value !== 'running') return;
+  const targetDir = '/tmp/hello-shell-lab';
+  const targetFile = `${targetDir}/${presetCaseId.value}-${variant.sourceFileName}`;
+  const commands = [`mkdir -p '${targetDir}'`];
+  for (const [path, content] of Object.entries(variant.fixtures)) {
+    const parent = path.slice(0, path.lastIndexOf('/'));
+    commands.push(`mkdir -p '${parent}'`);
+    commands.push(`printf '%s' '${encodeBase64(content)}' | base64 -d > '${path}'`);
+  }
+  commands.push(`printf '%s' '${encodeBase64(variant.source)}' | base64 -d > '${targetFile}'`);
+  commands.push(`chmod +x '${targetFile}'`);
+  const runner = variant.id === 'python' ? 'python3' : variant.id;
+  commands.push(`printf '\\n案例已载入：${targetFile}\\n运行命令：${runner} ${targetFile}\\n'`);
+  sendInput(`${commands.join('; ')}\n`);
+  presetLoaded.value = true;
+}
+
 function clearTerminal() {
   terminal?.clear();
 }
@@ -385,6 +427,20 @@ watch(isDark, (dark) => {
   terminal?.options && (terminal.options.theme = getTerminalTheme(dark));
 });
 
+onMounted(() => {
+  const params = new URLSearchParams(window.location.search);
+  const caseId = params.get('case') || '';
+  const variantId = params.get('variant') || '';
+  const shellId = params.get('shell') || '';
+  if (!['bash', 'zsh', 'fish', 'python'].includes(shellId) || shellId !== variantId) return;
+  const labCase = getLabCase(caseId);
+  const variant = getLabVariant(caseId, variantId);
+  if (!labCase || !variant || variant.route !== 'workbench') return;
+  presetCaseId.value = caseId;
+  presetCaseTitle.value = labCase.title;
+  presetVariant.value = variant;
+});
+
 onBeforeUnmount(() => {
   if (worker) {
     worker.terminate();
@@ -414,6 +470,50 @@ onBeforeUnmount(() => {
   padding: 1rem 1.25rem;
   border-bottom: 1px solid var(--vp-c-divider);
   background: var(--vp-c-bg-elv);
+}
+
+.preset-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1rem 1.25rem 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--vp-c-brand-1);
+  border-radius: 9px;
+  background: var(--vp-c-brand-soft);
+}
+
+.preset-card div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.preset-card small,
+.preset-card span {
+  color: var(--vp-c-text-2);
+  font-size: 0.76rem;
+}
+
+.preset-card button {
+  flex: none;
+  padding: 0.48rem 0.75rem;
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  background: var(--vp-c-brand-1);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.preset-card button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .preset-card { align-items: stretch; flex-direction: column; }
 }
 
 .runtime-header p {

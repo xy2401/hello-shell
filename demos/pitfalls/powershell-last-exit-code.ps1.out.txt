@@ -1,0 +1,3 @@
+nativeExit=7
+cmdletSucceeded=false
+afterCmdletLastExit=7

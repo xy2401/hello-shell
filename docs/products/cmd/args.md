@@ -111,3 +111,9 @@ nValue=3
 超过 9 个参数的场景在 cmd 里必须全程 `shift` 循环；选项带值（`-n 3`）
 要自己处理「吃下一个参数」。八种实现的逐列对照见
 [入参矩阵](/matrix/args-matrix)，动手复现见 [统一任务实验](/matrix/experiments)。
+
+## 浏览器实验
+
+<ShellLessonTrigger case-id="task-03" variant="cmd" label="载入 CMD 入参解析" />
+
+<ShellLessonLab :case-ids="['task-03']" default-variant="cmd" />

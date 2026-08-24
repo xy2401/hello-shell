@@ -49,3 +49,4 @@
 - 按任务读：[统一任务实验总览](/matrix/experiments)
 - 概念地基（什么是内核、什么是 Shell、什么是 GUI）：[内核 / Shell / GUI](/#shell-foundation)
 - Shell 与图灵完备语言的能力边界：[Shell vs Python](/matrix/comparison/shell-vs-python)
+- 可编辑实验与输出对照：[统一任务实验总览](/matrix/experiments#浏览器实验)

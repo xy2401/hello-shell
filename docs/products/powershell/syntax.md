@@ -147,3 +147,13 @@ scriptExitCode=0
 「遇错即停」开关，失败策略是逐点声明的。`$LASTEXITCODE` 为何只反映
 子进程、不反映 cmdlet 失败，见 [常见陷阱](/products/powershell/pitfalls)；
 各 shell 错误模型对照见 [错误处理矩阵](/matrix/error-handling-matrix)。
+
+## 浏览器实验
+
+PowerShell 暂不在浏览器内执行；运行体下拉仍可切换 Linux pwsh、Windows PowerShell 5.1 与 PowerShell 7 的仓库快照。
+
+<ShellLessonTrigger case-id="task-02" variant="powershell7" label="载入变量与引号" />
+<ShellLessonTrigger case-id="task-06" variant="powershell7" label="载入对象管道" />
+<ShellLessonTrigger case-id="task-07" variant="powershell7" label="载入错误处理" />
+
+<ShellLessonLab :case-ids="['task-02', 'task-06', 'task-07']" default-variant="powershell7" />

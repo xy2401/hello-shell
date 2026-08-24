@@ -171,3 +171,11 @@ scriptExitCode=0
 - [bash 入参模型](./args)
 - [bash 真实陷阱](./pitfalls)
 - [/matrix/args-matrix](/matrix/args-matrix)：八种运行体的入参差异横向对照
+
+## 浏览器实验
+
+<ShellLessonTrigger case-id="task-02" variant="bash" label="载入变量与引号" />
+<ShellLessonTrigger case-id="task-05" variant="bash" label="载入函数与作用域" />
+<ShellLessonTrigger case-id="task-07" variant="bash" label="载入错误处理" />
+
+<ShellLessonLab :case-ids="['task-02', 'task-05', 'task-07']" default-variant="bash" />

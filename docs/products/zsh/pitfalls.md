@@ -70,3 +70,10 @@ leftovers=( /tmp/work/data/*.log(N) )
 - [zsh 入参模型](./args)
 - [bash 真实陷阱](/products/bash/pitfalls)
 - [错误与信号](/matrix/errors-signals)
+
+## 浏览器实验
+
+<ShellLessonTrigger case-id="pitfall-zsh-nomatch" label="载入 NOMATCH 坑位" />
+<ShellLessonTrigger case-id="task-02" variant="zsh" label="载入默认不分词对照" />
+
+<ShellLessonLab :case-ids="['pitfall-zsh-nomatch', 'task-02']" default-variant="zsh" />

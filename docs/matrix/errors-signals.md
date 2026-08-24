@@ -113,3 +113,11 @@ Ctrl+C（SIGINT）与 SIGTERM 会中断前台脚本，POSIX shell 可用 `trap` 
 - [错误处理矩阵](/matrix/error-handling-matrix)：`set -e` / `trap` / `$ErrorActionPreference` / `try-except` 横向对照
 - [统一任务实验总览 · 任务 07](/matrix/experiments#任务-07-错误处理)
 - [函数与管道](/matrix/functions-pipes)：退出码作为函数返回通道的用法
+
+## 浏览器实验
+
+<ShellLessonTrigger case-id="task-01" label="载入任务 01：I/O 与退出码" />
+<ShellLessonTrigger case-id="task-07" label="载入任务 07：错误处理" />
+<ShellLessonTrigger case-id="pitfall-powershell-last-exit" label="载入 PowerShell 退出码坑位" />
+
+<ShellLessonLab :case-ids="['task-01', 'task-07', 'pitfall-powershell-last-exit']" default-variant="bash" />

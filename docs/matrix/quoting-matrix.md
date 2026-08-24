@@ -132,3 +132,10 @@ fish 同理（`# quoting: a quoted '*' stays literal and is never glob-expanded`
 | 引号内无通配 | `starLiteral=a*b*c` 八份快照逐字一致 |
 
 延伸阅读：[变量与引号统一骨架](/matrix/quoting-variables)、[通配矩阵](/matrix/globbing-matrix)、[统一任务实验](/matrix/experiments)。
+
+## 浏览器实验
+
+<ShellLessonTrigger case-id="task-02" label="载入统一引号实验" />
+<ShellLessonTrigger case-id="pitfall-bash-quoting" label="载入 Bash 分词/glob 坑位" />
+
+<ShellLessonLab :case-ids="['task-02', 'pitfall-bash-quoting']" default-variant="bash" />

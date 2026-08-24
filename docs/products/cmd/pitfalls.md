@@ -111,3 +111,9 @@ for /f %%c in ('find "request" "%DATA%\app.log" ^| find /c /v ""') do set "REQC=
 
 错误处理与入参两处的深坑另见 [常见陷阱之外的错误模型对照](/matrix/error-handling-matrix)
 与 [入参矩阵](/matrix/args-matrix)；cmd 语法全貌见 [语法基础](/products/cmd/syntax)。
+
+## 浏览器实验
+
+<ShellLessonTrigger case-id="pitfall-cmd-delayed-expansion" label="载入延迟变量展开坑位" />
+
+<ShellLessonLab :case-ids="['pitfall-cmd-delayed-expansion']" default-variant="cmd" />

@@ -1,0 +1,4 @@
+unquotedWords=2
+quotedWords=1
+expandedFiles=2
+literalPatterns=1

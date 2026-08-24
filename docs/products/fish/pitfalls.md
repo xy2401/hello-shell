@@ -67,3 +67,10 @@ set -l result $status
 - [fish 入参模型](./args)
 - [bash 真实陷阱](/products/bash/pitfalls)
 - [错误与信号](/matrix/errors-signals)
+
+## 浏览器实验
+
+<ShellLessonTrigger case-id="pitfall-fish-pipeline" label="载入管道作用域坑位" />
+<ShellLessonTrigger case-id="task-07" variant="fish" label="载入 $status 错误处理" />
+
+<ShellLessonLab :case-ids="['pitfall-fish-pipeline', 'task-07']" default-variant="fish" />

@@ -117,3 +117,13 @@ if !ERRORLEVEL! neq 0 set "CAUGHT=true"
 见 [常见陷阱](/products/cmd/pitfalls)）；`exit /b 0` 则是脚本自身向调用方
 交出的退出码。错误模型的横向对照见
 [错误处理矩阵](/matrix/error-handling-matrix)。
+
+## 浏览器实验
+
+CMD 暂不在浏览器内执行；下方仍可切换源码，并和 Windows 采集快照逐项对照。
+
+<ShellLessonTrigger case-id="task-02" variant="cmd" label="载入变量与引号" />
+<ShellLessonTrigger case-id="task-04" variant="cmd" label="载入控制流" />
+<ShellLessonTrigger case-id="task-07" variant="cmd" label="载入错误处理" />
+
+<ShellLessonLab :case-ids="['task-02', 'task-04', 'task-07']" default-variant="cmd" />
