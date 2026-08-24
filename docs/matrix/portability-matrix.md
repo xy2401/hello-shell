@@ -96,10 +96,3 @@ Windows 侧没有镜像可锁：cmd / PowerShell 5 是 windows-latest runner 内
 | Linux 运行体 tag+digest 双锁；Windows 运行体随 runner 漂移、快照留痕 | `.env.versions`、`demos/{zsh,fish}/Dockerfile`、`scripts/run-docker-demos.js` |
 
 延伸阅读：[版本政策](/reference/version-policy)、[证据政策](/reference/evidence-policy)、[快速上手](/reference/getting-started)、[统一任务实验](/matrix/experiments)。
-
-## 浏览器实验
-
-<ShellLessonTrigger case-id="task-00" label="载入任务 00：环境指纹" />
-<ShellLessonTrigger case-id="task-03" label="载入任务 03：跨运行体入参" />
-
-<ShellLessonLab :case-ids="['task-00', 'task-03']" default-variant="bash" />

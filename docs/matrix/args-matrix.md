@@ -142,9 +142,3 @@ bash/zsh/fish 在把参数交给命令**之前**就完成变量替换与通配�
 | cmd 的 `%~nx0` 在 shift 循环后守不住脚本名 | cmd 任务 03 快照实测 `invocation=3`，八体唯一例外（源码推断为脚本文件名，以快照为准修正） |
 
 延伸阅读：[bash 入参](/products/bash/args)、[zsh 入参](/products/zsh/args)、[fish 入参](/products/fish/args)、[cmd 入参](/products/cmd/args)、[PowerShell 入参](/products/powershell/args)。
-
-## 浏览器实验
-
-<ShellLessonTrigger case-id="task-03" label="载入任务 03：入参解析" />
-
-<ShellLessonLab :case-ids="['task-03']" default-variant="bash" />

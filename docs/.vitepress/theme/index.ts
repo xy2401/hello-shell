@@ -12,8 +12,6 @@ export default {
     app.component('BrowserPythonWorkbench', defineAsyncComponent(() => import('./components/BrowserPythonWorkbench.vue')))
     app.component('BrowserLinuxWorkbench', defineAsyncComponent(() => import('./components/BrowserLinuxWorkbench.vue')))
     app.component('BrowserContainerWorkbench', defineAsyncComponent(() => import('./components/BrowserContainerWorkbench.vue')))
-    app.component('ShellLessonLab', defineAsyncComponent(() => import('./components/ShellLessonLab.vue')))
-    app.component('ShellLessonTrigger', defineAsyncComponent(() => import('./components/ShellLessonTrigger.vue')))
     app.component('DockerTooling', DockerTooling)
   },
 }

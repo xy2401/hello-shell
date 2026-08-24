@@ -125,23 +125,6 @@ html.dark {
 .workbench-error strong { display: block; margin-bottom: .35rem; color: #dc2626; }
 .workbench-error pre { max-height: 12rem; margin: 0; overflow: auto; background: transparent; color: inherit; font-size: .72rem; line-height: 1.45; overflow-wrap: anywhere; white-space: pre-wrap; }
 
-.workbench-preset {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin: .75rem 1rem 0;
-  padding: .65rem .75rem;
-  border: 1px solid color-mix(in srgb, var(--wb-accent) 55%, var(--vp-c-divider));
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--wb-accent) 8%, var(--vp-c-bg));
-}
-
-.workbench-preset > div { display: grid; gap: .1rem; }
-.workbench-preset small,
-.workbench-preset span { color: var(--vp-c-text-2); font-size: .7rem; }
-.workbench-preset button { flex: none; }
-
 .workbench-terminal { background: var(--wb-bg); }
 
 .workbench-toolbar {
@@ -248,7 +231,6 @@ html.dark {
   .workbench-specs div:nth-child(-n + 2) { border-bottom: 1px solid var(--vp-c-divider); }
   .workbench-toolbar { align-items: flex-start; flex-direction: column; }
   .workbench-controls { width: 100%; flex-wrap: wrap; }
-  .workbench-preset { align-items: stretch; flex-direction: column; }
   .workbench-terminal-host,
   .shell-workbench--linux .workbench-terminal-host { height: 390px; }
 }

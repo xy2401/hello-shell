@@ -72,9 +72,3 @@ nValue=3
 - [/matrix/args-matrix](/matrix/args-matrix)：八种运行体 03 任务输出并排对照；
 - [bash 入参模型](/products/bash/args)：`$0/$#/$@` 与 case/shift 循环；
 - [zsh 入参模型](/products/zsh/args)：同用 `$0/$#/$@`，数组下标同样从 1 开始。
-
-## 浏览器实验
-
-<ShellLessonTrigger case-id="task-03" variant="fish" label="载入 Fish 入参解析" />
-
-<ShellLessonLab :case-ids="['task-03']" default-variant="fish" />

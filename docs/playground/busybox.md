@@ -15,6 +15,3 @@ pageClass: shell-runtime-page
 - **极致轻量且 100% 纯本地**：仅约 600 KB 打包体积，免外部网络与云端请求，毫秒级冷启动。
 - **包含常用工具集**：内置 `ash`、`sed`、`awk`、`grep`、`tr`、`tar`、`find`、`cut`、`xargs`、`uname` 等经典 Unix 工具。
 
----
-
-*其他工作台*：[JUST-BASH](./just-bash) · [Pyodide](./pyodide) · [V86](./v86) · [container2wasm](./container2wasm)

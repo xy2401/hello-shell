@@ -27,6 +27,3 @@ pageClass: shell-runtime-page
 | **启动 Python** | `python3` | 进入 Python 3.12 交互式解释器 |
 | **查看系统环境** | `cat /etc/os-release` | 查看 Alpine Linux 3.22 发行版信息 |
 
----
-
-*其他工作台*：[JUST-BASH](./just-bash) · [BusyBox](./busybox) · [Pyodide](./pyodide) · [V86](./v86)

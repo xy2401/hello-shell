@@ -28,17 +28,6 @@
         <pre>{{ runtimeError }}</pre>
       </div>
 
-      <aside v-if="presetVariant" class="workbench-preset">
-        <div>
-          <small>教程案例已预载（不会自动执行）</small>
-          <strong>{{ presetCaseTitle }} · {{ presetVariant.label }}</strong>
-          <span>{{ presetVariant.sourceFileName }}</span>
-        </div>
-        <button type="button" class="workbench-button" :disabled="status !== 'running' || presetLoaded" @click="loadPresetIntoTerminal">
-          {{ presetLoaded ? '已载入终端' : status === 'running' ? '载入到终端' : '启动后可载入' }}
-        </button>
-      </aside>
-
       <div class="workbench-terminal">
         <div class="workbench-toolbar">
           <div class="workbench-toolbar-message">
@@ -69,11 +58,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useData } from 'vitepress';
 import type { Terminal } from '@xterm/xterm';
 import type { FitAddon } from '@xterm/addon-fit';
-import { getLabCase, getLabVariant, type LabVariant } from '../data/labCatalog';
 import WorkbenchExampleMenu from './WorkbenchExampleMenu.vue';
 import '@xterm/xterm/css/xterm.css';
 
@@ -103,10 +91,6 @@ const runtimeError = ref('');
 const downloadProgress = ref(0);
 const downloadedChunks = ref(0);
 const totalChunks = ref(0);
-const presetCaseId = ref('');
-const presetVariant = ref<LabVariant>();
-const presetCaseTitle = ref('');
-const presetLoaded = ref(false);
 
 let terminal: Terminal | undefined;
 let fitAddon: FitAddon | undefined;
@@ -380,32 +364,6 @@ function runExample(source: string) {
   terminal?.focus();
 }
 
-function encodeBase64(value: string): string {
-  const bytes = new TextEncoder().encode(value);
-  let binary = '';
-  for (let index = 0; index < bytes.length; index += 1) binary += String.fromCharCode(bytes[index]);
-  return btoa(binary);
-}
-
-function loadPresetIntoTerminal() {
-  const variant = presetVariant.value;
-  if (!variant || !presetCaseId.value || status.value !== 'running') return;
-  const targetDir = '/tmp/hello-shell-lab';
-  const targetFile = `${targetDir}/${presetCaseId.value}-${variant.sourceFileName}`;
-  const commands = [`mkdir -p '${targetDir}'`];
-  for (const [path, content] of Object.entries(variant.fixtures)) {
-    const parent = path.slice(0, path.lastIndexOf('/'));
-    commands.push(`mkdir -p '${parent}'`);
-    commands.push(`printf '%s' '${encodeBase64(content)}' | base64 -d > '${path}'`);
-  }
-  commands.push(`printf '%s' '${encodeBase64(variant.source)}' | base64 -d > '${targetFile}'`);
-  commands.push(`chmod +x '${targetFile}'`);
-  const runner = variant.id === 'python' ? 'python3' : variant.id;
-  commands.push(`printf '\\n案例已载入：${targetFile}\\n运行命令：${runner} ${targetFile}\\n'`);
-  sendInput(`${commands.join('; ')}\n`);
-  presetLoaded.value = true;
-}
-
 function clearTerminal() {
   terminal?.clear();
 }
@@ -439,20 +397,6 @@ watch(isDark, (dark) => {
   terminal?.options && (terminal.options.theme = getTerminalTheme(dark));
 });
 
-onMounted(() => {
-  const params = new URLSearchParams(window.location.search);
-  const caseId = params.get('case') || '';
-  const variantId = params.get('variant') || '';
-  const shellId = params.get('shell') || '';
-  if (!['bash', 'zsh', 'fish', 'python'].includes(shellId) || shellId !== variantId) return;
-  const labCase = getLabCase(caseId);
-  const variant = getLabVariant(caseId, variantId);
-  if (!labCase || !variant || variant.route !== 'workbench') return;
-  presetCaseId.value = caseId;
-  presetCaseTitle.value = labCase.title;
-  presetVariant.value = variant;
-});
-
 onBeforeUnmount(() => {
   if (worker) {
     worker.terminate();
@@ -466,332 +410,3 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style scoped>
-.runtime-workbench {
-  margin: 1.5rem 0;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 12px;
-  overflow: hidden;
-  background: var(--vp-c-bg-soft);
-}
-
-.runtime-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--vp-c-divider);
-  background: var(--vp-c-bg-elv);
-}
-
-.preset-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin: 1rem 1.25rem 0;
-  padding: 0.85rem 1rem;
-  border: 1px solid var(--vp-c-brand-1);
-  border-radius: 9px;
-  background: var(--vp-c-brand-soft);
-}
-
-.preset-card div {
-  display: flex;
-  flex-direction: column;
-  gap: 0.12rem;
-}
-
-.preset-card small,
-.preset-card span {
-  color: var(--vp-c-text-2);
-  font-size: 0.76rem;
-}
-
-.preset-card button {
-  flex: none;
-  padding: 0.48rem 0.75rem;
-  border: 0;
-  border-radius: 6px;
-  color: #fff;
-  background: var(--vp-c-brand-1);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.preset-card button:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-@media (max-width: 640px) {
-  .preset-card { align-items: stretch; flex-direction: column; }
-}
-
-.runtime-header p {
-  margin: 0;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--vp-c-brand-1);
-}
-
-.runtime-header h2 {
-  margin: 0.25rem 0 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  border: none;
-  padding: 0;
-}
-
-.runtime-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.8rem;
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
-  background: var(--vp-c-default-soft);
-  color: var(--vp-c-text-2);
-}
-
-.runtime-status i {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #9ca3af;
-}
-
-.runtime-status.running i {
-  background: #10b981;
-  box-shadow: 0 0 6px #10b981;
-}
-
-.runtime-status.downloading i,
-.runtime-status.initializing i {
-  background: #3b82f6;
-  animation: pulse 1.5s infinite;
-}
-
-.runtime-status.not_ready i {
-  background: #f59e0b;
-}
-
-.runtime-status.error i {
-  background: #ef4444;
-}
-
-.runtime-error {
-  margin: 1rem 1.25rem 0;
-  padding: 0.9rem 1rem;
-  border: 1px solid color-mix(in srgb, #ef4444 45%, transparent);
-  border-radius: 8px;
-  background: color-mix(in srgb, #ef4444 10%, var(--vp-c-bg));
-  color: var(--vp-c-text-1);
-}
-
-.runtime-error strong {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #dc2626;
-}
-
-.runtime-error pre {
-  margin: 0;
-  max-height: 16rem;
-  overflow: auto;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  font-size: 0.78rem;
-  line-height: 1.5;
-  color: inherit;
-  background: transparent;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.85); }
-}
-
-.runtime-launcher {
-  padding: 2rem 1.5rem;
-  text-align: center;
-}
-
-.runtime-facts {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  margin-bottom: 1.25rem;
-  flex-wrap: wrap;
-}
-
-.runtime-facts span {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  background: var(--vp-c-bg);
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
-}
-
-.runtime-facts small {
-  font-size: 0.75rem;
-  color: var(--vp-c-text-2);
-}
-
-.runtime-facts strong {
-  font-size: 0.95rem;
-  color: var(--vp-c-text-1);
-}
-
-.runtime-desc {
-  color: var(--vp-c-text-2);
-  margin-bottom: 1.5rem;
-}
-
-.download-bar-container {
-  max-width: 400px;
-  margin: 0 auto 1.5rem;
-}
-
-.download-bar {
-  height: 6px;
-  background: var(--vp-c-brand-1);
-  border-radius: 3px;
-  transition: width 0.2s ease;
-}
-
-.download-text {
-  display: block;
-  margin-top: 0.5rem;
-  color: var(--vp-c-text-2);
-}
-
-.launcher-actions {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.btn-primary {
-  background: var(--vp-c-brand-1);
-  color: #fff;
-  padding: 0.6rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: background 0.2s;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: var(--vp-c-brand-2);
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  display: inline-block;
-  background: var(--vp-c-default-soft);
-  color: var(--vp-c-text-1);
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.terminal-shell {
-  display: flex;
-  flex-direction: column;
-}
-
-.terminal-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  background: var(--vp-c-bg-elv);
-  border-bottom: 1px solid var(--vp-c-divider);
-  font-size: 0.85rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.terminal-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: var(--vp-c-text-2);
-}
-
-.mini-progress {
-  width: 80px;
-  height: 4px;
-  background: var(--vp-c-divider);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.mini-bar {
-  height: 100%;
-  background: var(--vp-c-brand-1);
-}
-
-.terminal-btns {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.quick-commands {
-  display: flex;
-  gap: 0.35rem;
-  margin-right: 0.5rem;
-}
-
-.btn-tag {
-  background: var(--vp-c-default-soft);
-  color: var(--vp-c-brand-1);
-  border: 1px solid var(--vp-c-divider);
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-family: monospace;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-tag:hover {
-  background: var(--vp-c-brand-soft);
-}
-
-.terminal-btns button {
-  background: var(--vp-c-bg);
-  border: 1px solid var(--vp-c-divider);
-  color: var(--vp-c-text-1);
-  padding: 0.25rem 0.6rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  cursor: pointer;
-}
-
-.terminal-btns button:hover:not(:disabled) {
-  border-color: var(--vp-c-brand-1);
-}
-
-.terminal-btns button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.terminal-host {
-  padding: 0.75rem;
-  min-height: 380px;
-  background: #090d13;
-}
-</style>

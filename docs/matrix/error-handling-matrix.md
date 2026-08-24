@@ -146,11 +146,3 @@ scriptExitCode=0
 | 退出码数值归命令所有 | 任务 01 `childExitCode=1`（busybox ls、Windows dir）vs `=2`（GNU ls） |
 
 延伸阅读：[错误与信号统一骨架](/matrix/errors-signals)、[矩阵总览](/matrix/)、[统一任务实验](/matrix/experiments)。
-
-## 浏览器实验
-
-<ShellLessonTrigger case-id="task-01" label="载入 I/O 与退出码" />
-<ShellLessonTrigger case-id="task-07" label="载入统一错误实验" />
-<ShellLessonTrigger case-id="pitfall-powershell-last-exit" label="载入 PowerShell 退出码坑位" />
-
-<ShellLessonLab :case-ids="['task-01', 'task-07', 'pitfall-powershell-last-exit']" default-variant="bash" />

@@ -43,10 +43,3 @@
 - stdout 与 stderr 的分流在任务 01 中专门验证，其余任务不把诊断信息混进 stdout；
 - 快照与源码同目录：Linux 五个运行体（bash/zsh/fish/pwsh/python）的 `.out.txt` 已入库，Windows 三个运行体（cmd/powershell5/powershell7）的快照由 CI 采集（见[统一任务实验](/matrix/experiments#运行方式)）。
 
-## 下一步
-
-- 按维度读：[变量与引号](/matrix/quoting-variables) → [控制流](/matrix/control-flow) → [函数与管道](/matrix/functions-pipes) → [错误与信号](/matrix/errors-signals)
-- 按任务读：[统一任务实验总览](/matrix/experiments)
-- 概念地基（什么是内核、什么是 Shell、什么是 GUI）：[内核 / Shell / GUI](/#shell-foundation)
-- Shell 与图灵完备语言的能力边界：[Shell vs Python](/matrix/comparison/shell-vs-python)
-- 可编辑实验与输出对照：[统一任务实验总览](/matrix/experiments#浏览器实验)

@@ -81,9 +81,3 @@ Linux 侧的 bash/zsh/fish/python/pwsh 都在容器里运行，镜像以 tag + d
 | `08_real_world.bat` | 综合实战 | `copy`、`ren *.log *.log.bak`、校验 |
 
 动手复现见 [统一任务实验](/matrix/experiments)。
-
-## 浏览器练习入口
-
-- [语法源码与实测快照](./syntax#浏览器实验)
-- [入参解析源码与快照](./args#浏览器实验)
-- [延迟变量展开坑位](./pitfalls#浏览器实验)

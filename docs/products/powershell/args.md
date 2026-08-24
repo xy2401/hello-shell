@@ -114,9 +114,3 @@ cmd/PS5/PS7/python）用同一种「手工循环解析」算法，才能横向�
 | 与其他 shell 对齐的裸解析 | `while` 遍历 `$args`（本仓库 demo） |
 
 动手复现见 [统一任务实验](/matrix/experiments)。
-
-## 浏览器实验
-
-<ShellLessonTrigger case-id="task-03" variant="powershell7" label="载入 PowerShell 入参解析" />
-
-<ShellLessonLab :case-ids="['task-03']" default-variant="powershell7" />

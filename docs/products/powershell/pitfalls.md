@@ -123,10 +123,3 @@ PS5.1 的同名快照亦然。
 
 更多语法背景见 [语法基础](/products/powershell/syntax)，动手复现见
 [统一任务实验](/matrix/experiments)。
-
-## 浏览器实验
-
-<ShellLessonTrigger case-id="pitfall-powershell-last-exit" label="载入 $LASTEXITCODE 坑位" />
-<ShellLessonTrigger case-id="task-07" variant="powershell7" label="载入错误处理快照" />
-
-<ShellLessonLab :case-ids="['pitfall-powershell-last-exit', 'task-07']" default-variant="powershell7" />

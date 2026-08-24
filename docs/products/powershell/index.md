@@ -121,9 +121,3 @@ Windows 侧快照同样佐证：`demos/powershell7/01_hello_io.ps1.out.txt`
   `$LASTEXITCODE`、路径分隔符；
 - 横向对照：[入参矩阵](/matrix/args-matrix)、
   [错误处理矩阵](/matrix/error-handling-matrix)、[统一任务实验](/matrix/experiments)。
-
-## 浏览器练习入口
-
-- [语法源码与两代实测快照](./syntax#浏览器实验)
-- [入参解析源码与快照](./args#浏览器实验)
-- [`$LASTEXITCODE` 关键坑位](./pitfalls#浏览器实验)

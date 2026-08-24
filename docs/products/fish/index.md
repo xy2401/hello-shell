@@ -54,9 +54,3 @@ platform=linux
 - [统一任务实验](/matrix/experiments)：如何在本地复现这 9 个任务的采集；
 - [内核、Shell 与 GUI](/#shell-foundation)：fish 在三层模型中的位置；
 - [Shell vs Python](/matrix/comparison/shell-vs-python)：Shell 脚本的能力边界在哪里。
-
-## 浏览器练习入口
-
-- [语法案例：变量、控制流与文件](./syntax#浏览器实验)
-- [入参解析案例](./args#浏览器实验)
-- [Fish 管道作用域坑位](./pitfalls#浏览器实验)

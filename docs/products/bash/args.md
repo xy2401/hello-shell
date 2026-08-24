@@ -76,9 +76,3 @@ nValue=3
 - [/matrix/args-matrix](/matrix/args-matrix)：八种运行体 03 任务输出并排对照；
 - [zsh 入参模型](/products/zsh/args)：同样用 `$0/$#/$@`，但数组下标从 1 开始；
 - [fish 入参模型](/products/fish/args)：没有 `$0/$#`，用 `$argv` 与 `status filename`。
-
-## 浏览器实验
-
-<ShellLessonTrigger case-id="task-03" variant="bash" label="载入 Bash 入参解析" />
-
-<ShellLessonLab :case-ids="['task-03']" default-variant="bash" />

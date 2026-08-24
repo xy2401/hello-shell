@@ -75,8 +75,3 @@ demos/
 
 **推荐读法**：先读脚本（它做了什么）→ 再读并排的 `*.out.txt`（真实输出长什么样）→ 最后到[矩阵](/matrix/)看横向对照。想横向比较同一个任务，就把不同 shell 目录下同一编号的两个文件放在一起读，例如 `bash/03_args_parsing.sh.out.txt` 对 `powershell7/03_args_parsing.ps1.out.txt`。
 
-## 下一步
-
-- [内核、Shell、GUI：三层概念](/#shell-foundation)
-- [入门指南](/reference/getting-started)
-- [版本政策](/reference/version-policy) · [证据政策](/reference/evidence-policy)
