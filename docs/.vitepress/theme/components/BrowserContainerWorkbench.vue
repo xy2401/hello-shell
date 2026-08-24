@@ -204,8 +204,6 @@ async function loadChunks(manifest: Manifest, baseUrl: string): Promise<Uint8Arr
       if (!res.ok) {
         throw new Error(`Failed to fetch chunk ${chunk.filename}: ${res.statusText}`);
       }
-      const buf = await res.arrayBuffer();
-      buffers[index] = buf;
       const rawBuf = await res.arrayBuffer();
       const decompressedBuf = await decompressIfNeeded(rawBuf);
       buffers[index] = decompressedBuf;
@@ -261,6 +259,14 @@ async function startContainer() {
     status.value = 'initializing';
     message.value = '分片下载与解压完成，正在启动 WebAssembly 虚拟机与 PTY 终端...';
     terminal?.writeln(`\x1b[32m✔\x1b[0m 已加载全部分片 (共 ${(wasmBytes.byteLength / 1024 / 1024).toFixed(1)} MB)`);
+    message.value = '分片下载与解压完成，正在校验并启动 WebAssembly 虚拟机...';
+
+    if (!WebAssembly.validate(wasmBytes)) {
+      terminal?.writeln('\x1b[31m[错误]\x1b[0m WebAssembly 二进制完整性校验失败，请刷新重试。');
+      throw new Error('WebAssembly 二进制完整性校验失败');
+    }
+
+    terminal?.writeln(`\x1b[32m✔\x1b[0m 已加载并验证全部分片 (共 ${(wasmBytes.byteLength / 1024 / 1024).toFixed(1)} MB)`);
     terminal?.writeln('\x1b[34m[Boot]\x1b[0m 启动 Alpine Linux 3.22 内核与多 Shell 终端...');
 
     if (typeof SharedArrayBuffer === 'undefined') {
