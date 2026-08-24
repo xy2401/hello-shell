@@ -46,7 +46,8 @@ jobs:
         run: |
           C2W_VERSION="v0.8.4"
           echo "Installing container2wasm ${C2W_VERSION}..."
-          curl -sSL "https://github.com/ktock/container2wasm/releases/download/${C2W_VERSION}/c2w-${C2W_VERSION}-linux-amd64.tar.gz" | tar -xz -C /usr/local/bin
+          curl -sSL "https://github.com/container2wasm/container2wasm/releases/download/${C2W_VERSION}/container2wasm-${C2W_VERSION}-linux-amd64.tar.gz" | sudo tar -xz -C /usr/local/bin
+          sudo chmod +x /usr/local/bin/c2w /usr/local/bin/c2w-net
           c2w --version
 
       - name: Build custom multi-shell base Docker image
