@@ -80,9 +80,6 @@ export default defineConfig({
           text: '浏览器工作台',
           items: [
             { text: '工作台总览', link: '/playground/' },
-            { text: 'JUST-BASH', link: '/playground/bash' },
-            { text: 'V86', link: '/playground/linux' },
-            { text: 'container2wasm', link: '/playground/container' },
             { text: 'JUST-BASH', link: '/playground/just-bash' },
             { text: 'V86', link: '/playground/v86' },
             { text: 'container2wasm', link: '/playground/container2wasm' },
