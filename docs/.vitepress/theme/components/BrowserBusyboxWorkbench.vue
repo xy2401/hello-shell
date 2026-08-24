@@ -113,15 +113,17 @@ async function startBusybox() {
   try {
     runtimeError.value = '';
     status.value = 'loading';
-    message.value = '正在拉取 Wasmer SDK 与 BusyBox 官方模块 (~1MB)...';
+    message.value = '正在加载 Wasmer 核心运行时...';
     await nextTick();
     await ensureTerminal();
 
+    const baseUrl = import.meta.env.BASE_URL || '/';
     const { init, Wasmer } = await import('@wasmer/sdk');
     
-    await init();
+    // 显式指定本地静态托管的 wasmer_js_bg.wasm 路径，彻底杜绝 CDN 404 / HTML 错误页导致的 magic number 校验异常
+    await init(`${baseUrl}runtime/wasmer/wasmer_js_bg.wasm`);
 
-    message.value = '正在拉取 busybox/busybox 预编译 WASI 模块...';
+    message.value = '正在拉取 busybox 预编译模块 (~1MB)...';
     const pkg = await Wasmer.fromRegistry('busybox/busybox');
     
     instance = await pkg.entrypoint.run({
@@ -163,9 +165,9 @@ async function startBusybox() {
     message.value = 'BusyBox 纯 WASI 环境就绪。可直接在终端中执行 ash 及常用 POSIX 命令。';
   } catch (err: any) {
     status.value = 'error';
-    const detail = err?.message || String(err);
+    const detail = err?.stack || err?.message || String(err);
     runtimeError.value = detail;
-    message.value = 'BusyBox 启动失败，请检查网络连接。';
+    message.value = 'BusyBox 启动失败，详细信息已保留在上方。';
     terminal?.writeln(`\x1b[31m[错误] 启动失败: ${detail}\x1b[0m`);
   }
 }

@@ -116,6 +116,25 @@ function printPrompt() {
   currentLine = '';
 }
 
+async function loadPyodideLoader(): Promise<any> {
+  if (typeof (window as any).loadPyodide === 'function') {
+    return (window as any).loadPyodide;
+  }
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[src*="pyodide.js"]');
+    if (existing) {
+      existing.addEventListener('load', () => resolve((window as any).loadPyodide));
+      existing.addEventListener('error', (err) => reject(err));
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';
+    script.onload = () => resolve((window as any).loadPyodide);
+    script.onerror = () => reject(new Error('无法加载 Pyodide CDN 脚本，请检查网络连接'));
+    document.head.appendChild(script);
+  });
+}
+
 async function startPyodide() {
   try {
     runtimeError.value = '';
@@ -124,7 +143,7 @@ async function startPyodide() {
     await nextTick();
     await ensureTerminal();
 
-    const { loadPyodide } = await import('pyodide');
+    const loadPyodide = await loadPyodideLoader();
     
     pyodide = await loadPyodide({
       indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/',
@@ -201,9 +220,9 @@ async function startPyodide() {
     message.value = 'Python 3.12 交互式终端就绪。可直接输入 Python 语句，或点击上方预设按钮。';
   } catch (err: any) {
     status.value = 'error';
-    const detail = err?.message || String(err);
+    const detail = err?.stack || err?.message || String(err);
     runtimeError.value = detail;
-    message.value = 'Pyodide 启动失败，请检查网络连接。';
+    message.value = 'Pyodide 启动失败，详细信息已保留在上方。';
     terminal?.writeln(`\x1b[31m[错误] 加载失败: ${detail}\x1b[0m`);
   }
 }
@@ -243,7 +262,6 @@ function runTask02Snippet() {
 }
 
 function runTask06Snippet() {
-  runSnippet('import json; data = [{"id": 1, "val": 10}, {"id": 2, "val": 25}]; print(f"Total: {sum(x['val'] for x in data)}")');
   runSnippet('import json; data = [{"id": 1, "val": 10}, {"id": 2, "val": 25}]; print("Total:", sum(x["val"] for x in data))');
 }
 
