@@ -221,6 +221,7 @@ async function startContainer() {
 
     // 1. 加载 coi-serviceworker (保证 SharedArrayBuffer) 和 xterm-pty 依赖
     await loadScript(`${baseUrl}runtime/c2w/engine/coi-serviceworker.js`).catch(() => {});
+    // 加载 xterm-pty 终端主从协议库
     await loadScript(`${baseUrl}runtime/c2w/engine/xterm-pty.js`);
 
     const manifestRes = await fetch(`${baseUrl}runtime/c2w/manifest.json`);
