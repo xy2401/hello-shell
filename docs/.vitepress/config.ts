@@ -98,6 +98,9 @@ export default defineConfig({
           items: [
             { text: '工作台总览', link: '/playground/' },
             { text: 'JUST-BASH', link: '/playground/just-bash' },
+            { text: 'BusyBox', link: '/playground/busybox' },
+            { text: 'WebContainer', link: '/playground/webcontainer' },
+            { text: 'Pyodide', link: '/playground/pyodide' },
             { text: 'V86', link: '/playground/v86' },
             { text: 'container2wasm', link: '/playground/container2wasm' },
           ],
