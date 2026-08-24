@@ -116,12 +116,20 @@ async function startBusybox() {
     await nextTick();
     await ensureTerminal();
 
-    const { spawn } = await import('wasi-sh');
+    const baseUrl = import.meta.env.BASE_URL || '/';
+    const wasmRes = await fetch(`${baseUrl}runtime/busybox/busybox.wasm`);
+    if (!wasmRes.ok) {
+      throw new Error(`加载 busybox.wasm 失败: HTTP ${wasmRes.status}`);
+    }
+    const wasmBytes = await wasmRes.arrayBuffer();
 
     const cols = String(terminal?.cols || 80);
     const rows = String(terminal?.rows || 24);
 
+    const { spawn } = await import('wasi-sh');
+
     session = await spawn({
+      wasm: wasmBytes,
       env: {
         COLUMNS: cols,
         LINES: rows,
