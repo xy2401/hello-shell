@@ -18,3 +18,4 @@ pageClass: shell-runtime-page
 - 首次打开会下载锁定的 `just-bash@3.4.2` 浏览器代码，后续由浏览器缓存。
 
 完整 Linux 体验请进入 [V86 工作台](./linux) 或 [container2wasm 工作台](./container)。
+完整 Linux 体验请进入 [V86 工作台](./v86) 或 [container2wasm 工作台](./container2wasm)。

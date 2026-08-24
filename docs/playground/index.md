@@ -4,16 +4,19 @@
 
 <div class="runtime-entry-grid">
   <a href="./bash">
+  <a href="./just-bash">
     <small>轻量 · 语法沙箱</small>
     <strong>JUST-BASH</strong>
     <span>基于 TypeScript 执行 Bash 语法、管道、重定向和常见 Unix 工具，打开即用。</span>
   </a>
   <a href="./linux">
+  <a href="./v86">
     <small>微虚机 · x86 PC</small>
     <strong>V86</strong>
     <span>模拟 x86 硬件并引导真实 Buildroot Linux 内核，观察进程树与环境。</span>
   </a>
   <a href="./container">
+  <a href="./container2wasm">
     <small>完整容器 · RISC-V 虚拟机</small>
     <strong>container2wasm</strong>
     <span>Alpine 容器内自由切换 Bash、Zsh、Fish 与 Python 3，预装多 Shell 工具链。</span>
@@ -94,9 +97,12 @@
 
 1. **日常语法学习与快速验证**：
    * 优先使用 **[JUST-BASH](./bash)**：零等待、极省流量，适合快速验证管道、参数引用、循环与常见文本工具。
+   * 优先使用 **[JUST-BASH](./just-bash)**：零等待、极省流量，适合快速验证管道、参数引用、循环与常见文本工具。
 2. **内核行为与真实系统观察**：
    * 使用 **[V86](./linux)**：直观查看 Linux 启动过程、目录层次、环境变量与真实进程树。
+   * 使用 **[V86](./v86)**：直观查看 Linux 启动过程、目录层次、环境变量与真实进程树。
 3. **多 Shell 切换与完整工具链体验**：
    * 使用 **[container2wasm](./container)**：在同一容器中自由体验 Bash、Zsh、Fish、Python 3 及 jq 等现代命令行工具。
+   * 使用 **[container2wasm](./container2wasm)**：在同一容器中自由体验 Bash、Zsh、Fish、Python 3 及 jq 等现代命令行工具。
 4. **跨 Shell 矩阵与生产级实验**：
    * 跨 Shell 的 9 个统一任务、真实输出快照和基于 Docker 的本地运行方法，请参考 [对比矩阵 · 统一任务实验](/matrix/experiments)。
