@@ -120,8 +120,17 @@ async function startBusybox() {
     const baseUrl = import.meta.env.BASE_URL || '/';
     const { init, Wasmer } = await import('@wasmer/sdk');
     
-    // 显式指定本地静态托管的 wasmer_js_bg.wasm 路径，彻底杜绝 CDN 404 / HTML 错误页导致的 magic number 校验异常
-    await init(`${baseUrl}runtime/wasmer/wasmer_js_bg.wasm`);
+    // 直接以 ArrayBuffer 字节加载，避免任何 MIME Type 警告或流式加载格式冲突
+    const resp = await fetch(`${baseUrl}runtime/wasmer/wasmer_js_bg.wasm`);
+    if (!resp.ok) {
+      throw new Error(`加载 wasmer_js_bg.wasm 失败: HTTP ${resp.status}`);
+    }
+    const wasmBytes = await resp.arrayBuffer();
+
+    await init({
+      module: wasmBytes,
+      workerUrl: 'https://unpkg.com/@wasmer/sdk@0.8.0/dist/index.mjs',
+    });
 
     message.value = '正在拉取 busybox 预编译模块 (~1MB)...';
     const pkg = await Wasmer.fromRegistry('busybox/busybox');
