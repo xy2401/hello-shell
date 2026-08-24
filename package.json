@@ -13,9 +13,9 @@
     "collect:docker": "node scripts/initialize-docker-evidence.js && node scripts/run-docker-demos.js",
     "collect-outputs": "npm run collect:docker",
     "check:docker-catalog": "node scripts/check-docker-catalog.js",
-    "check:lesson-labs": "node scripts/check-lesson-labs.js",
+    "check:matrix-experiments": "node scripts/check-matrix-experiments.js",
     "check:project": "node scripts/check-project.js",
-    "check": "npm run check:project && npm run check:docker-catalog && npm run check:lesson-labs && npm run docs:build"
+    "check": "npm run check:project && npm run check:docker-catalog && npm run check:matrix-experiments && npm run docs:build"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

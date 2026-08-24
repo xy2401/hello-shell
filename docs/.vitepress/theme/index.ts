@@ -12,6 +12,7 @@ export default {
     app.component('BrowserPythonWorkbench', defineAsyncComponent(() => import('./components/BrowserPythonWorkbench.vue')))
     app.component('BrowserLinuxWorkbench', defineAsyncComponent(() => import('./components/BrowserLinuxWorkbench.vue')))
     app.component('BrowserContainerWorkbench', defineAsyncComponent(() => import('./components/BrowserContainerWorkbench.vue')))
+    app.component('MatrixExperimentViewer', defineAsyncComponent(() => import('./components/MatrixExperimentViewer.vue')))
     app.component('DockerTooling', DockerTooling)
   },
 }
