@@ -28,9 +28,9 @@
         <div class="terminal-toolbar">
           <span>{{ message }}</span>
           <div class="toolbar-actions">
-            <button type="button" :disabled="status !== 'running'" @click="runToolsHelp">支持工具集</button>
-            <button type="button" :disabled="status !== 'running'" @click="runSystemInfo">系统信息</button>
-            <button type="button" :disabled="status !== 'running'" @click="runPipeTest">管道测试</button>
+            <button type="button" :disabled="status !== 'running' || commandRunning" @click="runToolsHelp">支持工具集</button>
+            <button type="button" :disabled="status !== 'running' || commandRunning" @click="runSystemInfo">系统信息</button>
+            <button type="button" :disabled="status !== 'running' || commandRunning" @click="runPipeTest">管道测试</button>
             <button type="button" @click="clearTerminal">清屏</button>
             <button type="button" :disabled="status === 'loading'" @click="restart">重置终端</button>
           </div>
@@ -53,6 +53,7 @@ type RuntimeStatus = 'idle' | 'loading' | 'running' | 'error';
 const { isDark } = useData();
 const terminalHost = ref<HTMLElement>();
 const status = ref<RuntimeStatus>('idle');
+const commandRunning = ref(false);
 const message = ref('纯本地 WASI 驱动的 BusyBox ash 终端，600KB 免网络开箱即用。');
 const runtimeError = ref('');
 
@@ -60,6 +61,12 @@ let terminal: Terminal | undefined;
 let fitAddon: FitAddon | undefined;
 let resizeObserver: ResizeObserver | undefined;
 let session: any | undefined;
+let inputLine = '';
+let outputBuffer = '';
+let outputDecoder = new TextDecoder();
+
+const recordSeparator = '\x1e';
+const promptText = '\x1b[36m$\x1b[0m ';
 
 const statusLabel = computed(() => ({
   idle: '未启动',
@@ -106,6 +113,86 @@ async function ensureTerminal() {
     fitAddon.fit();
   }
   applyTerminalTheme();
+  terminal.onData(handleTerminalData);
+}
+
+function showPrompt() {
+  terminal?.write('', () => {
+    const needsNewline = (terminal?.buffer.active.cursorX || 0) > 0;
+    terminal?.write(`${needsNewline ? '\r\n' : ''}${promptText}`);
+    terminal?.focus();
+  });
+}
+
+function handleTerminalData(data: string) {
+  if (!session) return;
+
+  if (commandRunning.value) {
+    session.write(data);
+    return;
+  }
+
+  for (const char of data) {
+    if (char === '\r') {
+      terminal?.write('\r\n');
+      const command = inputLine;
+      inputLine = '';
+      executeCommand(command);
+    } else if (char === '\x7f' || char === '\b') {
+      if (inputLine) {
+        inputLine = inputLine.slice(0, -1);
+        terminal?.write('\b \b');
+      }
+    } else if (char === '\x03') {
+      inputLine = '';
+      terminal?.write('^C');
+      showPrompt();
+    } else if (char === '\x0c') {
+      terminal?.write(`\x1b[2J\x1b[H${promptText}${inputLine}`);
+    } else if (char >= ' ') {
+      inputLine += char;
+      terminal?.write(char);
+    }
+  }
+}
+
+function executeCommand(command: string) {
+  const trimmed = command.trim();
+  if (!trimmed) {
+    showPrompt();
+    return;
+  }
+
+  commandRunning.value = true;
+  session.write(`${command}\n`);
+  session.write(`printf "${recordSeparator}%d${recordSeparator}" "$?"\n`);
+}
+
+function handleSessionOutput(chunk: Uint8Array | string) {
+  outputBuffer += typeof chunk === 'string'
+    ? chunk
+    : outputDecoder.decode(chunk, { stream: true });
+
+  while (true) {
+    const markerStart = outputBuffer.indexOf(recordSeparator);
+    if (markerStart < 0) {
+      terminal?.write(outputBuffer);
+      outputBuffer = '';
+      return;
+    }
+
+    terminal?.write(outputBuffer.slice(0, markerStart));
+    const remainder = outputBuffer.slice(markerStart + 1);
+    const markerEnd = remainder.indexOf(recordSeparator);
+    if (markerEnd < 0) {
+      outputBuffer = recordSeparator + remainder;
+      return;
+    }
+
+    outputBuffer = remainder.slice(markerEnd + 1);
+    commandRunning.value = false;
+    showPrompt();
+  }
 }
 
 async function startBusybox() {
@@ -130,6 +217,7 @@ async function startBusybox() {
 
     session = await spawn({
       wasm: wasmBytes,
+      workerUrl: new URL('./busybox.worker.ts', import.meta.url),
       env: {
         COLUMNS: cols,
         LINES: rows,
@@ -139,18 +227,10 @@ async function startBusybox() {
       },
     });
 
-    const textDecoder = new TextDecoder();
-
-    session.onOutput((chunk: Uint8Array | string) => {
-      const text = typeof chunk === 'string' ? chunk : textDecoder.decode(chunk);
-      terminal?.write(text);
-    });
-
-    terminal?.onData((data: string) => {
-      session?.write(data);
-    });
+    session.onOutput(handleSessionOutput);
 
     if (terminalHost.value) {
+      resizeObserver?.disconnect();
       resizeObserver = new ResizeObserver(() => {
         fitAddon?.fit();
         if (terminal && session) {
@@ -161,7 +241,9 @@ async function startBusybox() {
     }
 
     status.value = 'running';
-    message.value = 'BusyBox 纯本地 WASI 环境就绪。可直接在终端中执行 ash 及常用 POSIX 命令。';
+    message.value = 'BusyBox 纯本地 WASI 环境就绪。点击终端后可直接输入命令并按 Enter 执行。';
+    terminal?.writeln('\x1b[38;5;244m输入命令并按 Enter 执行；支持 Backspace、Ctrl+C 和 Ctrl+L。\x1b[0m');
+    showPrompt();
   } catch (err: any) {
     status.value = 'error';
     const detail = err?.stack || err?.message || String(err);
@@ -171,18 +253,27 @@ async function startBusybox() {
   }
 }
 
-function runCommand(cmd: string) {
-  if (session) {
-    session.write(cmd);
-  }
+function runCommand(cmd: string, displayCommand = cmd) {
+  if (!session || commandRunning.value) return;
+  const command = cmd.replace(/[\r\n]+$/, '');
+  inputLine = '';
+  terminal?.write(`${displayCommand}\r\n`);
+  executeCommand(command);
+  terminal?.focus();
 }
 
 function runToolsHelp() {
-  runCommand('busybox --help\n');
+  runCommand(
+    `printf 'Available commands:\\n'; for cmd in cat ls stat touch mkdir rmdir rm cp mv find du mktemp grep sed awk sort uniq cut tr head tail wc seq paste fold tac expr hexdump xxd md5sum sha1sum sha256sum cksum crc32 date env printenv basename dirname realpath test printf getopt uname nproc stty; do command -v "$cmd" >/dev/null && printf '%s ' "$cmd"; done; printf '\\n'\n`,
+    '# 支持工具集',
+  );
 }
 
 function runSystemInfo() {
-  runCommand('uname -a && id\n');
+  runCommand(
+    `printf 'Runtime: WASI sandbox\\nShell: %s\\nSystem: ' "$0"; uname -s; printf 'Architecture: '; uname -m; printf 'Working directory: '; pwd; printf 'Terminal: %s\\nPATH: %s\\n' "$TERM" "$PATH"\n`,
+    '# 系统信息',
+  );
 }
 
 function runPipeTest() {
@@ -195,9 +286,13 @@ function clearTerminal() {
 
 async function restart() {
   status.value = 'idle';
+  commandRunning.value = false;
+  inputLine = '';
+  outputBuffer = '';
+  outputDecoder = new TextDecoder();
   terminal?.clear();
   if (session) {
-    try { session.end(); } catch {}
+    try { session.terminate(); } catch {}
     session = undefined;
   }
   startBusybox();
@@ -206,7 +301,7 @@ async function restart() {
 onBeforeUnmount(() => {
   resizeObserver?.disconnect();
   if (session) {
-    try { session.end(); } catch {}
+    try { session.terminate(); } catch {}
   }
   terminal?.dispose();
 });
@@ -408,6 +503,7 @@ onBeforeUnmount(() => {
   padding: 0.75rem;
   height: 380px;
   background: #090d13;
+  cursor: text;
 }
 
 @keyframes pulse {
