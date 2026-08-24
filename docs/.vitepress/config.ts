@@ -28,6 +28,18 @@ export default defineConfig({
   cleanUrls: true,
   head: [['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }]],
   vite: {
+    server: {
+      headers: {
+        'Cross-Origin-Opener-Policy': 'same-origin',
+        'Cross-Origin-Embedder-Policy': 'require-corp',
+      },
+    },
+    preview: {
+      headers: {
+        'Cross-Origin-Opener-Policy': 'same-origin',
+        'Cross-Origin-Embedder-Policy': 'require-corp',
+      },
+    },
     resolve: {
       alias: {
         'node:zlib': fileURLToPath(new URL('./theme/shims/zlib.ts', import.meta.url)),
@@ -71,6 +83,7 @@ export default defineConfig({
             { text: '工作台总览', link: '/playground/' },
             { text: '浏览器 Bash', link: '/playground/bash' },
             { text: '浏览器 Linux', link: '/playground/linux' },
+            { text: '浏览器容器 (Multi-Shell)', link: '/playground/container' },
           ],
         },
       ],

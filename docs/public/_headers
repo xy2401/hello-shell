@@ -1,0 +1,11 @@
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+
+/runtime/c2w/*.gz
+  Content-Type: application/octet-stream
+  Content-Encoding: gzip
+  Cache-Control: public, max-age=31536000, immutable
+
+/runtime/v86/*
+  Cache-Control: public, max-age=31536000, immutable
