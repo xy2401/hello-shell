@@ -67,7 +67,11 @@ jobs:
         run: |
           mkdir -p ./out
           echo "Converting container to Wasm (${TARGET_ARCH})..."
-          c2w --target-arch="${TARGET_ARCH}" hello-shell-base:latest ./out/c2w-runtime.wasm
+          c2w \
+            --build-arg SOURCE_REPO=https://github.com/container2wasm/container2wasm.git \
+            --build-arg SOURCE_REPO_VERSION=v0.8.4 \
+            --target-arch="${TARGET_ARCH}" \
+            hello-shell-base:latest ./out/c2w-runtime.wasm
           ls -lh ./out/c2w-runtime.wasm
 
       - name: Split, Gzip and Generate Manifest
