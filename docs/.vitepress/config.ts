@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 import { fileURLToPath } from 'node:url'
 
-const base = process.env.NODE_ENV === 'production' ? '/hello-shell/' : '/'
+const base = process.env.DOCS_BASE || '/'
 
 function shellSidebar(id: string, name: string) {
   return [
