@@ -3,7 +3,7 @@ aside: false
 pageClass: shell-runtime-page
 ---
 
-# BusyBox 工作台
+# BusyBox
 
 本页通过纯本地 **WASI (WebAssembly System Interface)** 模块运行 BusyBox，体积仅约 600 KB，零外部云端依赖，提供正统的 C 语言 `ash` Shell 与 100+ 个标准 POSIX 核心工具。
 

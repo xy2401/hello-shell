@@ -3,7 +3,7 @@ aside: false
 pageClass: shell-runtime-page
 ---
 
-# container2wasm 工作台
+# container2wasm
 
 本页通过 **`container2wasm`** 技术将预装多种 Shell 的 Alpine Linux 容器转换为 WebAssembly，直接在浏览器端加载并运行。
 

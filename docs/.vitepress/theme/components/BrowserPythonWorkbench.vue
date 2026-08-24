@@ -1,41 +1,44 @@
 <template>
   <ClientOnly>
-    <section class="runtime-workbench" aria-label="Pyodide 工作台">
-      <header class="runtime-header">
-        <div>
-          <p>PYODIDE · CPYTHON 3.12 · WEBASSEMBLY INTERACTIVE REPL</p>
-          <h2>Pyodide 工作台</h2>
+    <section class="shell-workbench shell-workbench--python" aria-label="Pyodide 工作台">
+      <header class="workbench-header">
+        <div class="workbench-identity">
+          <a href="https://pyodide.org/" target="_blank" rel="noopener noreferrer"><strong>Pyodide 0.26.4</strong></a>
+          <span aria-hidden="true">·</span>
+          <a href="https://www.python.org/" target="_blank" rel="noopener noreferrer">CPython 3.12</a>
         </div>
-        <span class="runtime-status" :class="status"><i></i>{{ statusLabel }}</span>
+        <button type="button" class="workbench-status" :class="status" :disabled="status === 'loading'" @click="handleRuntimeAction">
+          <i></i>{{ runtimeActionLabel }}
+        </button>
       </header>
 
-      <div v-if="runtimeError" class="runtime-error" role="alert" aria-live="assertive">
+      <dl class="workbench-specs">
+        <div><dt>解释器</dt><dd>CPython 3.12</dd></div>
+        <div><dt>交互</dt><dd>Python REPL</dd></div>
+        <div><dt>文件系统</dt><dd>Emscripten 内存</dd></div>
+        <div><dt>加载</dt><dd>CDN · 按需</dd></div>
+      </dl>
+
+      <div v-if="runtimeError" class="workbench-error" role="alert" aria-live="assertive">
         <strong>启动异常</strong>
         <pre>{{ runtimeError }}</pre>
       </div>
 
-      <div v-if="status === 'idle' || status === 'error'" class="runtime-launcher">
-        <div class="runtime-facts">
-          <span><small>解释器</small><strong>CPython 3.12 官方 WASM</strong></span>
-          <span><small>交互环境</small><strong>原生 &gt;&gt;&gt; 终端 REPL</strong></span>
-          <span><small>标准库</small><strong>sys / os / json / re / math</strong></span>
-        </div>
-        <p>{{ message }}</p>
-        <button type="button" @click="startPyodide">启动 Python 终端</button>
-      </div>
-
-      <div v-show="status === 'loading' || status === 'running'" class="terminal-shell">
-        <div class="terminal-toolbar">
-          <span>{{ message }}</span>
-          <div class="toolbar-actions">
-            <button type="button" :disabled="status !== 'running'" @click="runVersionSnippet">系统与版本</button>
-            <button type="button" :disabled="status !== 'running'" @click="runTask02Snippet">任务02: 变量格式化</button>
-            <button type="button" :disabled="status !== 'running'" @click="runTask06Snippet">任务06: 管道数据处理</button>
-            <button type="button" @click="clearTerminal">清屏</button>
-            <button type="button" :disabled="status === 'loading'" @click="restart">重置环境</button>
+      <div class="workbench-terminal">
+        <div class="workbench-toolbar">
+          <span class="workbench-toolbar-message"><strong>交互终端</strong>{{ message }}</span>
+          <div class="workbench-controls">
+            <WorkbenchExampleMenu :examples="examples" :disabled="status !== 'running'" :hint="controlHint" @select="runSnippet" />
+            <span class="workbench-control-hint" :title="status === 'running' ? '清空终端显示' : controlHint">
+              <button type="button" class="workbench-button" :disabled="status !== 'running'" @click="clearTerminal">清屏</button>
+            </span>
           </div>
         </div>
-        <div ref="terminalHost" class="terminal-host" />
+        <div v-if="status === 'idle' || status === 'error'" class="workbench-idle">
+          <div class="workbench-preview" aria-hidden="true"><span>&gt;&gt;&gt;</span><code>import sys; print(sys.version)</code></div>
+          <p>{{ status === 'idle' ? '终端尚未加载。点击右上角“未启动 · 启动 Python”后即可输入代码。' : message }}</p>
+        </div>
+        <div v-show="status === 'loading' || status === 'running'" ref="terminalHost" class="workbench-terminal-host" />
       </div>
     </section>
   </ClientOnly>
@@ -44,8 +47,9 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useData } from 'vitepress';
-import type { Terminal } from '@xterm/xterm';
+import type { IDisposable, Terminal } from '@xterm/xterm';
 import type { FitAddon } from '@xterm/addon-fit';
+import WorkbenchExampleMenu from './WorkbenchExampleMenu.vue';
 import '@xterm/xterm/css/xterm.css';
 
 type RuntimeStatus = 'idle' | 'loading' | 'running' | 'error';
@@ -63,13 +67,25 @@ let pyodide: any | undefined;
 let currentLine = '';
 let history: string[] = [];
 let historyIndex = -1;
+let dataDisposable: IDisposable | undefined;
 
-const statusLabel = computed(() => ({
-  idle: '未启动',
-  loading: '启动中',
-  running: '运行中',
-  error: '启动失败',
+const runtimeActionLabel = computed(() => ({
+  idle: '未启动 · 启动 Python',
+  loading: '正在启动…',
+  running: '运行中 · 重新启动',
+  error: '启动失败 · 重试',
 })[status.value]);
+
+const controlHint = computed(() => status.value === 'running'
+  ? '选择并运行 Python 示例'
+  : status.value === 'loading' ? '正在启动 Pyodide，请稍候' : '未启动，请先启动 Python');
+
+const examples = [
+  { id: 'version', title: '系统与版本', summary: '查看 Python 与 WASM 平台信息', source: 'import sys, os; print(f"Python {sys.version.split()[0]} on {sys.platform}")' },
+  { id: 'format', title: '变量格式化', summary: '使用 f-string 处理字符串和数字', source: 'name = "world"; score = 98.5; print(f"Hello, {name.upper()}! Score={score:.2f}")' },
+  { id: 'data', title: '数据处理', summary: '汇总结构化列表中的数值', source: 'data = [{"id": 1, "val": 10}, {"id": 2, "val": 25}]; print("Total:", sum(x["val"] for x in data))' },
+  { id: 'stdlib', title: '标准库', summary: '组合 JSON、正则和数学模块', source: 'import json, re, math; print(json.dumps({"match": bool(re.search(r"sh\\w+", "shell")), "root": math.sqrt(81)}))' },
+] as const;
 
 watch(isDark, () => applyTerminalTheme());
 
@@ -77,17 +93,18 @@ function applyTerminalTheme() {
   if (!terminal) return;
   terminal.options.theme = isDark.value
     ? {
-        background: '#090d13',
-        foreground: '#e6edf3',
-        cursor: '#58a6ff',
-        selectionBackground: '#264f78',
+        background: '#08111f', foreground: '#dce7f5', cursor: '#93c5fd', selectionBackground: '#1e3a8a',
+        red: '#f87171', green: '#4ade80', yellow: '#facc15', blue: '#60a5fa', magenta: '#c084fc', cyan: '#22d3ee', white: '#cbd5e1', brightBlack: '#64748b', brightBlue: '#93c5fd', brightWhite: '#f8fafc',
       }
     : {
-        background: '#ffffff',
-        foreground: '#24292f',
-        cursor: '#0969da',
-        selectionBackground: '#b6d7a8',
+        background: '#f8fafc', foreground: '#243247', cursor: '#2563eb', selectionBackground: '#bfdbfe',
+        red: '#dc2626', green: '#15803d', yellow: '#a16207', blue: '#2563eb', magenta: '#9333ea', cyan: '#0e7490', white: '#e2e8f0', brightBlack: '#64748b', brightBlue: '#3b82f6', brightWhite: '#f8fafc',
       };
+}
+
+async function handleRuntimeAction() {
+  if (status.value === 'running') await restart();
+  else await startPyodide();
 }
 
 async function ensureTerminal() {
@@ -165,7 +182,8 @@ async function startPyodide() {
     terminal?.writeln('Type "help", "copyright", "credits" or "license" for more information.');
     printPrompt();
 
-    terminal?.onData(async (data) => {
+    dataDisposable?.dispose();
+    dataDisposable = terminal?.onData(async (data) => {
       if (status.value !== 'running' || !pyodide) return;
 
       const code = data.charCodeAt(0);
@@ -253,18 +271,6 @@ async function runSnippet(snippet: string) {
   printPrompt();
 }
 
-function runVersionSnippet() {
-  runSnippet('import sys, os; print(f"Python {sys.version.split()[0]} on {sys.platform}")');
-}
-
-function runTask02Snippet() {
-  runSnippet('name = "world"; score = 98.5; print(f"Hello, {name.upper()}! Score={score:.2f}")');
-}
-
-function runTask06Snippet() {
-  runSnippet('import json; data = [{"id": 1, "val": 10}, {"id": 2, "val": 25}]; print("Total:", sum(x["val"] for x in data))');
-}
-
 function clearTerminal() {
   terminal?.clear();
   printPrompt();
@@ -278,6 +284,7 @@ async function restart() {
 }
 
 onBeforeUnmount(() => {
+  dataDisposable?.dispose();
   resizeObserver?.disconnect();
   terminal?.dispose();
 });

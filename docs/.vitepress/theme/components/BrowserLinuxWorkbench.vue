@@ -1,34 +1,40 @@
 <template>
   <ClientOnly>
-    <section class="runtime-workbench" aria-label="V86 工作台">
-      <header class="runtime-header">
-        <div>
-          <p>V86 · X86 EMULATION · BUILDROOT LINUX</p>
-          <h2>V86 工作台</h2>
+    <section class="shell-workbench shell-workbench--linux" aria-label="V86 工作台">
+      <header class="workbench-header">
+        <div class="workbench-identity">
+          <a href="https://copy.sh/v86/" target="_blank" rel="noopener noreferrer"><strong>v86 0.5.441</strong></a>
+          <span aria-hidden="true">·</span>
+          <a href="https://buildroot.org/" target="_blank" rel="noopener noreferrer">Buildroot Linux</a>
         </div>
-        <span class="runtime-status" :class="status"><i></i>{{ statusLabel }}</span>
+        <button type="button" class="workbench-status" :class="status" :disabled="status === 'loading'" @click="handleRuntimeAction">
+          <i></i>{{ runtimeActionLabel }}
+        </button>
       </header>
 
-      <div v-if="status === 'idle' || status === 'error'" class="runtime-launcher">
-        <div class="runtime-facts">
-          <span><small>内核</small><strong>真实 Linux</strong></span>
-          <span><small>机器</small><strong>v86 x86 PC</strong></span>
-          <span><small>首次下载</small><strong>约 13 MB</strong></span>
-        </div>
-        <p>{{ message }}</p>
-        <button type="button" @click="startLinux">启动 Linux</button>
-      </div>
+      <dl class="workbench-specs">
+        <div><dt>系统</dt><dd>真实 Linux 内核</dd></div>
+        <div><dt>机器</dt><dd>x86 PC 模拟</dd></div>
+        <div><dt>内存</dt><dd>64 MB</dd></div>
+        <div><dt>加载</dt><dd>本地 · 约 13 MB</dd></div>
+      </dl>
 
-      <div v-show="status === 'loading' || status === 'running' || status === 'paused'" class="terminal-shell">
-        <div class="terminal-toolbar">
-          <span>{{ message }}</span>
-          <div>
-            <button type="button" @click="clearTerminal">清屏</button>
-            <button type="button" :disabled="status === 'loading'" @click="toggleRun">{{ status === 'paused' ? '继续' : '暂停' }}</button>
-            <button type="button" :disabled="status === 'loading'" @click="reboot">重新启动</button>
+      <div class="workbench-terminal">
+        <div class="workbench-toolbar">
+          <span class="workbench-toolbar-message"><strong>串口终端</strong>{{ message }}</span>
+          <div class="workbench-controls">
+            <WorkbenchExampleMenu :examples="examples" :disabled="status !== 'running'" :hint="controlHint" @select="runExample" />
+            <span class="workbench-control-hint" :title="status === 'running' || status === 'paused' ? '清空终端显示' : controlHint">
+              <button type="button" class="workbench-button" :disabled="status !== 'running' && status !== 'paused'" @click="clearTerminal">清屏</button>
+            </span>
+            <button type="button" class="workbench-button" :disabled="status !== 'running' && status !== 'paused'" @click="toggleRun">{{ status === 'paused' ? '继续' : '暂停' }}</button>
           </div>
         </div>
-        <div ref="terminalHost" class="terminal-host" />
+        <div v-if="status === 'idle' || status === 'error'" class="workbench-idle">
+          <div class="workbench-preview" aria-hidden="true"><span>~%</span><code>uname -a</code></div>
+          <p>{{ status === 'idle' ? '虚拟机尚未加载。点击右上角“未启动 · 启动 Linux”后开始引导。' : message }}</p>
+        </div>
+        <div v-show="status === 'loading' || status === 'running' || status === 'paused'" ref="terminalHost" class="workbench-terminal-host" />
       </div>
     </section>
   </ClientOnly>
@@ -40,6 +46,7 @@ import { useData } from 'vitepress';
 import type { IDisposable, Terminal } from '@xterm/xterm';
 import type { FitAddon } from '@xterm/addon-fit';
 import type { V86 } from 'v86';
+import WorkbenchExampleMenu from './WorkbenchExampleMenu.vue';
 import '@xterm/xterm/css/xterm.css';
 
 type RuntimeStatus = 'idle' | 'loading' | 'running' | 'paused' | 'error';
@@ -57,15 +64,32 @@ let resizeObserver: ResizeObserver | undefined;
 let outputTail = '';
 const decoder = new TextDecoder();
 
-const statusLabel = computed(() => ({
-  idle: '未启动',
-  loading: '启动中',
-  running: '运行中',
-  paused: '已暂停',
-  error: '启动失败',
+const runtimeActionLabel = computed(() => ({
+  idle: '未启动 · 启动 Linux',
+  loading: '正在启动…',
+  running: '运行中 · 重新启动',
+  paused: '已暂停 · 继续',
+  error: '启动失败 · 重试',
 })[status.value]);
 
+const controlHint = computed(() => status.value === 'running'
+  ? '选择并运行 Linux 示例'
+  : status.value === 'loading' ? 'Linux 正在引导，请稍候' : status.value === 'paused' ? '虚拟机已暂停，请先继续' : '未启动，请先启动 Linux');
+
+const examples = [
+  { id: 'system', title: '系统信息', summary: '查看内核、架构和主机身份', source: 'uname -a' },
+  { id: 'processes', title: '进程与内存', summary: '查看真实 Linux 进程和内存', source: 'ps; free' },
+  { id: 'filesystem', title: '文件系统', summary: '查看当前目录和根目录内容', source: 'pwd; ls -la; df -h' },
+  { id: 'commands', title: '可用命令', summary: '按六列列出 BusyBox applet', source: 'busybox --list | sort | xargs -n 6' },
+] as const;
+
 watch(isDark, () => applyTerminalTheme());
+
+async function handleRuntimeAction() {
+  if (status.value === 'paused') await toggleRun();
+  else if (status.value === 'running') reboot();
+  else await startLinux();
+}
 
 async function startLinux() {
   if (!terminalHost.value || status.value === 'loading' || status.value === 'running') return;
@@ -166,14 +190,26 @@ function clearTerminal() {
   terminal?.focus();
 }
 
+function runExample(source: string) {
+  if (status.value !== 'running') return;
+  emulator?.serial0_send(`${source}\n`);
+  terminal?.focus();
+}
+
 function applyTerminalTheme() {
   if (terminal) terminal.options.theme = terminalTheme();
 }
 
 function terminalTheme() {
   return isDark.value
-    ? { background: '#07120c', foreground: '#d9f5e4', cursor: '#86efac', selectionBackground: '#14532d' }
-    : { background: '#0b1510', foreground: '#dcfce7', cursor: '#4ade80', selectionBackground: '#166534' };
+    ? {
+        background: '#08111f', foreground: '#dce7f5', cursor: '#86efac', selectionBackground: '#14532d',
+        red: '#f87171', green: '#4ade80', yellow: '#facc15', blue: '#60a5fa', magenta: '#c084fc', cyan: '#22d3ee', white: '#cbd5e1', brightBlack: '#64748b', brightGreen: '#86efac', brightWhite: '#f8fafc',
+      }
+    : {
+        background: '#f8fafc', foreground: '#243247', cursor: '#16a34a', selectionBackground: '#bbf7d0',
+        red: '#dc2626', green: '#15803d', yellow: '#a16207', blue: '#2563eb', magenta: '#9333ea', cyan: '#0e7490', white: '#e2e8f0', brightBlack: '#64748b', brightGreen: '#16a34a', brightWhite: '#f8fafc',
+      };
 }
 
 async function disposeRuntime() {

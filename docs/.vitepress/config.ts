@@ -42,7 +42,8 @@ function shellSidebar(id: string, name: string) {
 }
 
 export default defineConfig({
-  title: 'hello-shell',
+  title: 'Hello Shell',
+  titleTemplate: ':title | Shell 手册',
   description:
     'Shell 与命令行统一任务矩阵：bash/zsh/fish/cmd/PowerShell 同任务对照与真实输出快照 (Shell & Command Line Task Matrix)',
   lang: 'zh-CN',
@@ -71,7 +72,7 @@ export default defineConfig({
       { text: 'cmd', link: '/products/cmd/' },
       { text: 'PowerShell', link: '/products/powershell/' },
       { text: '对比矩阵', link: '/matrix/' },
-      { text: '试验场', link: '/playground/' },
+      { text: '实验台', link: '/playground/' },
       { text: '参考资料', link: '/reference/' },
     ],
     sidebar: {
@@ -94,9 +95,9 @@ export default defineConfig({
       ],
       '/playground/': [
         {
-          text: '浏览器工作台',
+          text: '浏览器实验台',
           items: [
-            { text: '工作台总览', link: '/playground/' },
+            { text: '实验台总览', link: '/playground/' },
             { text: 'JUST-BASH', link: '/playground/just-bash' },
             { text: 'BusyBox', link: '/playground/busybox' },
             { text: 'Pyodide', link: '/playground/pyodide' },

@@ -2,6 +2,7 @@ import DefaultTheme from 'vitepress/theme'
 import { defineAsyncComponent } from 'vue'
 import DockerTooling from './components/DockerTooling.vue'
 import './custom.css'
+import './browser-workbench.css'
 
 export default {
   extends: DefaultTheme,

@@ -1,41 +1,50 @@
 <template>
   <ClientOnly>
-    <section class="runtime-workbench" aria-label="BusyBox 工作台">
-      <header class="runtime-header">
-        <div>
-          <p>BUSYBOX · WASI-SH · 600KB PURE LOCAL WASM</p>
-          <h2>BusyBox 工作台</h2>
+    <section class="shell-workbench shell-workbench--busybox" aria-label="BusyBox 工作台">
+      <header class="workbench-header">
+        <div class="workbench-identity">
+          <a href="https://busybox.net/" target="_blank" rel="noopener noreferrer"><strong>BusyBox WASI</strong></a>
+          <span aria-hidden="true">·</span>
+          <a href="https://github.com/alganet/wasi-sh" target="_blank" rel="noopener noreferrer">wasi-sh 0.2.1</a>
         </div>
-        <span class="runtime-status" :class="status"><i></i>{{ statusLabel }}</span>
+        <button type="button" class="workbench-status" :class="status" :disabled="status === 'loading'" @click="handleRuntimeAction">
+          <i></i>{{ runtimeActionLabel }}
+        </button>
       </header>
 
-      <div v-if="runtimeError" class="runtime-error" role="alert" aria-live="assertive">
+      <dl class="workbench-specs">
+        <div><dt>实现</dt><dd>C / WebAssembly</dd></div>
+        <div><dt>Shell</dt><dd>ash · POSIX</dd></div>
+        <div><dt>文件系统</dt><dd>WASI 沙箱内存</dd></div>
+        <div><dt>加载</dt><dd>本地 · 约 600 KB</dd></div>
+      </dl>
+
+      <div v-if="runtimeError" class="workbench-error" role="alert" aria-live="assertive">
         <strong>启动异常</strong>
         <pre>{{ runtimeError }}</pre>
       </div>
 
-      <div v-if="status === 'idle' || status === 'error'" class="runtime-launcher">
-        <div class="runtime-facts">
-          <span><small>运行模式</small><strong>100% 纯本地 WASI</strong></span>
-          <span><small>包体积</small><strong>约 600 KB（零外部依赖）</strong></span>
-          <span><small>默认 Shell</small><strong>ash (Almquist Shell)</strong></span>
-        </div>
-        <p>{{ message }}</p>
-        <button type="button" @click="startBusybox">启动 BusyBox</button>
-      </div>
-
-      <div v-show="status === 'loading' || status === 'running'" class="terminal-shell">
-        <div class="terminal-toolbar">
-          <span>{{ message }}</span>
-          <div class="toolbar-actions">
-            <button type="button" :disabled="status !== 'running' || commandRunning" @click="runToolsHelp">支持工具集</button>
-            <button type="button" :disabled="status !== 'running' || commandRunning" @click="runSystemInfo">系统信息</button>
-            <button type="button" :disabled="status !== 'running' || commandRunning" @click="runPipeTest">管道测试</button>
-            <button type="button" @click="clearTerminal">清屏</button>
-            <button type="button" :disabled="status === 'loading'" @click="restart">重置终端</button>
+      <div class="workbench-terminal">
+        <div class="workbench-toolbar">
+          <span class="workbench-toolbar-message"><strong>交互终端</strong>{{ message }}</span>
+          <div class="workbench-controls">
+            <WorkbenchExampleMenu
+              :examples="examples"
+              :disabled="status !== 'running' || commandRunning"
+              :busy="commandRunning"
+              :hint="controlHint"
+              @select="runExample"
+            />
+            <span class="workbench-control-hint" :title="status === 'running' ? '清空终端显示' : controlHint">
+              <button type="button" class="workbench-button" :disabled="status !== 'running'" @click="clearTerminal">清屏</button>
+            </span>
           </div>
         </div>
-        <div ref="terminalHost" class="terminal-host" />
+        <div v-if="status === 'idle' || status === 'error'" class="workbench-idle">
+          <div class="workbench-preview" aria-hidden="true"><span>busybox:/$</span><code>uname -a</code></div>
+          <p>{{ status === 'idle' ? '终端尚未加载。点击右上角“未启动 · 启动 BusyBox”后即可输入命令。' : message }}</p>
+        </div>
+        <div v-show="status === 'loading' || status === 'running'" ref="terminalHost" class="workbench-terminal-host" />
       </div>
     </section>
   </ClientOnly>
@@ -46,6 +55,7 @@ import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useData } from 'vitepress';
 import type { Terminal } from '@xterm/xterm';
 import type { FitAddon } from '@xterm/addon-fit';
+import WorkbenchExampleMenu from './WorkbenchExampleMenu.vue';
 import '@xterm/xterm/css/xterm.css';
 
 type RuntimeStatus = 'idle' | 'loading' | 'running' | 'error';
@@ -68,12 +78,23 @@ let outputDecoder = new TextDecoder();
 const recordSeparator = '\x1e';
 const promptText = '\x1b[36m$\x1b[0m ';
 
-const statusLabel = computed(() => ({
-  idle: '未启动',
-  loading: '启动中',
-  running: '运行中',
-  error: '启动失败',
+const runtimeActionLabel = computed(() => ({
+  idle: '未启动 · 启动 BusyBox',
+  loading: '正在启动…',
+  running: '运行中 · 重新启动',
+  error: '启动失败 · 重试',
 })[status.value]);
+
+const controlHint = computed(() => status.value === 'running'
+  ? commandRunning.value ? '命令执行中，请稍候' : '选择并运行示例'
+  : status.value === 'loading' ? '正在启动 BusyBox，请稍候' : '未启动，请先启动 BusyBox');
+
+const examples = [
+  { id: 'commands', title: '可用命令', summary: '多列列出当前 WASI 工具集', source: `printf 'Available commands:\\n'; for cmd in cat ls stat touch mkdir rmdir rm cp mv find du mktemp grep sed awk sort uniq cut tr head tail wc seq paste fold tac expr hexdump xxd md5sum sha1sum sha256sum cksum crc32 date env printenv basename dirname realpath test printf getopt uname nproc stty; do command -v "$cmd" >/dev/null && printf '%s\\n' "$cmd"; done | xargs -n 6` },
+  { id: 'system', title: '系统信息', summary: '查看 WASI、架构、目录和 PATH', source: `printf 'Runtime: WASI sandbox\\nShell: %s\\nSystem: ' "$0"; uname -s; printf 'Architecture: '; uname -m; printf 'Working directory: '; pwd; printf 'Terminal: %s\\nPATH: %s\\n' "$TERM" "$PATH"` },
+  { id: 'pipeline', title: '管道与过滤', summary: '组合 tr 与 sed 处理文本', source: `echo "hello world" | tr a-z A-Z | sed "s/WORLD/BUSYBOX/g"` },
+  { id: 'files', title: '文件与重定向', summary: '写入沙箱文件并读取统计', source: `printf 'alpha\\nbeta\\n' > sample.txt; wc -l sample.txt; cat sample.txt` },
+] as const;
 
 watch(isDark, () => applyTerminalTheme());
 
@@ -81,17 +102,18 @@ function applyTerminalTheme() {
   if (!terminal) return;
   terminal.options.theme = isDark.value
     ? {
-        background: '#090d13',
-        foreground: '#e6edf3',
-        cursor: '#58a6ff',
-        selectionBackground: '#264f78',
+        background: '#08111f', foreground: '#dce7f5', cursor: '#67e8f9', selectionBackground: '#164e63',
+        red: '#f87171', green: '#4ade80', yellow: '#facc15', blue: '#60a5fa', magenta: '#c084fc', cyan: '#22d3ee', white: '#cbd5e1', brightBlack: '#64748b', brightCyan: '#67e8f9', brightWhite: '#f8fafc',
       }
     : {
-        background: '#ffffff',
-        foreground: '#24292f',
-        cursor: '#0969da',
-        selectionBackground: '#b6d7a8',
+        background: '#f8fafc', foreground: '#243247', cursor: '#0891b2', selectionBackground: '#bae6fd',
+        red: '#dc2626', green: '#15803d', yellow: '#a16207', blue: '#2563eb', magenta: '#9333ea', cyan: '#0e7490', white: '#e2e8f0', brightBlack: '#64748b', brightCyan: '#0891b2', brightWhite: '#f8fafc',
       };
+}
+
+async function handleRuntimeAction() {
+  if (status.value === 'running') await restart();
+  else await startBusybox();
 }
 
 async function ensureTerminal() {
@@ -262,23 +284,7 @@ function runCommand(cmd: string, displayCommand = cmd) {
   terminal?.focus();
 }
 
-function runToolsHelp() {
-  runCommand(
-    `printf 'Available commands:\\n'; for cmd in cat ls stat touch mkdir rmdir rm cp mv find du mktemp grep sed awk sort uniq cut tr head tail wc seq paste fold tac expr hexdump xxd md5sum sha1sum sha256sum cksum crc32 date env printenv basename dirname realpath test printf getopt uname nproc stty; do command -v "$cmd" >/dev/null && printf '%s ' "$cmd"; done; printf '\\n'\n`,
-    '# 支持工具集',
-  );
-}
-
-function runSystemInfo() {
-  runCommand(
-    `printf 'Runtime: WASI sandbox\\nShell: %s\\nSystem: ' "$0"; uname -s; printf 'Architecture: '; uname -m; printf 'Working directory: '; pwd; printf 'Terminal: %s\\nPATH: %s\\n' "$TERM" "$PATH"\n`,
-    '# 系统信息',
-  );
-}
-
-function runPipeTest() {
-  runCommand('echo "hello world" | tr a-z A-Z | sed "s/WORLD/BUSYBOX/g"\n');
-}
+function runExample(source: string) { runCommand(source); }
 
 function clearTerminal() {
   terminal?.clear();

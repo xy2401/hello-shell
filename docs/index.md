@@ -1,9 +1,10 @@
 ---
 layout: home
+title: "Hello Shell"
 
 hero:
   name: "🔧 Hello Shell"
-  text: "Shell 命令、脚本与对比实验"
+  text: "学习常用 Shell 的语法、差异与使用方法。"
   tagline: "8 大运行体 · 9 个统一任务 · 双平台真实采集 · 横向能力对比矩阵"
   image: /favicon.svg
   alt: Hello Shell - Shell 命令学习平台

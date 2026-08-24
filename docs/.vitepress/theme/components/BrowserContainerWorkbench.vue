@@ -1,77 +1,68 @@
 <template>
   <ClientOnly>
-    <section class="runtime-workbench" aria-label="container2wasm 工作台">
-      <header class="runtime-header">
-        <div>
-          <p>CONTAINER2WASM · ALPINE 3.22 · MULTI-SHELL RUNTIME</p>
-          <h2>container2wasm 工作台</h2>
+    <section class="shell-workbench shell-workbench--container" aria-label="container2wasm 工作台">
+      <header class="workbench-header">
+        <div class="workbench-identity">
+          <a href="https://github.com/container2wasm/container2wasm" target="_blank" rel="noopener noreferrer"><strong>container2wasm 0.8.4</strong></a>
+          <span aria-hidden="true">·</span>
+          <a href="https://alpinelinux.org/" target="_blank" rel="noopener noreferrer">Alpine Linux 3.22</a>
         </div>
-        <span class="runtime-status" :class="status"><i></i>{{ statusLabel }}</span>
+        <button
+          type="button"
+          class="workbench-status"
+          :class="status"
+          :disabled="status === 'downloading' || status === 'initializing' || status === 'not_ready'"
+          @click="handleRuntimeAction"
+        ><i></i>{{ runtimeActionLabel }}</button>
       </header>
 
-      <div v-if="runtimeError" class="runtime-error" role="alert" aria-live="assertive">
+      <dl class="workbench-specs">
+        <div><dt>系统</dt><dd>Alpine 3.22</dd></div>
+        <div><dt>架构</dt><dd>RISC-V 64</dd></div>
+        <div><dt>环境</dt><dd>Bash · Zsh · Fish · Py3</dd></div>
+        <div><dt>加载</dt><dd>17 个 Gzip 分片</dd></div>
+      </dl>
+
+      <div v-if="runtimeError" class="workbench-error" role="alert" aria-live="assertive">
         <strong>容器启动失败</strong>
         <pre>{{ runtimeError }}</pre>
       </div>
 
-      <aside v-if="presetVariant" class="preset-card">
+      <aside v-if="presetVariant" class="workbench-preset">
         <div>
           <small>教程案例已预载（不会自动执行）</small>
           <strong>{{ presetCaseTitle }} · {{ presetVariant.label }}</strong>
           <span>{{ presetVariant.sourceFileName }}</span>
         </div>
-        <button type="button" :disabled="status !== 'running' || presetLoaded" @click="loadPresetIntoTerminal">
+        <button type="button" class="workbench-button" :disabled="status !== 'running' || presetLoaded" @click="loadPresetIntoTerminal">
           {{ presetLoaded ? '已载入终端' : status === 'running' ? '载入到终端' : '启动后可载入' }}
         </button>
       </aside>
 
-      <div v-if="status === 'idle' || status === 'error' || status === 'not_ready'" class="runtime-launcher">
-        <div class="runtime-facts">
-          <span><small>运行底座</small><strong>Alpine Linux 3.22</strong></span>
-          <span><small>预装 Shell</small><strong>Bash / Zsh / Fish / Py3</strong></span>
-          <span><small>分片分发</small><strong>Gzip 自动解压 · 17 分片</strong></span>
-        </div>
-
-        <p class="runtime-desc">{{ message }}</p>
-
-        <div v-if="downloadProgress > 0 && status === 'downloading'" class="download-bar-container">
-          <div class="download-bar" :style="{ width: `${downloadProgress}%` }" />
-          <small class="download-text">已加载 {{ downloadedChunks }} / {{ totalChunks }} 分片 ({{ downloadProgress }}%)</small>
-        </div>
-
-        <div class="launcher-actions">
-          <button v-if="status !== 'not_ready'" type="button" class="btn-primary" :disabled="status === 'downloading' || status === 'initializing'" @click="startContainer">
-            {{ status === 'downloading' || status === 'initializing' ? '正在启动容器...' : '启动多 Shell 容器' }}
-          </button>
-          <a v-else href="https://github.com" target="_blank" rel="noreferrer" class="btn-secondary">
-            查看 GitHub Actions 构建流水线
-          </a>
-        </div>
-      </div>
-
-      <div v-show="status === 'downloading' || status === 'initializing' || status === 'running' || status === 'paused'" class="terminal-shell">
-        <div class="terminal-toolbar">
-          <div class="terminal-meta">
-            <span>{{ message }}</span>
-            <div v-if="status === 'downloading'" class="mini-progress">
-              <div class="mini-bar" :style="{ width: `${downloadProgress}%` }" />
+      <div class="workbench-terminal">
+        <div class="workbench-toolbar">
+          <div class="workbench-toolbar-message">
+            <strong>容器终端</strong><span>{{ message }}</span>
+            <div v-if="status === 'downloading'" class="workbench-progress" :title="`已加载 ${downloadedChunks} / ${totalChunks} 分片`">
+              <i :style="{ width: `${downloadProgress}%` }" />
             </div>
           </div>
-          <div class="terminal-btns">
-            <div class="quick-commands" v-if="status === 'running'">
-              <button type="button" class="btn-tag" @click="sendInput('exec bash -l\n')">Bash</button>
-              <button type="button" class="btn-tag" @click="sendInput('exec zsh -l\n')">Zsh</button>
-              <button type="button" class="btn-tag" @click="sendInput('exec fish\n')">Fish</button>
-              <button type="button" class="btn-tag" @click="sendInput('python3\n')">Python 3</button>
-            </div>
-            <button type="button" @click="clearTerminal">清屏</button>
-            <button type="button" :disabled="status !== 'running' && status !== 'paused'" @click="toggleRun">
+          <div class="workbench-controls">
+            <WorkbenchExampleMenu :examples="examples" :disabled="status !== 'running'" :hint="controlHint" @select="runExample" />
+            <span class="workbench-control-hint" :title="status === 'running' || status === 'paused' ? '清空终端显示' : controlHint">
+              <button type="button" class="workbench-button" :disabled="status !== 'running' && status !== 'paused'" @click="clearTerminal">清屏</button>
+            </span>
+            <button type="button" class="workbench-button" :disabled="status !== 'running' && status !== 'paused'" @click="toggleRun">
               {{ status === 'paused' ? '继续' : '暂停' }}
             </button>
-            <button type="button" @click="restartContainer">重新加载</button>
           </div>
         </div>
-        <div ref="terminalHost" class="terminal-host" />
+        <div v-if="status === 'idle' || status === 'error' || status === 'not_ready'" class="workbench-idle">
+          <div class="workbench-preview" aria-hidden="true"><span>alpine:~$</span><code>exec zsh -l</code></div>
+          <p>{{ status === 'idle' ? '容器尚未加载。点击右上角“未启动 · 启动容器”后下载运行时分片。' : message }}</p>
+          <a v-if="status === 'not_ready'" class="workbench-button" href="https://github.com/container2wasm/container2wasm" target="_blank" rel="noopener noreferrer">查看 container2wasm</a>
+        </div>
+        <div v-show="status === 'downloading' || status === 'initializing' || status === 'running' || status === 'paused'" ref="terminalHost" class="workbench-terminal-host" />
       </div>
     </section>
   </ClientOnly>
@@ -83,6 +74,7 @@ import { useData } from 'vitepress';
 import type { Terminal } from '@xterm/xterm';
 import type { FitAddon } from '@xterm/addon-fit';
 import { getLabCase, getLabVariant, type LabVariant } from '../data/labCatalog';
+import WorkbenchExampleMenu from './WorkbenchExampleMenu.vue';
 import '@xterm/xterm/css/xterm.css';
 
 type RuntimeStatus = 'idle' | 'downloading' | 'initializing' | 'running' | 'paused' | 'not_ready' | 'error';
@@ -123,38 +115,52 @@ let worker: Worker | undefined;
 let ttyServer: any | undefined;
 let slavePty: any | undefined;
 
-const statusLabel = computed(() => {
+const runtimeActionLabel = computed(() => {
   switch (status.value) {
     case 'downloading':
-      return `下载分片 (${downloadProgress.value}%)`;
+      return `正在下载 · ${downloadProgress.value}%`;
     case 'initializing':
-      return '初始化虚拟机';
+      return '正在初始化…';
     case 'running':
-      return '运行中';
+      return '运行中 · 重新启动';
     case 'paused':
-      return '已暂停';
+      return '已暂停 · 继续';
     case 'not_ready':
-      return '待云端构建';
+      return '运行时不可用';
     case 'error':
-      return '加载失败';
+      return '启动失败 · 重试';
     default:
-      return '就绪';
+      return '未启动 · 启动容器';
   }
 });
+
+const controlHint = computed(() => status.value === 'running'
+  ? '选择环境或运行示例'
+  : status.value === 'paused' ? '容器已暂停，请先继续' : status.value === 'idle' ? '未启动，请先启动容器' : '容器尚未就绪');
+
+const examples: Array<{ id: string; title: string; summary: string; source: string }> = [
+  { id: 'bash', title: '切换 Bash', summary: '切换并从 /proc 输出当前进程', source: 'exec bash -l\ncat /proc/$$/comm' },
+  { id: 'zsh', title: '切换 Zsh', summary: '切换并从 /proc 输出当前进程', source: 'exec zsh -l\ncat /proc/$$/comm' },
+  { id: 'fish', title: '切换 Fish', summary: '切换并从 /proc 输出当前进程', source: 'exec fish\ncat /proc/$fish_pid/comm' },
+  { id: 'python', title: '启动 Python', summary: '进入 Python 交互解释器', source: 'python3' },
+  { id: 'system', title: '系统信息', summary: '查看 Alpine、内核和架构', source: `cat /etc/os-release; uname -a` },
+];
+
+function handleRuntimeAction() {
+  if (status.value === 'paused') toggleRun();
+  else if (status.value === 'running') restartContainer();
+  else startContainer();
+}
 
 function getTerminalTheme(dark: boolean) {
   return dark
     ? {
-        background: '#090d13',
-        foreground: '#e6edf3',
-        cursor: '#58a6ff',
-        selectionBackground: '#264f78',
+        background: '#08111f', foreground: '#dce7f5', cursor: '#fdba74', selectionBackground: '#7c2d12',
+        red: '#f87171', green: '#4ade80', yellow: '#facc15', blue: '#60a5fa', magenta: '#c084fc', cyan: '#22d3ee', white: '#cbd5e1', brightBlack: '#64748b', brightYellow: '#fde047', brightWhite: '#f8fafc',
       }
     : {
-        background: '#f6f8fa',
-        foreground: '#1f2328',
-        cursor: '#0969da',
-        selectionBackground: '#b6d7ff',
+        background: '#f8fafc', foreground: '#243247', cursor: '#ea580c', selectionBackground: '#fed7aa',
+        red: '#dc2626', green: '#15803d', yellow: '#a16207', blue: '#2563eb', magenta: '#9333ea', cyan: '#0e7490', white: '#e2e8f0', brightBlack: '#64748b', brightYellow: '#ca8a04', brightWhite: '#f8fafc',
       };
 }
 
@@ -361,11 +367,17 @@ async function startContainer() {
 }
 
 function sendInput(cmd: string) {
-  if (slavePty) {
-    slavePty.write(cmd);
-  } else {
-    terminal?.paste(cmd);
-  }
+  if (!terminal) return;
+  // Use raw terminal input instead of paste: interactive shells can enable
+  // bracketed-paste mode, where a pasted newline is intentionally not run.
+  terminal.input(cmd.replace(/\r?\n/g, '\r'), true);
+  terminal.focus();
+}
+
+function runExample(source: string) {
+  if (status.value !== 'running') return;
+  sendInput(`${source}\n`);
+  terminal?.focus();
 }
 
 function encodeBase64(value: string): string {

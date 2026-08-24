@@ -3,7 +3,7 @@ aside: false
 pageClass: shell-runtime-page
 ---
 
-# Pyodide 工作台
+# Pyodide
 
 本页通过 Python 官方维护的 **Pyodide (CPython 3.12 WebAssembly)** 运行时，直接在浏览器中提供原生 Python 3.12 的 `>>> ` 交互式 REPL 终端。
 
