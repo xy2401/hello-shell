@@ -2,33 +2,13 @@
 
 在浏览器里直接运行 Shell，不需要连接命令执行服务器。轻量 Bash 适合快速练习语法，完整 Linux 适合观察真实内核和系统环境。
 
-<div class="runtime-entry-grid">
-  <a href="./just-bash">
-    <small>轻量 · 语法沙箱</small>
-    <strong>JUST-BASH</strong>
-    <span>基于 TypeScript 执行 Bash 语法、管道、重定向和常见 Unix 工具，打开即用。</span>
-  </a>
-  <a href="./busybox">
-    <small>正统 POSIX · 纯本地 WASI</small>
-    <strong>BusyBox</strong>
-    <span>纯本地 600KB WASI 模块，毫秒级启动标准 ash 与 100+ POSIX 经典工具。</span>
-  </a>
-  <a href="./pyodide">
-    <small>官方 WASM · 对照终端</small>
-    <strong>Pyodide</strong>
-    <span>CPython 3.12 官方原生交互终端，直接进行 Shell vs Python 语法横向对照。</span>
-  </a>
-  <a href="./v86">
-    <small>微虚机 · x86 PC</small>
-    <strong>V86</strong>
-    <span>模拟 x86 硬件并引导真实 Buildroot Linux 内核，观察进程树与环境。</span>
-  </a>
-  <a href="./container2wasm">
-    <small>完整容器 · RISC-V 虚拟机</small>
-    <strong>container2wasm</strong>
-    <span>Alpine 容器内自由切换 Bash、Zsh、Fish 与 Python 3，预装多 Shell 工具链。</span>
-  </a>
-</div>
+## 选择运行环境
+
+- **[JUST-BASH](./just-bash)** · 轻量 Bash 语法沙箱。验证引号、管道、重定向与常见 Unix 工具，打开即用。
+- **[BusyBox](./busybox)** · 纯本地 WASI。毫秒级启动 `ash` 与 100+ POSIX 经典工具。
+- **[Pyodide](./pyodide)** · 官方 CPython 3.12 WASM 终端。用于 Shell 与 Python 的语法对照。
+- **[V86](./v86)** · x86 微虚机。引导真实 Buildroot Linux，观察进程树和系统环境。
+- **[container2wasm](./container2wasm)** · Alpine 容器。可切换 Bash、Zsh、Fish 与 Python 3，适合完整工具链实验。
 
 ---
 
