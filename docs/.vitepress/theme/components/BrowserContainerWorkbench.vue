@@ -9,6 +9,11 @@
         <span class="runtime-status" :class="status"><i></i>{{ statusLabel }}</span>
       </header>
 
+      <div v-if="runtimeError" class="runtime-error" role="alert" aria-live="assertive">
+        <strong>容器启动失败</strong>
+        <pre>{{ runtimeError }}</pre>
+      </div>
+
       <div v-if="status === 'idle' || status === 'error' || status === 'not_ready'" class="runtime-launcher">
         <div class="runtime-facts">
           <span><small>运行底座</small><strong>Alpine Linux 3.22</strong></span>
@@ -89,6 +94,7 @@ const { isDark } = useData();
 const terminalHost = ref<HTMLElement>();
 const status = ref<RuntimeStatus>('idle');
 const message = ref('支持在同一容器内无缝切换 Bash 5.2、Zsh 5.9、Fish 3.7 与 Python 3.12。');
+const runtimeError = ref('');
 
 const downloadProgress = ref(0);
 const downloadedChunks = ref(0);
@@ -224,12 +230,35 @@ async function loadChunks(manifest: Manifest, baseUrl: string): Promise<Uint8Arr
   return combined;
 }
 
+function formatRuntimeError(error: any): string {
+  if (typeof error === 'string') return error;
+
+  const message = error?.message || '容器加载失败，请刷新重试。';
+  const stack = error?.stack;
+  return stack && !stack.startsWith(message) ? `${message}\n${stack}` : stack || message;
+}
+
+function showRuntimeError(error: any) {
+  const detail = formatRuntimeError(error);
+  status.value = 'error';
+  message.value = '容器启动失败，详细信息已保留在下方。';
+  runtimeError.value = detail;
+  terminal?.writeln(`\x1b[31m[错误] 加载失败: ${detail}\x1b[0m`);
+}
+
 async function startContainer() {
   try {
+    runtimeError.value = '';
     status.value = 'downloading';
     message.value = '正在读取运行时资产清单...';
     await nextTick();
     await ensureTerminal();
+
+    if (typeof SharedArrayBuffer === 'undefined') {
+      terminal?.writeln('\x1b[33m[环境提示]\x1b[0m 当前预览环境未开放 SharedArrayBuffer。');
+      terminal?.writeln('container2wasm 的多线程 PTY 终端依赖 Cross-Origin Isolation 安全隔离支持。');
+      throw new Error('当前开发服务器未开启 SharedArrayBuffer 跨域隔离支持');
+    }
 
     const baseUrl = import.meta.env.BASE_URL || '/';
 
@@ -267,13 +296,6 @@ async function startContainer() {
     terminal?.writeln(`\x1b[32m✔\x1b[0m 已加载并验证全部分片 (共 ${(wasmBytes.byteLength / 1024 / 1024).toFixed(1)} MB)`);
     terminal?.writeln('\x1b[34m[Boot]\x1b[0m 启动 Alpine Linux 3.22 内核与多 Shell 终端...');
 
-    if (typeof SharedArrayBuffer === 'undefined') {
-      terminal?.writeln('\x1b[33m[环境提示]\x1b[0m 当前预览环境（如 Codespaces 端口转发代理或内嵌 iframe）未开放 SharedArrayBuffer。');
-      terminal?.writeln('container2wasm 的多线程 PTY 终端依赖浏览器的 Cross-Origin Isolation 安全隔离支持。');
-      terminal?.writeln('建议在独立顶级域名（如生产站 Cloudflare Pages）或本地直连环境下使用，或体验上方免隔离的「轻量 Bash」与「v86 Linux」工作台。');
-      throw new Error('当前代理环境未开启 SharedArrayBuffer 跨域隔离支持');
-    }
-
     const { openpty, TtyServer, Termios } = (window as any);
     const { master, slave } = openpty();
     slavePty = slave;
@@ -289,6 +311,27 @@ async function startContainer() {
     // 启动 Worker (附带时间戳防 CDN / 浏览器旧版本缓存)
     worker = new Worker(`${baseUrl}runtime/c2w/engine/worker.js?t=${Date.now()}`);
 
+    worker.addEventListener('message', (event: MessageEvent) => {
+      const data = event.data;
+      if (!data || typeof data !== 'object') return;
+
+      if (data.type === 'runtime-started') {
+        status.value = 'running';
+        message.value = 'WebAssembly 虚拟机已启动，正在引导 Alpine Linux。';
+      } else if (data.type === 'runtime-error') {
+        showRuntimeError(data.stack || data.message || 'Worker 运行失败');
+      }
+    });
+
+    worker.addEventListener('error', (event: ErrorEvent) => {
+      event.preventDefault();
+      showRuntimeError(event.error || event.message || 'Worker 脚本加载失败');
+    });
+
+    worker.addEventListener('messageerror', () => {
+      showRuntimeError('Worker 消息无法解析，容器运行时已停止。');
+    });
+
     worker.postMessage({
       type: 'init',
       wasmBuffer: wasmBytes.buffer
@@ -296,13 +339,8 @@ async function startContainer() {
 
     ttyServer = new TtyServer(slave);
     ttyServer.start(worker);
-
-    status.value = 'running';
-    message.value = '多 Shell 容器已就绪。可通过上方按钮快速切换 Shell，或直接在终端中交互。';
   } catch (err: any) {
-    status.value = 'error';
-    message.value = err.message || '容器加载失败，请刷新重试。';
-    terminal?.writeln(`\x1b[31m[错误] 加载失败: ${err.message}\x1b[0m`);
+    showRuntimeError(err);
   }
 }
 
@@ -337,6 +375,7 @@ function restartContainer() {
     ttyServer.stop();
     ttyServer = undefined;
   }
+  runtimeError.value = '';
   status.value = 'idle';
   downloadProgress.value = 0;
   startContainer();
@@ -428,6 +467,33 @@ onBeforeUnmount(() => {
 
 .runtime-status.error i {
   background: #ef4444;
+}
+
+.runtime-error {
+  margin: 1rem 1.25rem 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid color-mix(in srgb, #ef4444 45%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, #ef4444 10%, var(--vp-c-bg));
+  color: var(--vp-c-text-1);
+}
+
+.runtime-error strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #dc2626;
+}
+
+.runtime-error pre {
+  margin: 0;
+  max-height: 16rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: inherit;
+  background: transparent;
 }
 
 @keyframes pulse {

@@ -3,6 +3,28 @@ import { fileURLToPath } from 'node:url'
 
 const base = process.env.DOCS_BASE || '/'
 
+const crossOriginIsolationHeaders = {
+  'Cross-Origin-Opener-Policy': 'same-origin',
+  'Cross-Origin-Embedder-Policy': 'require-corp',
+}
+
+function crossOriginIsolationPlugin() {
+  const installHeaders = (server: any) => {
+    server.middlewares.use((_req: any, res: any, next: any) => {
+      for (const [name, value] of Object.entries(crossOriginIsolationHeaders)) {
+        res.setHeader(name, value)
+      }
+      next()
+    })
+  }
+
+  return {
+    name: 'hello-shell:cross-origin-isolation',
+    configureServer: installHeaders,
+    configurePreviewServer: installHeaders,
+  }
+}
+
 function shellSidebar(id: string, name: string) {
   return [
     {
@@ -27,17 +49,12 @@ export default defineConfig({
   base,
   head: [['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }]],
   vite: {
+    plugins: [crossOriginIsolationPlugin()],
     server: {
-      headers: {
-        'Cross-Origin-Opener-Policy': 'same-origin',
-        'Cross-Origin-Embedder-Policy': 'require-corp',
-      },
+      headers: crossOriginIsolationHeaders,
     },
     preview: {
-      headers: {
-        'Cross-Origin-Opener-Policy': 'same-origin',
-        'Cross-Origin-Embedder-Policy': 'require-corp',
-      },
+      headers: crossOriginIsolationHeaders,
     },
     resolve: {
       alias: {
