@@ -127,9 +127,13 @@ async function startBusybox() {
     }
     const wasmBytes = await resp.arrayBuffer();
 
+    const workerUrl = new URL(`${baseUrl}runtime/wasmer/worker.mjs`, window.location.href).href;
+    const sdkUrl = new URL(`${baseUrl}runtime/wasmer/index.mjs`, window.location.href).href;
+
     await init({
       module: wasmBytes,
-      workerUrl: 'https://unpkg.com/@wasmer/sdk@0.8.0/dist/index.mjs',
+      workerUrl: workerUrl,
+      sdkUrl: sdkUrl,
     });
 
     message.value = '正在拉取 busybox 预编译模块 (~1MB)...';
