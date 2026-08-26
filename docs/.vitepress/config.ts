@@ -55,6 +55,17 @@ export default defineConfig({
       { text: 'fish', link: '/products/fish/' },
       { text: 'cmd', link: '/products/cmd/' },
       { text: 'PowerShell', link: '/products/powershell/' },
+      {
+        text: '更多',
+        items: [
+          { text: 'Nushell', link: '/products/nushell/' },
+          { text: 'Oils for Unix', link: '/products/oils/' },
+          { text: 'Elvish', link: '/products/elvish/' },
+          { text: 'rc', link: '/products/rc/' },
+          { text: 'Murex', link: '/products/murex/' },
+          { text: 'Dash', link: '/products/dash/' },
+        ],
+      },
       { text: '🧪 实验台', link: '/playground/' },
       { text: '⚖️ 对比矩阵', link: '/matrix/' },
       { text: '📚 参考资料', link: '/reference/' },
