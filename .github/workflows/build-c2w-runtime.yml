@@ -4,9 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       env_list:
-        description: 'Environments to build (e.g. "all" or "python shell-x64")'
+        description: 'Environment to build (select "all" or a specific one)'
         required: true
         default: 'all'
+        type: choice
+        options:
+          - all
+          - base
+          - shell
+          - shell-x64
+          - python
+          - powershell
       chunk_size:
         description: 'Chunk size for splitting (e.g. 10M, 5M)'
         required: true
