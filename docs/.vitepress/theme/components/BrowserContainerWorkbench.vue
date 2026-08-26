@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, watch, onMounted } from 'vue';
 import { useData } from 'vitepress';
 const props = defineProps<{ runtimeId?: string }>();
 const getRuntimeId = () => props.runtimeId || "c2w";
@@ -87,7 +87,8 @@ type RuntimeStatus = 'idle' | 'downloading' | 'initializing' | 'running' | 'paus
 
 interface ChunkItem {
   filename: string;
-  size: number;
+  size?: number;
+  compressedSize?: number;
   sha256?: string;
 }
 
@@ -107,21 +108,34 @@ const message = ref('支持在同一容器内无缝切换 Bash 5.2、Zsh 5.9、F
 
 const targetArchDisplay = computed(() => {
   const rid = getRuntimeId();
-  if (rid === 'c2w-shell-x64' || rid === 'c2w-powershell') return 'AMD64 / x86_64';
+  if (rid === 'c2w-powershell') return 'AMD64 / x86_64';
   return 'RISC-V 64';
 });
 const envDisplay = computed(() => {
   const rid = getRuntimeId();
-  if (rid === 'c2w-python') return 'Python 3 · Pip';
   if (rid === 'c2w-powershell') return 'PowerShell Core';
-  if (rid === 'c2w-shell') return 'Bash·Zsh·Fish·Elvish·Dash';
-  if (rid === 'c2w-shell-x64') return 'Bash·Zsh·Fish·Nu·Elvish';
-  return 'Bash · Zsh · Fish · Py3';
+  if (rid === 'c2w-shell') return 'Bash·Zsh·Fish·Elvish·Dash·Python3';
+  return 'Alpine 3.22 (仅 ash)';
 });
-const chunkDisplay = computed(() => {
-  const rid = getRuntimeId();
-  if (rid === 'c2w-powershell') return '~34 个 Gzip 分片';
-  return '~18 个 Gzip 分片';
+
+const chunkDisplay = ref('获取中...');
+
+onMounted(async () => {
+  try {
+    const baseUrl = import.meta.env.BASE_URL || '/';
+    const res = await fetch(`${baseUrl}runtime/${getRuntimeId()}/manifest.json`);
+    if (res.ok) {
+      const manifest = await res.json() as Manifest;
+      const chunks = manifest.chunks || [];
+      const totalCompressed = chunks.reduce((acc, cur) => acc + (cur.compressedSize || cur.size || 0), 0);
+      const sizeMB = (totalCompressed / 1024 / 1024).toFixed(1);
+      chunkDisplay.value = `${chunks.length} 个分片 (${sizeMB} MB)`;
+    } else {
+      chunkDisplay.value = '未知';
+    }
+  } catch (e) {
+    chunkDisplay.value = '获取失败';
+  }
 });
 
 const runtimeError = ref('');
@@ -308,7 +322,7 @@ async function startContainer() {
     const baseUrl = import.meta.env.BASE_URL || '/';
 
     // 加载 xterm-pty 终端主从协议库
-    await loadScript(`${baseUrl}runtime/${getRuntimeId()}/engine/xterm-pty.js`);
+    await loadScript(`${baseUrl}runtime/c2w/engine/xterm-pty.js`);
 
     const manifestRes = await fetch(`${baseUrl}runtime/${getRuntimeId()}/manifest.json`);
 
@@ -354,7 +368,7 @@ async function startContainer() {
     terminal?.loadAddon(master);
 
     // 启动 Worker (附带时间戳防 CDN / 浏览器旧版本缓存)
-    worker = new Worker(`${baseUrl}runtime/${getRuntimeId()}/engine/worker.js?t=${Date.now()}`);
+    worker = new Worker(`${baseUrl}runtime/c2w/engine/worker.js?t=${Date.now()}`);
 
     worker.addEventListener('message', (event: MessageEvent) => {
       const data = event.data;

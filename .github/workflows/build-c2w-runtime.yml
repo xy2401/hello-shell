@@ -10,10 +10,8 @@ on:
         type: choice
         options:
           - all
-          - base
+          - empty
           - shell
-          - shell-x64
-          - python
           - powershell
       chunk_size:
         description: 'Chunk size for splitting (e.g. 10M, 5M)'
@@ -23,7 +21,7 @@ on:
     branches:
       - main
     paths:
-      - 'Dockerfile.base'
+      - 'docs/public/runtime/c2w*/Dockerfile'
       - '.github/workflows/build-c2w-runtime.yml'
       - 'scripts/package-c2w.js'
 
@@ -60,7 +58,7 @@ jobs:
           CHUNK_SIZE: ${{ inputs.chunk_size || '10M' }}
         run: |
           if [ "${ENV_LIST}" = "all" ]; then
-            ENVS="base shell shell-x64 python powershell"
+            ENVS="empty shell powershell"
           else
             ENVS="${ENV_LIST}"
           fi
@@ -70,16 +68,21 @@ jobs:
             echo "Processing environment: ${ENV_NAME}"
             echo "========================================================="
             
-            if [ "${ENV_NAME}" = "shell-x64" ] || [ "${ENV_NAME}" = "powershell" ]; then
+            if [ "${ENV_NAME}" = "powershell" ]; then
               TARGET_ARCH="amd64"
             else
               TARGET_ARCH="riscv64"
             fi
             
+            DEST_DIR="./docs/public/runtime/c2w"
+            if [ "${ENV_NAME}" != "empty" ]; then
+              DEST_DIR="./docs/public/runtime/c2w-${ENV_NAME}"
+            fi
+
             echo "1. Building Docker image for ${TARGET_ARCH}..."
             docker buildx build \
               --platform="linux/${TARGET_ARCH}" \
-              -f Dockerfile.${ENV_NAME} \
+              -f "${DEST_DIR}/Dockerfile" \
               -t hello-shell-${ENV_NAME}:latest \
               --load .
             

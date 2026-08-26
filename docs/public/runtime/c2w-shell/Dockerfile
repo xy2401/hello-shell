@@ -1,13 +1,15 @@
 FROM alpine:3.22
 
 LABEL maintainer="hello-shell"
-LABEL description="Prebuilt multi-shell environment for browser container workbench"
+LABEL description="Prebuilt multi-shell & Python environment for browser container workbench"
 
-# Install essential Shells and Unix tooling
+# Install essential Shells, Python, and Unix tooling
 RUN apk add --no-cache \
     bash \
     zsh \
     fish \
+    elvish \
+    dash \
     python3 \
     py3-pip \
     jq \
@@ -38,6 +40,6 @@ RUN echo '[ -f /etc/motd ] && cat /etc/motd' >> /root/.bashrc && \
     echo '[ -f /etc/motd ] && cat /etc/motd' >> /root/.zshrc && \
     mkdir -p /root/.config/fish && \
     echo 'if test -f /etc/motd; cat /etc/motd; end' >> /root/.config/fish/config.fish && \
-    printf "\n=======================================================\n  Welcome to hello-shell Browser Multi-Shell Container\n  Available Shells: bash, zsh, fish, python3, sh (ash)\n  Workspace: /workspace\n=======================================================\n\n" > /etc/motd
+    printf "\n=======================================================\n  Welcome to hello-shell Browser Multi-Shell Container\n  Available Shells: bash, zsh, fish, elvish, dash, python3\n  Workspace: /workspace\n=======================================================\n\n" > /etc/motd
 
 CMD ["/bin/bash", "-l"]
