@@ -29,6 +29,7 @@
           <span class="workbench-toolbar-message"><strong>交互终端</strong>{{ message }}</span>
           <div class="workbench-controls">
             <WorkbenchExampleMenu :examples="examples" :disabled="status !== 'running'" :hint="controlHint" @select="runSnippet" />
+            <button type="button" class="workbench-button" :disabled="status !== 'running'" @click="loadAllExperiments" title="将所有实验脚本和数据注入到虚拟文件系统中">加载实验</button>
             <span class="workbench-control-hint" :title="status === 'running' ? '清空终端显示' : controlHint">
               <button type="button" class="workbench-button" :disabled="status !== 'running'" @click="clearTerminal">清屏</button>
             </span>
@@ -49,6 +50,7 @@ import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useData } from 'vitepress';
 import type { IDisposable, Terminal } from '@xterm/xterm';
 import type { FitAddon } from '@xterm/addon-fit';
+import { sourceModules, fixtureModules } from "../data/matrixExperiments";
 import WorkbenchExampleMenu from './WorkbenchExampleMenu.vue';
 import '@xterm/xterm/css/xterm.css';
 
@@ -85,6 +87,7 @@ const examples = [
   { id: 'format', title: '变量格式化', summary: '使用 f-string 处理字符串和数字', source: 'name = "world"; score = 98.5; print(f"Hello, {name.upper()}! Score={score:.2f}")' },
   { id: 'data', title: '数据处理', summary: '汇总结构化列表中的数值', source: 'data = [{"id": 1, "val": 10}, {"id": 2, "val": 25}]; print("Total:", sum(x["val"] for x in data))' },
   { id: 'stdlib', title: '标准库', summary: '组合 JSON、正则和数学模块', source: 'import json, re, math; print(json.dumps({"match": bool(re.search(r"sh\\w+", "shell")), "root": math.sqrt(81)}))' },
+  { id: 'demo', title: '执行文件脚本', summary: '运行我们刚刚注入的测试脚本', source: 'exec(open("/python/06_pipes_files.py").read())' },
 ] as const;
 
 watch(isDark, () => applyTerminalTheme());
@@ -269,6 +272,53 @@ async function runSnippet(snippet: string) {
     terminal?.writeln(`\x1b[31m${err.message || String(err)}\x1b[0m`);
   }
   printPrompt();
+}
+
+async function loadAllExperiments() {
+  if (status.value !== 'running' || !pyodide || !terminal) return;
+
+  try {
+    const allModules = { ...sourceModules, ...fixtureModules };
+    const files = Object.entries(allModules)
+      .map(([key, content]) => {
+        const match = key.match(/demos\/(.+)$/);
+        return match ? { relPath: match[1], content } : undefined;
+      })
+      .filter((file): file is { relPath: string; content: string } => !!file);
+
+    terminal.writeln(`\r\n\x1b[34m[加载实验]\x1b[0m 正在极速注入 ${files.length} 个实验素材至 Pyodide 虚拟文件系统...`);
+
+    for (const { relPath, content } of files) {
+      // Map shared/fixtures to /fixtures as expected by python scripts
+      const targetPath = relPath.startsWith('shared/fixtures') 
+        ? `/${relPath.replace('shared/fixtures', 'fixtures')}`
+        : `/${relPath}`;
+        
+      const dir = targetPath.substring(0, targetPath.lastIndexOf('/'));
+      if (dir) {
+        const parts = dir.split('/');
+        let currentPath = '';
+        for (const part of parts) {
+          if (!part) continue;
+          currentPath += '/' + part;
+          try {
+            pyodide.FS.mkdir(currentPath);
+          } catch (e: any) {
+            // Ignore if directory exists
+            if (e.code !== 'EEXIST') console.warn(e);
+          }
+        }
+      }
+      
+      pyodide.FS.writeFile(targetPath, content);
+    }
+
+    terminal.writeln(`\x1b[32m✔\x1b[0m 成功载入所有素材。试试执行: \x1b[36mexec(open('/python/06_pipes_files.py').read())\x1b[0m`);
+    printPrompt();
+  } catch (err: any) {
+    terminal.writeln(`\r\n\x1b[31m[错误]\x1b[0m 素材加载失败: ${err.message || String(err)}`);
+    printPrompt();
+  }
 }
 
 function clearTerminal() {
