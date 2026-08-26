@@ -56,7 +56,7 @@ export default defineConfig({
       { text: 'cmd', link: '/products/cmd/' },
       { text: 'PowerShell', link: '/products/powershell/' },
       {
-        text: '更多',
+        text: '📦 更多',
         items: [
           { text: '👑 Nushell', link: '/products/nushell/' },
           { text: '🛢️ Oils for Unix', link: '/products/oils/' },
