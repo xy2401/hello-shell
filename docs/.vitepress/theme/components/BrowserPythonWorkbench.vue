@@ -338,7 +338,7 @@ async function executeShellCommand() {
   const execCode = `
 def _sh():
     import os, shutil, runpy
-    args = ${JSON.stringify(cmd.split(/\\s+/))}
+    args = ${JSON.stringify(cmd.split(/\s+/))}
     cmd_name, args = args[0], args[1:]
     try:
         if cmd_name == 'pwd': print(os.getcwd())
@@ -353,7 +353,9 @@ def _sh():
             if os.path.isdir(args[0]): shutil.copytree(args[0], args[1])
             else: shutil.copy(args[0], args[1])
         elif cmd_name == 'mv': shutil.move(args[0], args[1])
-        elif cmd_name == 'python': runpy.run_path(args[0], run_name='__main__')
+        elif cmd_name == 'python':
+            if not args: print("bash: python: missing script path")
+            else: runpy.run_path(args[0], run_name='__main__')
         else: print(f"bash: {cmd_name}: command not found")
     except Exception as e:
         print(f"{cmd_name}: {type(e).__name__}: {e}")
