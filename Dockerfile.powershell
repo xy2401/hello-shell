@@ -13,7 +13,6 @@ RUN apk add --no-cache \
     wget \
     tree \
     nano \
-    vim \
     && rm -rf /var/cache/apk/*
 
 WORKDIR /workspace

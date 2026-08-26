@@ -3,14 +3,6 @@ name: build-c2w-runtime
 on:
   workflow_dispatch:
     inputs:
-      target_arch:
-        description: 'Target Architecture (riscv64 or amd64)'
-        required: true
-        default: 'amd64'
-        type: choice
-        options:
-          - riscv64
-          - amd64
       chunk_size:
         description: 'Chunk size for splitting (e.g. 10M, 5M)'
         required: true
@@ -52,15 +44,20 @@ jobs:
 
       - name: Build, Convert and Package All Environments
         env:
-          TARGET_ARCH: ${{ inputs.target_arch || 'amd64' }}
           CHUNK_SIZE: ${{ inputs.chunk_size || '10M' }}
         run: |
-          for ENV_NAME in base shell python powershell; do
+          for ENV_NAME in base shell shell-x64 python powershell; do
             echo "========================================================="
             echo "Processing environment: ${ENV_NAME}"
             echo "========================================================="
             
-            echo "1. Building Docker image..."
+            if [ "${ENV_NAME}" = "shell-x64" ] || [ "${ENV_NAME}" = "powershell" ]; then
+              TARGET_ARCH="amd64"
+            else
+              TARGET_ARCH="riscv64"
+            fi
+            
+            echo "1. Building Docker image for ${TARGET_ARCH}..."
             docker buildx build \
               --platform="linux/${TARGET_ARCH}" \
               -f Dockerfile.${ENV_NAME} \

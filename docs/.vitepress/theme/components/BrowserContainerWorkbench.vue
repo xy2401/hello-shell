@@ -106,13 +106,16 @@ const status = ref<RuntimeStatus>('idle');
 const message = ref('支持在同一容器内无缝切换 Bash 5.2、Zsh 5.9、Fish 3.7 与 Python 3.12。');
 
 const targetArchDisplay = computed(() => {
-  return "AMD64 / x86_64";
+  const rid = getRuntimeId();
+  if (rid === 'c2w-shell-x64' || rid === 'c2w-powershell') return 'AMD64 / x86_64';
+  return 'RISC-V 64';
 });
 const envDisplay = computed(() => {
   const rid = getRuntimeId();
   if (rid === 'c2w-python') return 'Python 3 · Pip';
   if (rid === 'c2w-powershell') return 'PowerShell Core';
-  if (rid === 'c2w-shell') return 'Bash·Zsh·Fish·Nu·Elvish';
+  if (rid === 'c2w-shell') return 'Bash·Zsh·Fish·Elvish·Dash';
+  if (rid === 'c2w-shell-x64') return 'Bash·Zsh·Fish·Nu·Elvish';
   return 'Bash · Zsh · Fish · Py3';
 });
 const chunkDisplay = computed(() => {
