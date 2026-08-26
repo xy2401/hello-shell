@@ -289,3 +289,16 @@ Windows 内核（NT 内核）
 | 「换 shell 会搞坏系统」 | shell 只是翻译官，可随意安装、卸载、切换；内核与数据不受影响 |
 | 「没有 GUI 这台机器就没法用」 | GUI 是图形化的 shell 表现形式，不是必需品；命令行 shell 可完成全部管理操作 |
 
+
+## 🚀 特色与下一代 Shell 入口
+
+探索打破传统，带来全新设计哲学的特色与下一代 Shell 方案：
+
+| Shell | 平台 | 类型 | 核心价值 | 分卷文档 |
+| :--- | :--- | :--- | :--- | --- |
+| [Nushell](/products/nushell/) 👑 | 跨平台 | 结构化数据 | 把终端变成强大的数据表格引擎，抛弃纯文本流，极现代 | [查看详情](/products/nushell/) → |
+| [Oils](/products/oils/) 🛢️ | Unix | 双向兼容 | 致力于终结 Bash 的“新一代工业级 Shell”，无缝继承资产 | [查看详情](/products/oils/) → |
+| [Elvish](/products/elvish/) 🧝 | 跨平台 | 函数式 | 极具编程语言素养，Go语言编写，原生强大异常捕获机制 | [查看详情](/products/elvish/) → |
+| [rc](/products/rc/) 🪐 | Unix | 极简主义 | 彻底干掉空格噩梦的极简主义经典，Plan 9 默认命令行 | [查看详情](/products/rc/) → |
+| [Murex](/products/murex/) 🦕 | 跨平台 | 实用数据流 | 折中的实用派，既保留 POSIX 习惯又原生支持 JSON 等格式 | [查看详情](/products/murex/) → |
+| [Dash](/products/dash/) ⚡ | Linux | 极速引擎 | 把速度和轻量化推向极值的后台王者，Ubuntu/Debian 核心基石 | [查看详情](/products/dash/) → |
