@@ -3,6 +3,10 @@ name: build-c2w-runtime
 on:
   workflow_dispatch:
     inputs:
+      env_list:
+        description: 'Environments to build (e.g. "all" or "python shell-x64")'
+        required: true
+        default: 'all'
       chunk_size:
         description: 'Chunk size for splitting (e.g. 10M, 5M)'
         required: true
@@ -44,9 +48,16 @@ jobs:
 
       - name: Build, Convert and Package All Environments
         env:
+          ENV_LIST: ${{ inputs.env_list || 'all' }}
           CHUNK_SIZE: ${{ inputs.chunk_size || '10M' }}
         run: |
-          for ENV_NAME in base shell shell-x64 python powershell; do
+          if [ "${ENV_LIST}" = "all" ]; then
+            ENVS="base shell shell-x64 python powershell"
+          else
+            ENVS="${ENV_LIST}"
+          fi
+          
+          for ENV_NAME in ${ENVS}; do
             echo "========================================================="
             echo "Processing environment: ${ENV_NAME}"
             echo "========================================================="
