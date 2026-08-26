@@ -40,6 +40,10 @@
           <p>{{ status === 'idle' ? '终端尚未加载。点击右上角“未启动 · 启动 Python”后即可输入代码。' : message }}</p>
         </div>
         <div v-show="status === 'loading' || status === 'running'" ref="terminalHost" class="workbench-terminal-host" />
+        <div v-show="status === 'running'" class="workbench-pseudo-shell">
+          <span class="shell-prompt">$</span>
+          <input v-model="shellInput" @keyup.enter="executeShellCommand" placeholder="在此输入伪终端命令 (如: ls, pwd, python /python/06_pipes_files.py)" spellcheck="false" autocomplete="off" />
+        </div>
       </div>
     </section>
   </ClientOnly>
@@ -61,6 +65,7 @@ const terminalHost = ref<HTMLElement>();
 const status = ref<RuntimeStatus>('idle');
 const message = ref('官方 CPython 3.12 解释器在浏览器本地执行，直接对照 Shell 语法。');
 const runtimeError = ref('');
+const shellInput = ref('');
 
 let terminal: Terminal | undefined;
 let fitAddon: FitAddon | undefined;
@@ -196,21 +201,8 @@ async function startPyodide() {
         if (trimmed) {
           history.push(trimmed);
           historyIndex = history.length;
-          
-          let execCode = trimmed;
-          // Magic command sugar to make REPL feel more like a shell
-          if (trimmed.startsWith('python ')) {
-            const file = trimmed.substring(7).trim();
-            execCode = `import runpy; runpy.run_path("${file}", run_name="__main__")`;
-          } else if (trimmed === 'ls' || trimmed.startsWith('ls ')) {
-            const dir = trimmed.substring(2).trim() || '.';
-            execCode = `import os; print("\\n".join(os.listdir("${dir}")))`;
-          } else if (trimmed === 'pwd') {
-            execCode = `import os; print(os.getcwd())`;
-          }
-
           try {
-            const res = await pyodide.runPythonAsync(execCode);
+            const res = await pyodide.runPythonAsync(trimmed);
             if (res !== undefined && res !== null) {
               terminal?.writeln(String(res));
             }
@@ -277,18 +269,7 @@ async function runSnippet(snippet: string) {
   history.push(snippet);
   historyIndex = history.length;
   try {
-    let execCode = snippet;
-    if (snippet.startsWith('python ')) {
-      const file = snippet.substring(7).trim();
-      execCode = `import runpy; runpy.run_path("${file}", run_name="__main__")`;
-    } else if (snippet === 'ls' || snippet.startsWith('ls ')) {
-      const dir = snippet.substring(2).trim() || '.';
-      execCode = `import os; print("\\n".join(os.listdir("${dir}")))`;
-    } else if (snippet === 'pwd') {
-      execCode = `import os; print(os.getcwd())`;
-    }
-
-    const res = await pyodide.runPythonAsync(execCode);
+    const res = await pyodide.runPythonAsync(snippet);
     if (res !== undefined && res !== null) {
       terminal?.writeln(String(res));
     }
@@ -343,6 +324,40 @@ async function loadAllExperiments() {
     terminal.writeln(`\r\n\x1b[31m[错误]\x1b[0m 素材加载失败: ${err.message || String(err)}`);
     printPrompt();
   }
+}
+
+async function executeShellCommand() {
+  const cmd = shellInput.value.trim();
+  if (!cmd || status.value !== 'running' || !pyodide || !terminal) return;
+  
+  // echo command
+  terminal.writeln(`\r\n\x1b[33m$ ${cmd}\x1b[0m`);
+  shellInput.value = '';
+  
+  let execCode = '';
+  if (cmd.startsWith('python ')) {
+    const file = cmd.substring(7).trim();
+    execCode = `import runpy; runpy.run_path("${file}", run_name="__main__")`;
+  } else if (cmd === 'ls' || cmd.startsWith('ls ')) {
+    const dir = cmd.substring(2).trim() || '.';
+    execCode = `import os; print("\\n".join(os.listdir("${dir}")))`;
+  } else if (cmd === 'pwd') {
+    execCode = `import os; print(os.getcwd())`;
+  } else {
+    terminal.writeln(`\x1b[31mbash: ${cmd}: command not found (pseudo-shell only supports: ls, pwd, python)\x1b[0m`);
+    printPrompt();
+    return;
+  }
+  
+  try {
+    const res = await pyodide.runPythonAsync(execCode);
+    if (res !== undefined && res !== null) {
+      terminal.writeln(String(res));
+    }
+  } catch (err: any) {
+    terminal.writeln(`\x1b[31m${err.message || String(err)}\x1b[0m`);
+  }
+  printPrompt();
 }
 
 function clearTerminal() {
@@ -560,6 +575,35 @@ onBeforeUnmount(() => {
   padding: 0.75rem;
   height: 380px;
   background: #090d13;
+}
+
+.workbench-pseudo-shell {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: var(--vp-c-bg-soft);
+  border-top: 1px solid var(--vp-c-divider);
+  gap: 0.5rem;
+}
+
+.shell-prompt {
+  color: var(--vp-c-brand-1);
+  font-weight: bold;
+  font-family: monospace;
+}
+
+.workbench-pseudo-shell input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--vp-c-text-1);
+  font-family: 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', monospace;
+  font-size: 0.8rem;
+  outline: none;
+}
+
+.workbench-pseudo-shell input::placeholder {
+  color: var(--vp-c-text-3);
 }
 
 @keyframes pulse {
