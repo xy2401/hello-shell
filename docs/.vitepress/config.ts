@@ -227,6 +227,7 @@ export default defineConfig({
             { text: '证据政策', link: '/reference/evidence-policy' },
             { text: '官方资料基线', link: '/reference/sources' },
             { text: '编程语言 Shell (REPL)', link: '/reference/lang-repl' },
+            { text: '特定领域 Shell', link: '/reference/domain-repl' },
           ],
         },
       ],
