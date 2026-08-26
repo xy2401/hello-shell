@@ -38,7 +38,12 @@
           </div>
           <div class="workbench-controls">
             <WorkbenchExampleMenu :examples="examples" :disabled="status !== 'running'" :hint="controlHint" @select="runExample" />
-            <button type="button" class="workbench-button" @click="loadAllExperiments">加载实验</button>
+            <button
+              type="button"
+              class="workbench-button"
+              :disabled="status !== 'running' || isLoadingExperiments"
+              @click="loadAllExperiments"
+            >{{ isLoadingExperiments ? '加载中…' : '加载实验' }}</button>
             <span class="workbench-control-hint" :title="status === 'running' || status === 'paused' ? '清空终端显示' : controlHint">
               <button type="button" class="workbench-button" :disabled="status !== 'running' && status !== 'paused'" @click="clearTerminal">清屏</button>
             </span>
@@ -98,6 +103,7 @@ const terminalHost = ref<HTMLElement>();
 const status = ref<RuntimeStatus>('idle');
 const message = ref('支持在同一容器内无缝切换 Bash 5.2、Zsh 5.9、Fish 3.7 与 Python 3.12。');
 const runtimeError = ref('');
+const isLoadingExperiments = ref(false);
 
 const downloadProgress = ref(0);
 const downloadedChunks = ref(0);
@@ -361,12 +367,36 @@ async function startContainer() {
   }
 }
 
-function sendInput(cmd: string) {
+function sendInput(cmd: string, wasUserInput = true) {
   if (!terminal) return;
   // Use raw terminal input instead of paste: interactive shells can enable
   // bracketed-paste mode, where a pasted newline is intentionally not run.
-  terminal.input(cmd.replace(/\r?\n/g, '\r'), true);
-  terminal.focus();
+  terminal.input(cmd.replace(/\r?\n/g, '\r'), wasUserInput);
+  if (wasUserInput) terminal.focus();
+}
+
+function waitForTerminalTitle(expected: string, errorPrefix?: string, timeoutMs = 15_000) {
+  if (!terminal) return Promise.reject(new Error('终端尚未初始化'));
+
+  return new Promise<void>((resolve, reject) => {
+    const timeout = window.setTimeout(() => {
+      subscription.dispose();
+      reject(new Error(`等待容器确认超时（${expected}）`));
+    }, timeoutMs);
+
+    const subscription = terminal!.onTitleChange((title) => {
+      if (title !== expected && (!errorPrefix || !title.startsWith(errorPrefix))) return;
+
+      window.clearTimeout(timeout);
+      subscription.dispose();
+      if (title === expected) resolve();
+      else reject(new Error(`容器端写入失败（${title.slice(errorPrefix!.length) || 'unknown'}）`));
+    });
+  });
+}
+
+function shellSingleQuote(value: string) {
+  return "'" + value.replace(/'/g, "'\\''") + "'";
 }
 
 const isDragging = ref(false);
@@ -415,12 +445,22 @@ function runExample(source: string) {
 }
 
 async function loadAllExperiments() {
-  console.log('loadAllExperiments triggered! Status:', status.value);
   if (status.value !== 'running') {
     alert('请先点击右上角的【启动容器】按钮，等待终端提示进入 Alpine Linux 后，再加载实验素材！');
     return;
   }
-  
+
+  if (isLoadingExperiments.value || !terminal) return;
+
+  isLoadingExperiments.value = true;
+
+  const sessionId = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+  const echoOffTitle = `c2w-import-echo-off-${sessionId}`;
+  const readyTitle = `c2w-import-ready-${sessionId}`;
+  const fileTitlePrefix = `c2w-import-file-${sessionId}-`;
+  const errorTitlePrefix = `c2w-import-error-${sessionId}-`;
+  const doneTitle = `c2w-import-done-${sessionId}`;
+
   try {
     const utf8ToBase64 = (str: string) => {
       const bytes = new TextEncoder().encode(str);
@@ -430,65 +470,101 @@ async function loadAllExperiments() {
       }
       return btoa(binary);
     };
-    
+
     const allModules = { ...sourceModules, ...fixtureModules };
-    
-    terminal?.writeln(`\r\n\x1b[34m[加载实验]\x1b[0m 开始逐个注入实验素材...`);
-    sendInput(`stty -echo\n`);
-    await new Promise(resolve => setTimeout(resolve, 50));
-    
-    sendInput(`mkdir -p demos\n`);
-    await new Promise(resolve => setTimeout(resolve, 10));
-    
-    let fileCount = 0;
-    for (const [key, content] of Object.entries(allModules)) {
-      const match = key.match(/demos\/(.+)$/);
-      if (!match) continue;
-      
-      const relPath = match[1];
-      const dir = relPath.includes('/') ? relPath.substring(0, relPath.lastIndexOf('/')) : '';
-      
-      if (dir) {
-        sendInput(`mkdir -p "demos/${dir}"\n`);
-        await new Promise(resolve => setTimeout(resolve, 10));
+    const experimentFiles = Object.entries(allModules)
+      .map(([key, content]) => {
+        const match = key.match(/demos\/(.+)$/);
+        return match ? { relPath: match[1], content } : undefined;
+      })
+      .filter((file): file is { relPath: string; content: string } => !!file)
+      .sort((a, b) => a.relPath.localeCompare(b.relPath));
+
+    message.value = `正在加载 ${experimentFiles.length} 个实验素材…`;
+    terminal.writeln(`\r\n\x1b[34m[加载实验]\x1b[0m 正在可靠注入 ${experimentFiles.length} 个实验素材…`);
+
+    // Disable terminal echo first, then wait for an invisible OSC title signal.
+    // This keeps importer protocol lines and shell prompts out of the terminal.
+    const echoOffPromise = waitForTerminalTitle(echoOffTitle);
+    sendInput(`stty -echo; printf '\\033]0;${echoOffTitle}\\007'\n`, false);
+    await echoOffPromise;
+
+    const importerScript = `
+notify() { printf "\\033]0;%s\\007" "$1"; }
+fail() {
+  stty echo
+  notify "${errorTitlePrefix}$1"
+  exit "$2"
+}
+root="$PWD/demos"
+mkdir -p "$root" || fail setup 2
+notify "${readyTitle}"
+while IFS=" " read -r kind file_id encoded_path encoded_content; do
+  if [ "$kind" = "DONE" ]; then
+    stty echo
+    notify "${doneTitle}"
+    exit 0
+  fi
+  [ "$kind" = "FILE" ] || fail protocol 3
+  rel_path=$(printf "%s" "$encoded_path" | base64 -d) || fail "$file_id" 4
+  case "$rel_path" in
+    ""|/*|..|../*|*/..|*/../*) fail "$file_id" 5 ;;
+  esac
+  target="$root/$rel_path"
+  mkdir -p "$(dirname "$target")" || fail "$file_id" 6
+  if [ "$encoded_content" = "-" ]; then
+    : > "$target" || fail "$file_id" 7
+  else
+    printf "%s" "$encoded_content" | base64 -d > "$target" || fail "$file_id" 8
+  fi
+  notify "${fileTitlePrefix}$file_id"
+done
+fail eof 9
+`.trim();
+
+    const importerPayload = utf8ToBase64(importerScript);
+    const importerWrapper = `temp="/tmp/hello-shell-import-${sessionId}.sh"; printf "%s" "$1" | base64 -d > "$temp" || exit 10; sh "$temp"; rc=$?; rm -f "$temp"; exit "$rc"`;
+    const readyPromise = waitForTerminalTitle(readyTitle, errorTitlePrefix);
+    sendInput(`env sh -c ${shellSingleQuote(importerWrapper)} c2w-import ${importerPayload}\n`, false);
+    await readyPromise;
+
+    for (let index = 0; index < experimentFiles.length; index++) {
+      const { relPath, content } = experimentFiles[index];
+      const fileId = String(index + 1);
+      const pathPayload = utf8ToBase64(relPath);
+      const contentPayload = utf8ToBase64(content) || '-';
+      const ackTitle = `${fileTitlePrefix}${fileId}`;
+      const ackPromise = waitForTerminalTitle(ackTitle, errorTitlePrefix);
+
+      sendInput(`FILE ${fileId} ${pathPayload} ${contentPayload}\n`, false);
+      try {
+        await ackPromise;
+      } catch (error) {
+        throw new Error(`写入 demos/${relPath} 失败: ${error instanceof Error ? error.message : String(error)}`);
       }
-      
-      const base64 = utf8ToBase64(content);
-      const targetPath = `demos/${relPath}`;
-      
-      terminal?.writeln(`\x1b[90m[注入]\x1b[0m 正在写入 ${targetPath} ...`);
-      
-      const chunkSize = 1024;
-      if (base64.length > chunkSize) {
-        sendInput(`cat > "${targetPath}.b64"\n`);
-        await new Promise(resolve => setTimeout(resolve, 10));
-        
-        for (let i = 0; i < base64.length; i += chunkSize) {
-          const chunk = base64.slice(i, i + chunkSize);
-          sendInput(chunk + '\n');
-          await new Promise(resolve => setTimeout(resolve, 15));
-        }
-        sendInput(`\x04`); // Ctrl+D
-        await new Promise(resolve => setTimeout(resolve, 20));
-        
-        sendInput(`base64 -d "${targetPath}.b64" > "${targetPath}" && rm "${targetPath}.b64"\n`);
-      } else {
-        sendInput(`echo "${base64}" | base64 -d > "${targetPath}"\n`);
+
+      const completed = index + 1;
+      message.value = `正在加载实验素材：${completed} / ${experimentFiles.length}`;
+      if (completed % 10 === 0 || completed === experimentFiles.length) {
+        terminal.writeln(`\x1b[90m[注入]\x1b[0m 已完成 ${completed} / ${experimentFiles.length}`);
       }
-      
-      await new Promise(resolve => setTimeout(resolve, 15));
-      fileCount++;
     }
-    
-    sendInput(`stty echo\n`);
-    await new Promise(resolve => setTimeout(resolve, 50));
-    
-    sendInput(`cd demos && clear && ls -la\n`);
-    terminal?.writeln(`\r\n\x1b[32m✔\x1b[0m 成功逐个载入 ${fileCount} 个实验素材。`);
-    terminal?.focus();
+
+    const donePromise = waitForTerminalTitle(doneTitle, errorTitlePrefix);
+    sendInput(`DONE\n`, false);
+    await donePromise;
+
+    message.value = `已加载 ${experimentFiles.length} 个实验素材，目录为 demos/。`;
+    terminal.writeln(`\r\n\x1b[32m✔\x1b[0m 成功载入 ${experimentFiles.length} 个实验素材；当前目录未改变。`);
   } catch (err) {
-    sendInput(`stty echo\n`);
-    terminal?.writeln(`\r\n\x1b[31m[错误]\x1b[0m 素材加载失败: ${err}`);
+    // Interrupt a possibly waiting importer and always restore terminal echo.
+    sendInput(`\x03stty echo\n`, false);
+    const detail = err instanceof Error ? err.message : String(err);
+    message.value = `实验素材加载失败：${detail}`;
+    terminal.writeln(`\r\n\x1b[31m[错误]\x1b[0m 素材加载失败: ${detail}`);
+  } finally {
+    isLoadingExperiments.value = false;
+    terminal.focus();
   }
 }
 
