@@ -51,7 +51,7 @@ export interface MatrixVariant {
 
 type RawModules = Record<string, string>
 
-const sourceModules = import.meta.glob('../../../../demos/**/*.{sh,zsh,fish,ps1,py,bat}', {
+export const sourceModules = import.meta.glob('../../../../demos/**/*.{sh,zsh,fish,ps1,py,bat}', {
   eager: true,
   query: '?raw',
   import: 'default',
@@ -63,7 +63,7 @@ const snapshotModules = import.meta.glob('../../../../demos/**/*.out.txt', {
   import: 'default',
 }) as RawModules
 
-const fixtureModules = import.meta.glob('../../../../demos/shared/fixtures/**/*', {
+export const fixtureModules = import.meta.glob('../../../../demos/shared/fixtures/**/*', {
   eager: true,
   query: '?raw',
   import: 'default',

@@ -38,6 +38,7 @@
           </div>
           <div class="workbench-controls">
             <WorkbenchExampleMenu :examples="examples" :disabled="status !== 'running'" :hint="controlHint" @select="runExample" />
+            <button type="button" class="workbench-button" @click="loadAllExperiments">加载实验</button>
             <span class="workbench-control-hint" :title="status === 'running' || status === 'paused' ? '清空终端显示' : controlHint">
               <button type="button" class="workbench-button" :disabled="status !== 'running' && status !== 'paused'" @click="clearTerminal">清屏</button>
             </span>
@@ -51,7 +52,16 @@
           <p>{{ status === 'idle' ? '容器尚未加载。点击右上角“未启动 · 启动容器”后下载运行时分片。' : message }}</p>
           <a v-if="status === 'not_ready'" class="workbench-button" href="https://github.com/container2wasm/container2wasm" target="_blank" rel="noopener noreferrer">查看 container2wasm</a>
         </div>
-        <div v-show="status === 'downloading' || status === 'initializing' || status === 'running' || status === 'paused'" ref="terminalHost" class="workbench-terminal-host" />
+        <div 
+          v-show="status === 'downloading' || status === 'initializing' || status === 'running' || status === 'paused'" 
+          ref="terminalHost" 
+          class="workbench-terminal-host" 
+          @dragover.prevent
+          @dragenter.prevent="isDragging = true"
+          @dragleave.prevent="isDragging = false"
+          @drop.prevent="handleDrop"
+          :class="{ 'is-dragging': isDragging }"
+        />
       </div>
     </section>
   </ClientOnly>
@@ -63,6 +73,7 @@ import { useData } from 'vitepress';
 import type { Terminal } from '@xterm/xterm';
 import type { FitAddon } from '@xterm/addon-fit';
 import WorkbenchExampleMenu from './WorkbenchExampleMenu.vue';
+import { sourceModules, fixtureModules } from '../data/matrixExperiments';
 import '@xterm/xterm/css/xterm.css';
 
 type RuntimeStatus = 'idle' | 'downloading' | 'initializing' | 'running' | 'paused' | 'not_ready' | 'error';
@@ -358,10 +369,123 @@ function sendInput(cmd: string) {
   terminal.focus();
 }
 
+const isDragging = ref(false);
+
+async function handleDrop(e: DragEvent) {
+  isDragging.value = false;
+  if (status.value !== 'running') {
+    terminal?.writeln('\x1b[33m[提示]\x1b[0m 容器未运行，无法接收文件。请先启动容器。');
+    return;
+  }
+  
+  const files = e.dataTransfer?.files;
+  if (!files || files.length === 0) return;
+  
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = reader.result as string;
+          resolve(result.split(',')[1]);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      
+      const safeFilename = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+      terminal?.writeln(`\r\n\x1b[34m[上传]\x1b[0m 正在注入文件: ${safeFilename} (${(file.size / 1024).toFixed(1)} KB)...`);
+      
+      const cmd = `echo "${base64}" | base64 -d > "${safeFilename}"\n`;
+      sendInput(cmd);
+      
+      terminal?.writeln(`\x1b[32m✔\x1b[0m ${safeFilename} 注入完成。您可以通过 cat ${safeFilename} 查看。`);
+    } catch (err) {
+      terminal?.writeln(`\r\n\x1b[31m[错误]\x1b[0m 注入 ${file.name} 失败: ${err}`);
+    }
+  }
+}
+
 function runExample(source: string) {
   if (status.value !== 'running') return;
   sendInput(`${source}\n`);
   terminal?.focus();
+}
+
+async function loadAllExperiments() {
+  console.log('loadAllExperiments triggered! Status:', status.value);
+  if (status.value !== 'running') {
+    alert('请先点击右上角的【启动容器】按钮，等待终端提示进入 Alpine Linux 后，再加载实验素材！');
+    return;
+  }
+  
+  try {
+    terminal?.writeln(`\r\n\x1b[34m[加载实验]\x1b[0m 正在向系统注入所有实验素材，请稍候...`);
+    
+    sendInput(`stty -echo\n`);
+    
+    const utf8ToBase64 = (str: string) => {
+      const bytes = new TextEncoder().encode(str);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    };
+    
+    const allModules = { ...sourceModules, ...fixtureModules };
+    
+    let loaderScript = `mkdir -p demos\ncd demos\n`;
+    let fileCount = 0;
+    
+    for (const [key, content] of Object.entries(allModules)) {
+      const match = key.match(/demos\/(.+)$/);
+      if (!match) continue;
+      
+      const relPath = match[1];
+      const dir = relPath.includes('/') ? relPath.substring(0, relPath.lastIndexOf('/')) : '';
+      
+      if (dir) {
+        loaderScript += `mkdir -p "${dir}"\n`;
+      }
+      
+      const fileB64 = utf8ToBase64(content);
+      loaderScript += `echo "${fileB64}" | base64 -d > "${relPath}"\n`;
+      fileCount++;
+    }
+    
+    const loaderB64 = utf8ToBase64(loaderScript);
+    
+    sendInput(`stty -echo -icanon\n`);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    sendInput(`cat > /tmp/load.b64\n`);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    const chunkSize = 1024;
+    for (let i = 0; i < loaderB64.length; i += chunkSize) {
+      const chunk = loaderB64.slice(i, i + chunkSize);
+      sendInput(chunk);
+      await new Promise(resolve => setTimeout(resolve, 5));
+    }
+    
+    sendInput(`\x04`); // Ctrl+D to signal EOF
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    sendInput(`stty echo icanon\n`);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    sendInput(`base64 -d /tmp/load.b64 | sh && rm /tmp/load.b64\n`);
+    sendInput(`cd demos && clear && ls -la\n`);
+    
+    terminal?.writeln(`\r\n\x1b[32m✔\x1b[0m 成功载入 ${fileCount} 个实验素材至 ~/demos 目录。`);
+    terminal?.focus();
+  } catch (err) {
+    sendInput(`stty echo\n`);
+    terminal?.writeln(`\r\n\x1b[31m[错误]\x1b[0m 素材加载失败: ${err}`);
+  }
 }
 
 function clearTerminal() {
@@ -409,4 +533,25 @@ onBeforeUnmount(() => {
   terminal?.dispose();
 });
 </script>
+
+<style scoped>
+.workbench-terminal-host.is-dragging {
+  position: relative;
+}
+.workbench-terminal-host.is-dragging::after {
+  content: '松开鼠标以上传文件';
+  position: absolute;
+  inset: 0;
+  background: rgba(37, 99, 235, 0.2);
+  border: 2px dashed #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #3b82f6;
+  z-index: 10;
+  pointer-events: none;
+}
+</style>
 
