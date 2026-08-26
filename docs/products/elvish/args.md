@@ -1,3 +1,21 @@
-# elvish 参数与交互
+# Elvish 参数与交互
 
-> 建设中... 此章节将详细介绍 elvish 的参数与交互相关细节。
+> 本页结论：Elvish 的命名空间和模块化机制，使其在编写和维护复杂 CLI 工具时如鱼得水。
+
+## 函数与参数签名
+
+Elvish 支持通过非常优雅的语法定义函数，同时支持位置参数与关键字参数（Options）。
+
+```elvish
+fn greet {|name &shout=$false|
+  if $shout {
+    echo "HELLO, "$name
+  } else {
+    echo "Hello, "$name
+  }
+}
+
+# 调用
+greet "Elvish"
+greet "Elvish" &shout=$true
+```
