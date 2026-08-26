@@ -42,7 +42,7 @@
         <div v-show="status === 'loading' || status === 'running'" ref="terminalHost" class="workbench-terminal-host" />
         <div v-show="status === 'running'" class="workbench-pseudo-shell">
           <span class="shell-prompt">{{ pseudoCwd }} $</span>
-          <input v-model="shellInput" @keyup.enter="executeShellCommand" @keydown.tab.prevent="handleTabCompletion" placeholder="在此输入伪终端命令 (如: ls, pwd, cat, cd, rm, python... 支持 Tab 补全)" spellcheck="false" autocomplete="off" />
+          <input v-model="shellInput" @keyup.enter="executeShellCommand" @keydown.tab.prevent="handleTabCompletion" placeholder="在此输入伪终端命令 (如: ls, pwd, tree, cat, cd, rm, python... 支持 Tab 补全)" spellcheck="false" autocomplete="off" />
         </div>
       </div>
     </section>
@@ -338,11 +338,26 @@ async function executeShellCommand() {
   const execCode = `
 def _sh():
     import os, shutil, runpy
+    
+    def print_tree(dir_path, prefix=""):
+        try: entries = sorted(os.listdir(dir_path))
+        except: return
+        for i, entry in enumerate(entries):
+            is_last = (i == len(entries) - 1)
+            path = os.path.join(dir_path, entry)
+            print(prefix + ("└── " if is_last else "├── ") + entry)
+            if os.path.isdir(path):
+                print_tree(path, prefix + ("    " if is_last else "│   "))
+                
     args = ${JSON.stringify(cmd.split(/\s+/))}
     cmd_name, args = args[0], args[1:]
     try:
         if cmd_name == 'pwd': print(os.getcwd())
         elif cmd_name == 'ls': print("\\n".join(sorted(os.listdir(args[0] if args else '.'))))
+        elif cmd_name == 'tree':
+            root = args[0] if args else '.'
+            print(root)
+            print_tree(root)
         elif cmd_name == 'cd': os.chdir(args[0] if args else '/')
         elif cmd_name == 'cat': print(open(args[0]).read(), end='')
         elif cmd_name == 'mkdir': os.makedirs(args[0], exist_ok=True)
