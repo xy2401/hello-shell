@@ -1,0 +1,69 @@
+{
+  "version": "1.0.0",
+  "targetArch": "riscv64",
+  "chunkSize": "10M",
+  "totalRawSize": 99354097,
+  "createdAt": "2026-08-26T07:14:52.347Z",
+  "chunks": [
+    {
+      "filename": "c2w-runtime.part_00.gz",
+      "rawSize": 10485760,
+      "compressedSize": 6490588,
+      "sha256": "ec69a9a5535e0fd2364497410142bc0b008254efaf74f6b6ed30804e691503ce"
+    },
+    {
+      "filename": "c2w-runtime.part_01.gz",
+      "rawSize": 10485760,
+      "compressedSize": 4626298,
+      "sha256": "fd0ce432d3550f36487073a0032fdd0bdd2e7cb5a6fe643b52ee88a9d5f32c50"
+    },
+    {
+      "filename": "c2w-runtime.part_02.gz",
+      "rawSize": 10485760,
+      "compressedSize": 3541378,
+      "sha256": "f28a4c91d2a6a9811069c94a01081ad07ce86b2015ad473757d4df925cb7f894"
+    },
+    {
+      "filename": "c2w-runtime.part_03.gz",
+      "rawSize": 10485760,
+      "compressedSize": 4745707,
+      "sha256": "124ba9c450e8ea40701239954cdd3ea0aecd15aa70083d76d8100e7c5b3c2da0"
+    },
+    {
+      "filename": "c2w-runtime.part_04.gz",
+      "rawSize": 10485760,
+      "compressedSize": 4305730,
+      "sha256": "75aa9c5e4b4b06cf4647f6fa0ad9c81d4c955d942c1b722d50c10e9179e00a17"
+    },
+    {
+      "filename": "c2w-runtime.part_05.gz",
+      "rawSize": 10485760,
+      "compressedSize": 3436067,
+      "sha256": "2d9f3300e955e9c2dc18134ea21023475671c56c5fa35764ef833716e8ff3af6"
+    },
+    {
+      "filename": "c2w-runtime.part_06.gz",
+      "rawSize": 10485760,
+      "compressedSize": 4699534,
+      "sha256": "8afc3d76dbbf492ef1a8404e50780b33fd536dbf42d6727c2c3672cc4c0f6c6c"
+    },
+    {
+      "filename": "c2w-runtime.part_07.gz",
+      "rawSize": 10485760,
+      "compressedSize": 5555438,
+      "sha256": "4d372a298981a5483dd027e6ecaa77a0b3efe577854d64b978fe7d8650626459"
+    },
+    {
+      "filename": "c2w-runtime.part_08.gz",
+      "rawSize": 10485760,
+      "compressedSize": 4563073,
+      "sha256": "32f22315b1740944d63532ff12d949963d3403cb40bbef55033904700a457f35"
+    },
+    {
+      "filename": "c2w-runtime.part_09.gz",
+      "rawSize": 4982257,
+      "compressedSize": 1634476,
+      "sha256": "ee78a1770890427525a05d36cbe71e21fc937f89f63f265ae56b904e19495c4e"
+    }
+  ]
+}

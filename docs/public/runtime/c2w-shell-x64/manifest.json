@@ -1,0 +1,111 @@
+{
+  "version": "1.0.0",
+  "targetArch": "amd64",
+  "chunkSize": "10M",
+  "totalRawSize": 176698665,
+  "createdAt": "2026-08-26T07:30:32.812Z",
+  "chunks": [
+    {
+      "filename": "c2w-runtime.part_00.gz",
+      "rawSize": 10485760,
+      "compressedSize": 1953469,
+      "sha256": "5c44a8f63533ac42d402ce0623fc2cdcaab235ab34e183e85629da08e3a41ddb"
+    },
+    {
+      "filename": "c2w-runtime.part_01.gz",
+      "rawSize": 10485760,
+      "compressedSize": 1548599,
+      "sha256": "acb41256eb04de751d14cd092f00fb7e5f9ea42c33c974b34b72591fb52d5d43"
+    },
+    {
+      "filename": "c2w-runtime.part_02.gz",
+      "rawSize": 10485760,
+      "compressedSize": 5166901,
+      "sha256": "6abbecdb3f23e0702e0b34e6b39d782301ef1176b5714d4bb3563ce9b355b822"
+    },
+    {
+      "filename": "c2w-runtime.part_03.gz",
+      "rawSize": 10485760,
+      "compressedSize": 4830332,
+      "sha256": "0172e1aade195f634c0fca2655aa70942c5746a1779480f61ba9fd186e4fa9c5"
+    },
+    {
+      "filename": "c2w-runtime.part_04.gz",
+      "rawSize": 10485760,
+      "compressedSize": 3540260,
+      "sha256": "969dd0fd21f3c18c18bbdb48b8656f43b5a26b9bd1e0160b88c212ea22886616"
+    },
+    {
+      "filename": "c2w-runtime.part_05.gz",
+      "rawSize": 10485760,
+      "compressedSize": 4230039,
+      "sha256": "2be8a8552d7db5cc902824d7116ac8e9373d47fb1f30605dc80f20388c6cac13"
+    },
+    {
+      "filename": "c2w-runtime.part_06.gz",
+      "rawSize": 10485760,
+      "compressedSize": 5209791,
+      "sha256": "42c959d95e373a16b936ac134f92019ba5a17dfa61e7c8aab619087bc61bbff2"
+    },
+    {
+      "filename": "c2w-runtime.part_07.gz",
+      "rawSize": 10485760,
+      "compressedSize": 3695190,
+      "sha256": "d0cce241b3803f5b3a390de30b4587bf494c3512a3c3a56269a3de363ee97d31"
+    },
+    {
+      "filename": "c2w-runtime.part_08.gz",
+      "rawSize": 10485760,
+      "compressedSize": 4623438,
+      "sha256": "cd1b669b6c6afb347224322e6e5030eddad0577281f261ffc62a4e1b16232b56"
+    },
+    {
+      "filename": "c2w-runtime.part_09.gz",
+      "rawSize": 10485760,
+      "compressedSize": 4440832,
+      "sha256": "d620ed0efbbf860ce9fb314fd78ce1063ec2ae7a2a3615ca1cfd6f4290160409"
+    },
+    {
+      "filename": "c2w-runtime.part_10.gz",
+      "rawSize": 10485760,
+      "compressedSize": 4738203,
+      "sha256": "cb3fc56a4ecc76c129ce7c9d6f549ac8e161b6be374731d1594b820bd20bade6"
+    },
+    {
+      "filename": "c2w-runtime.part_11.gz",
+      "rawSize": 10485760,
+      "compressedSize": 4139902,
+      "sha256": "b0edf6e3981b2c737969fb239d04a1142ea19c7b3e82df396d72f59c9661697c"
+    },
+    {
+      "filename": "c2w-runtime.part_12.gz",
+      "rawSize": 10485760,
+      "compressedSize": 2897675,
+      "sha256": "59826e56b2b9530d38e93b8056165f7e4d2d4c4ad1ad52ae38aafab244efe0a1"
+    },
+    {
+      "filename": "c2w-runtime.part_13.gz",
+      "rawSize": 10485760,
+      "compressedSize": 4772072,
+      "sha256": "3e20b3b688be0ca4b97ffeb7e00571e231df89cee6eb47cbd04b50dac4b373fe"
+    },
+    {
+      "filename": "c2w-runtime.part_14.gz",
+      "rawSize": 10485760,
+      "compressedSize": 4964042,
+      "sha256": "277c3b45ea89f6be9ee2ef12b5c86644902954ab3a30bd6e51ed1c851e71f117"
+    },
+    {
+      "filename": "c2w-runtime.part_15.gz",
+      "rawSize": 10485760,
+      "compressedSize": 4106522,
+      "sha256": "f08aeeb87cdffc1ab3e980400fb40668c8600bf29a2beab4a2985a89a3022950"
+    },
+    {
+      "filename": "c2w-runtime.part_16.gz",
+      "rawSize": 8926505,
+      "compressedSize": 3148900,
+      "sha256": "58f32ee91b8263063159a2a0ba382dd031b14d22993505be1b284769fada032a"
+    }
+  ]
+}
