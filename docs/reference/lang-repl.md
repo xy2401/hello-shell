@@ -27,10 +27,13 @@ Python 的普及离不开其极其易用的交互式环境。
 - **irb (Interactive Ruby)**：Ruby 官方自带的交互终端。
 - **pry**：Ruby 社区的顶级 REPL 替代品，支持深度对象探查（`cd` 进对象内部）、断点调试和实时查看源码，对开发者体验极其友好。
 
-### 4. Java 体系 (jshell / scala)
-传统静态编译语言在过去很难做交互环境，但现在也标配了 REPL：
+### 4. Java 体系与 JVM (jshell / Ammonite)
+传统静态编译语言在过去很难做交互环境，但如今在这方面也有了极大的突破：
 - **jshell**：从 Java 9 开始，JDK 官方内置了 `jshell`，免去了为了测试几行 API 还要写 `public static void main` 样板代码的痛苦。
-- **Scala REPL / Ammonite**：Scala 的交互式环境非常强大，Ammonite 更是可以用 Scala 直接写复杂的系统运维脚本。
+- **Ammonite (Scala)**：这是基于 Scala 语言构建的极其强大的 REPL 和脚本环境。
+  - **核心特色**：Ammonite 不仅仅是一个简单的代码测试台，它更像是一个旨在“替代 Bash”的超级系统 Shell。
+  - **脚本化**：它允许开发者抛弃古老的 Shell 脚本，使用强类型的 Scala 语言来编写系统运维脚本，并且完美处理了依赖管理（使用 `import $ivy` 魔法语法直接在脚本中动态拉取 Maven 依赖）。
+  - **高阶特性**：自带极致的语法高亮、多行代码块编辑、以及极其易用的文件系统库 (OS-Lib) 封装，是静态语言进军系统脚本领域的一座里程碑。
 
 ### 5. LISP 家族与“REPL 驱动开发”
 在 Clojure、Common Lisp 等语言中，REPL 不仅仅是个测试工具，而是**核心的开发范式**。开发者通常会让编辑器（如 Emacs/Vim）直连一个常驻的 REPL 进程，边写代码边将函数动态求值注入到运行中的系统中，这种体验被称为“REPL 驱动开发 (REPL-Driven Development)”。
