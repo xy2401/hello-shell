@@ -121,12 +121,54 @@ export default defineConfig({
           { text: 'Docker 验证', link: '/products/powershell/DockerTooling' },
         ] },
       ],
-      '/products/nushell/': [ { text: '👑 Nushell', items: [ { text: '概览', link: '/products/nushell/' } ] } ],
-      '/products/oils/': [ { text: '🛢️ Oils for Unix', items: [ { text: '概览', link: '/products/oils/' } ] } ],
-      '/products/elvish/': [ { text: '🧝 Elvish', items: [ { text: '概览', link: '/products/elvish/' } ] } ],
-      '/products/rc/': [ { text: '🪐 rc', items: [ { text: '概览', link: '/products/rc/' } ] } ],
-      '/products/murex/': [ { text: '🦕 Murex', items: [ { text: '概览', link: '/products/murex/' } ] } ],
-      '/products/dash/': [ { text: '⚡ Dash', items: [ { text: '概览', link: '/products/dash/' } ] } ],
+      '/products/nushell/': [
+        { text: '👑 Nushell', items: [
+          { text: '概览', link: '/products/nushell/' },
+          { text: '语法与特性', link: '/products/nushell/syntax' },
+          { text: '参数与交互', link: '/products/nushell/args' },
+          { text: '常见坑位', link: '/products/nushell/pitfalls' },
+        ] },
+      ],
+      '/products/oils/': [
+        { text: '🛢️ Oils for Unix', items: [
+          { text: '概览', link: '/products/oils/' },
+          { text: '语法与特性', link: '/products/oils/syntax' },
+          { text: '参数与交互', link: '/products/oils/args' },
+          { text: '常见坑位', link: '/products/oils/pitfalls' },
+        ] },
+      ],
+      '/products/elvish/': [
+        { text: '🧝 Elvish', items: [
+          { text: '概览', link: '/products/elvish/' },
+          { text: '语法与特性', link: '/products/elvish/syntax' },
+          { text: '参数与交互', link: '/products/elvish/args' },
+          { text: '常见坑位', link: '/products/elvish/pitfalls' },
+        ] },
+      ],
+      '/products/rc/': [
+        { text: '🪐 rc', items: [
+          { text: '概览', link: '/products/rc/' },
+          { text: '语法与特性', link: '/products/rc/syntax' },
+          { text: '参数与交互', link: '/products/rc/args' },
+          { text: '常见坑位', link: '/products/rc/pitfalls' },
+        ] },
+      ],
+      '/products/murex/': [
+        { text: '🦕 Murex', items: [
+          { text: '概览', link: '/products/murex/' },
+          { text: '语法与特性', link: '/products/murex/syntax' },
+          { text: '参数与交互', link: '/products/murex/args' },
+          { text: '常见坑位', link: '/products/murex/pitfalls' },
+        ] },
+      ],
+      '/products/dash/': [
+        { text: '⚡ Dash', items: [
+          { text: '概览', link: '/products/dash/' },
+          { text: '语法与特性', link: '/products/dash/syntax' },
+          { text: '参数与交互', link: '/products/dash/args' },
+          { text: '常见坑位', link: '/products/dash/pitfalls' },
+        ] },
+      ],
       '/products/': [
         {
           text: 'Shell 目录',
