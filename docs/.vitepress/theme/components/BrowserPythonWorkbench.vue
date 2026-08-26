@@ -87,7 +87,7 @@ const examples = [
   { id: 'format', title: '变量格式化', summary: '使用 f-string 处理字符串和数字', source: 'name = "world"; score = 98.5; print(f"Hello, {name.upper()}! Score={score:.2f}")' },
   { id: 'data', title: '数据处理', summary: '汇总结构化列表中的数值', source: 'data = [{"id": 1, "val": 10}, {"id": 2, "val": 25}]; print("Total:", sum(x["val"] for x in data))' },
   { id: 'stdlib', title: '标准库', summary: '组合 JSON、正则和数学模块', source: 'import json, re, math; print(json.dumps({"match": bool(re.search(r"sh\\w+", "shell")), "root": math.sqrt(81)}))' },
-  { id: 'demo', title: '执行文件脚本', summary: '运行我们刚刚注入的测试脚本', source: 'exec(open("/python/06_pipes_files.py").read())' },
+  { id: 'demo', title: '执行文件脚本', summary: '运行我们刚刚注入的测试脚本', source: 'python /python/06_pipes_files.py' },
 ] as const;
 
 watch(isDark, () => applyTerminalTheme());
@@ -196,8 +196,21 @@ async function startPyodide() {
         if (trimmed) {
           history.push(trimmed);
           historyIndex = history.length;
+          
+          let execCode = trimmed;
+          // Magic command sugar to make REPL feel more like a shell
+          if (trimmed.startsWith('python ')) {
+            const file = trimmed.substring(7).trim();
+            execCode = `import runpy; runpy.run_path("${file}", run_name="__main__")`;
+          } else if (trimmed === 'ls' || trimmed.startsWith('ls ')) {
+            const dir = trimmed.substring(2).trim() || '.';
+            execCode = `import os; print("\\n".join(os.listdir("${dir}")))`;
+          } else if (trimmed === 'pwd') {
+            execCode = `import os; print(os.getcwd())`;
+          }
+
           try {
-            const res = await pyodide.runPythonAsync(trimmed);
+            const res = await pyodide.runPythonAsync(execCode);
             if (res !== undefined && res !== null) {
               terminal?.writeln(String(res));
             }
@@ -264,7 +277,18 @@ async function runSnippet(snippet: string) {
   history.push(snippet);
   historyIndex = history.length;
   try {
-    const res = await pyodide.runPythonAsync(snippet);
+    let execCode = snippet;
+    if (snippet.startsWith('python ')) {
+      const file = snippet.substring(7).trim();
+      execCode = `import runpy; runpy.run_path("${file}", run_name="__main__")`;
+    } else if (snippet === 'ls' || snippet.startsWith('ls ')) {
+      const dir = snippet.substring(2).trim() || '.';
+      execCode = `import os; print("\\n".join(os.listdir("${dir}")))`;
+    } else if (snippet === 'pwd') {
+      execCode = `import os; print(os.getcwd())`;
+    }
+
+    const res = await pyodide.runPythonAsync(execCode);
     if (res !== undefined && res !== null) {
       terminal?.writeln(String(res));
     }
@@ -313,7 +337,7 @@ async function loadAllExperiments() {
       pyodide.FS.writeFile(targetPath, content);
     }
 
-    terminal.writeln(`\x1b[32m✔\x1b[0m 成功载入所有素材。试试执行: \x1b[36mexec(open('/python/06_pipes_files.py').read())\x1b[0m`);
+    terminal.writeln(`\x1b[32m✔\x1b[0m 成功载入所有素材。试试执行: \x1b[36mpython /python/06_pipes_files.py\x1b[0m`);
     printPrompt();
   } catch (err: any) {
     terminal.writeln(`\r\n\x1b[31m[错误]\x1b[0m 素材加载失败: ${err.message || String(err)}`);
