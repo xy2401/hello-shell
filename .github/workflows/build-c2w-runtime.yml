@@ -6,7 +6,7 @@ on:
       target_arch:
         description: 'Target Architecture (riscv64 or amd64)'
         required: true
-        default: 'riscv64'
+        default: 'amd64'
         type: choice
         options:
           - riscv64
@@ -52,7 +52,7 @@ jobs:
 
       - name: Build, Convert and Package All Environments
         env:
-          TARGET_ARCH: ${{ inputs.target_arch || 'riscv64' }}
+          TARGET_ARCH: ${{ inputs.target_arch || 'amd64' }}
           CHUNK_SIZE: ${{ inputs.chunk_size || '10M' }}
         run: |
           for ENV_NAME in base shell python powershell; do

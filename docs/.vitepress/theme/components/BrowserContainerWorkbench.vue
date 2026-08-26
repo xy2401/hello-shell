@@ -18,9 +18,9 @@
 
       <dl class="workbench-specs">
         <div><dt>系统</dt><dd>Alpine 3.22</dd></div>
-        <div><dt>架构</dt><dd>RISC-V 64</dd></div>
-        <div><dt>环境</dt><dd>Bash · Zsh · Fish · Py3</dd></div>
-        <div><dt>加载</dt><dd>17 个 Gzip 分片</dd></div>
+        <div><dt>架构</dt><dd>{{ targetArchDisplay }}</dd></div>
+        <div><dt>环境</dt><dd>{{ envDisplay }}</dd></div>
+        <div><dt>加载</dt><dd>{{ chunkDisplay }}</dd></div>
       </dl>
 
       <div v-if="runtimeError" class="workbench-error" role="alert" aria-live="assertive">
@@ -104,6 +104,23 @@ const { isDark } = useData();
 const terminalHost = ref<HTMLElement>();
 const status = ref<RuntimeStatus>('idle');
 const message = ref('支持在同一容器内无缝切换 Bash 5.2、Zsh 5.9、Fish 3.7 与 Python 3.12。');
+
+const targetArchDisplay = computed(() => {
+  return "AMD64 / x86_64";
+});
+const envDisplay = computed(() => {
+  const rid = getRuntimeId();
+  if (rid === 'c2w-python') return 'Python 3 · Pip';
+  if (rid === 'c2w-powershell') return 'PowerShell Core';
+  if (rid === 'c2w-shell') return 'Bash·Zsh·Fish·Nu·Elvish';
+  return 'Bash · Zsh · Fish · Py3';
+});
+const chunkDisplay = computed(() => {
+  const rid = getRuntimeId();
+  if (rid === 'c2w-powershell') return '~34 个 Gzip 分片';
+  return '~18 个 Gzip 分片';
+});
+
 const runtimeError = ref('');
 const isLoadingExperiments = ref(false);
 
