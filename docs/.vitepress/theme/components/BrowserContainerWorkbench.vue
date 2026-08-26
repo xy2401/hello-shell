@@ -422,10 +422,6 @@ async function loadAllExperiments() {
   }
   
   try {
-    terminal?.writeln(`\r\n\x1b[34m[加载实验]\x1b[0m 正在向系统注入所有实验素材，请稍候...`);
-    
-    sendInput(`stty -echo\n`);
-    
     const utf8ToBase64 = (str: string) => {
       const bytes = new TextEncoder().encode(str);
       let binary = '';
@@ -437,9 +433,14 @@ async function loadAllExperiments() {
     
     const allModules = { ...sourceModules, ...fixtureModules };
     
-    let loaderScript = `mkdir -p demos\ncd demos\n`;
-    let fileCount = 0;
+    terminal?.writeln(`\r\n\x1b[34m[加载实验]\x1b[0m 开始逐个注入实验素材...`);
+    sendInput(`stty -echo\n`);
+    await new Promise(resolve => setTimeout(resolve, 50));
     
+    sendInput(`mkdir -p demos\n`);
+    await new Promise(resolve => setTimeout(resolve, 10));
+    
+    let fileCount = 0;
     for (const [key, content] of Object.entries(allModules)) {
       const match = key.match(/demos\/(.+)$/);
       if (!match) continue;
@@ -448,39 +449,42 @@ async function loadAllExperiments() {
       const dir = relPath.includes('/') ? relPath.substring(0, relPath.lastIndexOf('/')) : '';
       
       if (dir) {
-        loaderScript += `mkdir -p "${dir}"\n`;
+        sendInput(`mkdir -p "demos/${dir}"\n`);
+        await new Promise(resolve => setTimeout(resolve, 10));
       }
       
-      const fileB64 = utf8ToBase64(content);
-      loaderScript += `echo "${fileB64}" | base64 -d > "${relPath}"\n`;
+      const base64 = utf8ToBase64(content);
+      const targetPath = `demos/${relPath}`;
+      
+      terminal?.writeln(`\x1b[90m[注入]\x1b[0m 正在写入 ${targetPath} ...`);
+      
+      const chunkSize = 1024;
+      if (base64.length > chunkSize) {
+        sendInput(`cat > "${targetPath}.b64"\n`);
+        await new Promise(resolve => setTimeout(resolve, 10));
+        
+        for (let i = 0; i < base64.length; i += chunkSize) {
+          const chunk = base64.slice(i, i + chunkSize);
+          sendInput(chunk + '\n');
+          await new Promise(resolve => setTimeout(resolve, 15));
+        }
+        sendInput(`\x04`); // Ctrl+D
+        await new Promise(resolve => setTimeout(resolve, 20));
+        
+        sendInput(`base64 -d "${targetPath}.b64" > "${targetPath}" && rm "${targetPath}.b64"\n`);
+      } else {
+        sendInput(`echo "${base64}" | base64 -d > "${targetPath}"\n`);
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, 15));
       fileCount++;
     }
     
-    const loaderB64 = utf8ToBase64(loaderScript);
-    
-    sendInput(`stty -echo -icanon\n`);
+    sendInput(`stty echo\n`);
     await new Promise(resolve => setTimeout(resolve, 50));
     
-    sendInput(`cat > /tmp/load.b64\n`);
-    await new Promise(resolve => setTimeout(resolve, 50));
-    
-    const chunkSize = 1024;
-    for (let i = 0; i < loaderB64.length; i += chunkSize) {
-      const chunk = loaderB64.slice(i, i + chunkSize);
-      sendInput(chunk);
-      await new Promise(resolve => setTimeout(resolve, 5));
-    }
-    
-    sendInput(`\x04`); // Ctrl+D to signal EOF
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
-    sendInput(`stty echo icanon\n`);
-    await new Promise(resolve => setTimeout(resolve, 50));
-    
-    sendInput(`base64 -d /tmp/load.b64 | sh && rm /tmp/load.b64\n`);
     sendInput(`cd demos && clear && ls -la\n`);
-    
-    terminal?.writeln(`\r\n\x1b[32m✔\x1b[0m 成功载入 ${fileCount} 个实验素材至 ~/demos 目录。`);
+    terminal?.writeln(`\r\n\x1b[32m✔\x1b[0m 成功逐个载入 ${fileCount} 个实验素材。`);
     terminal?.focus();
   } catch (err) {
     sendInput(`stty echo\n`);
