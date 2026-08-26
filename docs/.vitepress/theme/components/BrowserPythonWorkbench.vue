@@ -417,13 +417,24 @@ function handleTabCompletion() {
     if (matches.length === 1) {
       const match = matches[0];
       const isDir = pyodide.FS.isDir(pyodide.FS.stat(`${targetDir}/${match}`).mode);
-      const completed = (dir === '.' ? '' : dir + '/') + match + (isDir ? '/' : '');
+      const completed = (dir === '.' ? '' : (dir.endsWith('/') ? dir : dir + '/')) + match + (isDir ? '/' : '');
       tokens[tokens.length - 1] = completed;
       shellInput.value = tokens.join(' ');
     } else if (matches.length > 1) {
-      terminal?.writeln(`\r\n\x1b[33m${pseudoCwd.value} $ ${input}\x1b[0m`);
-      terminal?.writeln(matches.join('  '));
-      printPrompt();
+      let common = matches[0];
+      for (let i = 1; i < matches.length; i++) {
+        let j = 0;
+        while (j < common.length && j < matches[i].length && common[j] === matches[i][j]) j++;
+        common = common.substring(0, j);
+      }
+      if (common.length > prefix.length) {
+        tokens[tokens.length - 1] = (dir === '.' ? '' : (dir.endsWith('/') ? dir : dir + '/')) + common;
+        shellInput.value = tokens.join(' ');
+      } else {
+        terminal?.writeln(`\r\n\x1b[33m${pseudoCwd.value} $ ${input}\x1b[0m`);
+        terminal?.writeln(matches.join('  '));
+        printPrompt();
+      }
     }
   } catch (e) {
     // Ignore invalid paths
