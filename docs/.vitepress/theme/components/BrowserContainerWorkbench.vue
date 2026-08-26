@@ -75,6 +75,8 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useData } from 'vitepress';
+const props = defineProps<{ runtimeId?: string }>();
+const getRuntimeId = () => props.runtimeId || "c2w";
 import type { Terminal } from '@xterm/xterm';
 import type { FitAddon } from '@xterm/addon-fit';
 import WorkbenchExampleMenu from './WorkbenchExampleMenu.vue';
@@ -228,7 +230,7 @@ async function loadChunks(manifest: Manifest, baseUrl: string): Promise<Uint8Arr
 
   await Promise.all(
     chunks.map(async (chunk, index) => {
-      const url = `${baseUrl}runtime/c2w/${chunk.filename}`;
+      const url = `${baseUrl}runtime/${getRuntimeId()}/${chunk.filename}`;
       const res = await fetch(url);
       if (!res.ok) {
         throw new Error(`Failed to fetch chunk ${chunk.filename}: ${res.statusText}`);
@@ -286,9 +288,9 @@ async function startContainer() {
     const baseUrl = import.meta.env.BASE_URL || '/';
 
     // 加载 xterm-pty 终端主从协议库
-    await loadScript(`${baseUrl}runtime/c2w/engine/xterm-pty.js`);
+    await loadScript(`${baseUrl}runtime/${getRuntimeId()}/engine/xterm-pty.js`);
 
-    const manifestRes = await fetch(`${baseUrl}runtime/c2w/manifest.json`);
+    const manifestRes = await fetch(`${baseUrl}runtime/${getRuntimeId()}/manifest.json`);
 
     if (!manifestRes.ok) {
       status.value = 'not_ready';
@@ -332,7 +334,7 @@ async function startContainer() {
     terminal?.loadAddon(master);
 
     // 启动 Worker (附带时间戳防 CDN / 浏览器旧版本缓存)
-    worker = new Worker(`${baseUrl}runtime/c2w/engine/worker.js?t=${Date.now()}`);
+    worker = new Worker(`${baseUrl}runtime/${getRuntimeId()}/engine/worker.js?t=${Date.now()}`);
 
     worker.addEventListener('message', (event: MessageEvent) => {
       const data = event.data;

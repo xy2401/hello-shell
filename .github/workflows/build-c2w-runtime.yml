@@ -50,55 +50,59 @@ jobs:
           sudo chmod +x /usr/local/bin/c2w /usr/local/bin/c2w-net
           c2w --version
 
-      - name: Build custom multi-shell base Docker image
-        env:
-          TARGET_ARCH: ${{ inputs.target_arch || 'riscv64' }}
-        run: |
-          echo "Building Docker image for platform linux/${TARGET_ARCH}..."
-          docker buildx build \
-            --platform="linux/${TARGET_ARCH}" \
-            -f Dockerfile.base \
-            -t hello-shell-base:latest \
-            --load .
-
-      - name: Convert container to WebAssembly
-        env:
-          TARGET_ARCH: ${{ inputs.target_arch || 'riscv64' }}
-        run: |
-          mkdir -p ./out
-          echo "Converting container to Wasm (${TARGET_ARCH})..."
-          c2w \
-            --build-arg SOURCE_REPO=https://github.com/container2wasm/container2wasm.git \
-            --build-arg SOURCE_REPO_VERSION=v0.8.4 \
-            --target-arch="${TARGET_ARCH}" \
-            hello-shell-base:latest ./out/c2w-runtime.wasm
-          ls -lh ./out/c2w-runtime.wasm
-
-      - name: Split, Gzip and Generate Manifest
+      - name: Build, Convert and Package All Environments
         env:
           TARGET_ARCH: ${{ inputs.target_arch || 'riscv64' }}
           CHUNK_SIZE: ${{ inputs.chunk_size || '10M' }}
         run: |
-          node scripts/package-c2w.js \
-            --input ./out/c2w-runtime.wasm \
-            --dest ./docs/public/runtime/c2w \
-            --arch "${TARGET_ARCH}" \
-            --chunk-size "${CHUNK_SIZE}"
+          for ENV_NAME in base shell python powershell; do
+            echo "========================================================="
+            echo "Processing environment: ${ENV_NAME}"
+            echo "========================================================="
+            
+            echo "1. Building Docker image..."
+            docker buildx build \
+              --platform="linux/${TARGET_ARCH}" \
+              -f Dockerfile.${ENV_NAME} \
+              -t hello-shell-${ENV_NAME}:latest \
+              --load .
+            
+            echo "2. Converting container to WebAssembly..."
+            mkdir -p ./out/${ENV_NAME}
+            c2w \
+              --build-arg SOURCE_REPO=https://github.com/container2wasm/container2wasm.git \
+              --build-arg SOURCE_REPO_VERSION=v0.8.4 \
+              --target-arch="${TARGET_ARCH}" \
+              hello-shell-${ENV_NAME}:latest ./out/${ENV_NAME}/c2w-runtime.wasm
+            ls -lh ./out/${ENV_NAME}/c2w-runtime.wasm
+            
+            echo "3. Splitting and generating manifest..."
+            DEST_DIR="./docs/public/runtime/c2w"
+            if [ "${ENV_NAME}" != "base" ]; then
+              DEST_DIR="./docs/public/runtime/c2w-${ENV_NAME}"
+            fi
+            
+            node scripts/package-c2w.js \
+              --input ./out/${ENV_NAME}/c2w-runtime.wasm \
+              --dest "${DEST_DIR}" \
+              --arch "${TARGET_ARCH}" \
+              --chunk-size "${CHUNK_SIZE}"
+          done
 
       - name: Upload Artifacts for Workflow Run
         uses: actions/upload-artifact@v4
         with:
           name: c2w-runtime-chunks
-          path: docs/public/runtime/c2w/
+          path: docs/public/runtime/c2w*/
 
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/public/runtime/c2w/
+          git add docs/public/runtime/c2w*/
           if git diff --staged --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "chore(runtime): update prebuilt c2w runtime assets [skip ci]"
+            git commit -m "chore(runtime): update prebuilt c2w runtime assets for all environments [skip ci]"
             git push origin HEAD:${{ github.ref }}
           fi
