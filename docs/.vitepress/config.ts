@@ -64,6 +64,7 @@ export default defineConfig({
           { text: '🪐 rc', link: '/products/rc/' },
           { text: '🦕 Murex', link: '/products/murex/' },
           { text: '⚡ Dash', link: '/products/dash/' },
+          { text: '🪨 Ash (BusyBox)', link: '/products/ash/' },
         ],
       },
       { text: '🧪 实验台', link: '/playground/' },
@@ -169,6 +170,14 @@ export default defineConfig({
           { text: '常见坑位', link: '/products/dash/pitfalls' },
         ] },
       ],
+      '/products/ash/': [
+        { text: '🪨 Ash (BusyBox)', items: [
+          { text: '概览', link: '/products/ash/' },
+          { text: '语法与特性', link: '/products/ash/syntax' },
+          { text: '参数与交互', link: '/products/ash/args' },
+          { text: '常见坑位', link: '/products/ash/pitfalls' },
+        ] },
+      ],
       '/products/': [
         {
           text: 'Shell 目录',
@@ -184,6 +193,7 @@ export default defineConfig({
             { text: '🪐 rc', link: '/products/rc/' },
             { text: '🦕 Murex', link: '/products/murex/' },
             { text: '⚡ Dash', link: '/products/dash/' },
+            { text: '🪨 Ash (BusyBox)', link: '/products/ash/' },
           ],
         },
       ],
