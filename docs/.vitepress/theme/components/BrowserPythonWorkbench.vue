@@ -41,8 +41,8 @@
         </div>
         <div v-show="status === 'loading' || status === 'running'" ref="terminalHost" class="workbench-terminal-host" />
         <div v-show="status === 'running'" class="workbench-pseudo-shell">
-          <span class="shell-prompt">$</span>
-          <input v-model="shellInput" @keyup.enter="executeShellCommand" placeholder="在此输入伪终端命令 (如: ls, pwd, python /python/06_pipes_files.py)" spellcheck="false" autocomplete="off" />
+          <span class="shell-prompt">{{ pseudoCwd }} $</span>
+          <input v-model="shellInput" @keyup.enter="executeShellCommand" @keydown.tab.prevent="handleTabCompletion" placeholder="在此输入伪终端命令 (如: ls, pwd, cat, cd, rm, python... 支持 Tab 补全)" spellcheck="false" autocomplete="off" />
         </div>
       </div>
     </section>
@@ -66,6 +66,7 @@ const status = ref<RuntimeStatus>('idle');
 const message = ref('官方 CPython 3.12 解释器在浏览器本地执行，直接对照 Shell 语法。');
 const runtimeError = ref('');
 const shellInput = ref('');
+const pseudoCwd = ref('/');
 
 let terminal: Terminal | undefined;
 let fitAddon: FitAddon | undefined;
@@ -331,33 +332,85 @@ async function executeShellCommand() {
   if (!cmd || status.value !== 'running' || !pyodide || !terminal) return;
   
   // echo command
-  terminal.writeln(`\r\n\x1b[33m$ ${cmd}\x1b[0m`);
+  terminal.writeln(`\r\n\x1b[33m${pseudoCwd.value} $ ${cmd}\x1b[0m`);
   shellInput.value = '';
   
-  let execCode = '';
-  if (cmd.startsWith('python ')) {
-    const file = cmd.substring(7).trim();
-    execCode = `import runpy; runpy.run_path("${file}", run_name="__main__")`;
-  } else if (cmd === 'ls' || cmd.startsWith('ls ')) {
-    const dir = cmd.substring(2).trim() || '.';
-    execCode = `import os; print("\\n".join(os.listdir("${dir}")))`;
-  } else if (cmd === 'pwd') {
-    execCode = `import os; print(os.getcwd())`;
-  } else {
-    terminal.writeln(`\x1b[31mbash: ${cmd}: command not found (pseudo-shell only supports: ls, pwd, python)\x1b[0m`);
-    printPrompt();
-    return;
-  }
+  const execCode = `
+def _sh():
+    import os, shutil, runpy
+    args = ${JSON.stringify(cmd.split(/\\s+/))}
+    cmd_name, args = args[0], args[1:]
+    try:
+        if cmd_name == 'pwd': print(os.getcwd())
+        elif cmd_name == 'ls': print("\\n".join(sorted(os.listdir(args[0] if args else '.'))))
+        elif cmd_name == 'cd': os.chdir(args[0] if args else '/')
+        elif cmd_name == 'cat': print(open(args[0]).read(), end='')
+        elif cmd_name == 'mkdir': os.makedirs(args[0], exist_ok=True)
+        elif cmd_name == 'rm': 
+            p = args[0]
+            shutil.rmtree(p) if os.path.isdir(p) else os.remove(p)
+        elif cmd_name == 'cp': 
+            if os.path.isdir(args[0]): shutil.copytree(args[0], args[1])
+            else: shutil.copy(args[0], args[1])
+        elif cmd_name == 'mv': shutil.move(args[0], args[1])
+        elif cmd_name == 'python': runpy.run_path(args[0], run_name='__main__')
+        else: print(f"bash: {cmd_name}: command not found")
+    except Exception as e:
+        print(f"{cmd_name}: {type(e).__name__}: {e}")
+_sh()
+del _sh
+`;
   
   try {
     const res = await pyodide.runPythonAsync(execCode);
     if (res !== undefined && res !== null) {
       terminal.writeln(String(res));
     }
+    pseudoCwd.value = pyodide.runPython('import os; os.getcwd()');
   } catch (err: any) {
     terminal.writeln(`\x1b[31m${err.message || String(err)}\x1b[0m`);
   }
   printPrompt();
+}
+
+function handleTabCompletion() {
+  if (!pyodide || status.value !== 'running') return;
+  const input = shellInput.value;
+  const tokens = input.split(/\s+/);
+  if (tokens.length === 0) return;
+  const lastToken = tokens[tokens.length - 1];
+  
+  let dir = '.';
+  let prefix = lastToken;
+  const lastSlash = lastToken.lastIndexOf('/');
+  if (lastSlash >= 0) {
+    dir = lastToken.substring(0, lastSlash) || '/';
+    prefix = lastToken.substring(lastSlash + 1);
+  }
+  
+  try {
+    const cwd = pyodide.runPython('import os; os.getcwd()');
+    let targetDir = dir;
+    if (dir === '.') targetDir = cwd;
+    else if (!dir.startsWith('/')) targetDir = `${cwd}/${dir}`;
+    
+    const items = pyodide.FS.readdir(targetDir).filter((n: string) => n !== '.' && n !== '..');
+    const matches = items.filter((n: string) => n.startsWith(prefix));
+    
+    if (matches.length === 1) {
+      const match = matches[0];
+      const isDir = pyodide.FS.isDir(pyodide.FS.stat(`${targetDir}/${match}`).mode);
+      const completed = (dir === '.' ? '' : dir + '/') + match + (isDir ? '/' : '');
+      tokens[tokens.length - 1] = completed;
+      shellInput.value = tokens.join(' ');
+    } else if (matches.length > 1) {
+      terminal?.writeln(`\r\n\x1b[33m${pseudoCwd.value} $ ${input}\x1b[0m`);
+      terminal?.writeln(matches.join('  '));
+      printPrompt();
+    }
+  } catch (e) {
+    // Ignore invalid paths
+  }
 }
 
 function clearTerminal() {
