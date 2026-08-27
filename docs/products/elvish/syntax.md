@@ -6,7 +6,7 @@
 
 和传统 Bash 的纯字符串管道不同，Elvish 支持在管道中传递丰富的数据结构。
 
-```elvish
+```bash
 # 定义列表和字典
 var li = [a b c]
 var map = [&key=value &foo=bar]
@@ -19,7 +19,7 @@ put 1 2 3 | each {|x| * $x 2 } # 输出 2 4 6
 
 Elvish 抛弃了 `set -e` 和 `$?` 这种脆弱的错误处理方式，引入了强力的 `try...catch` 机制。
 
-```elvish
+```bash
 try {
   # 可能会失败的命令
   cat non_existent_file.txt

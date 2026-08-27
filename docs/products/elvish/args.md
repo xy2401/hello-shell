@@ -6,7 +6,7 @@
 
 Elvish 支持通过非常优雅的语法定义函数，同时支持位置参数与关键字参数（Options）。
 
-```elvish
+```bash
 fn greet {|name &shout=$false|
   if $shout {
     echo "HELLO, "$name

@@ -6,7 +6,7 @@
 
 在 rc 中，一切变量默认都是一个列表（List）。当一个列表展开时，rc 不会像 Bash 那样进行二次分词（Word Splitting）。
 
-```rc
+```bash
 # rc 中给变量赋值
 files = (a.txt 'b c.txt')
 
@@ -19,7 +19,7 @@ rm $files
 
 语法极简，没有 Bash 中 `[[`, `]`, `test` 这些复杂的历史包袱。
 
-```rc
+```bash
 if (~ $1 -x) {
     echo "Executable option passed"
 }

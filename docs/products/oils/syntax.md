@@ -19,14 +19,14 @@ fi
 
 ### 1. 变量声明
 告别裸露的全局变量，YSH 强制或推荐更清晰的变量声明：
-```ysh
+```bash
 var name = "Oils"   # 声明变量
 setvar name = "YSH" # 修改变量
 ```
 
 ### 2. 表达式与条件判断
 Bash 的 `[ ]` 和 `[[ ]]` 以及各种 `-eq`, `-z` 让人头皮发麻。YSH 借用了 Python 和 JS 的现代语法：
-```ysh
+```bash
 if (x > 0 and name === "Oils") {
     echo "Modern Syntax!"
 }
@@ -34,7 +34,7 @@ if (x > 0 and name === "Oils") {
 
 ### 3. 原生数据结构
 不仅有字符串，YSH 原生支持字典（Dict）和数组（List）以及直接处理 JSON：
-```ysh
+```bash
 var my_dict = {
   name: "Alice",
   age: 30
