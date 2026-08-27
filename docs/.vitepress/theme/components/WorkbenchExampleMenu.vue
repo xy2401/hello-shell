@@ -1,7 +1,7 @@
 <template>
   <div
     class="workbench-example-menu"
-    :class="{ open, available: !disabled }"
+    :class="{ open, available: !disabled, compact }"
     :title="hint"
     @mouseleave="close"
     @keydown.esc="close"
@@ -24,7 +24,7 @@
         role="menuitem"
         @click="select(example.source)"
       >
-        <strong>{{ example.title }}</strong>
+        <strong>{{ example.title }}<template v-if="compact">：</template></strong>
         <small>{{ example.summary }}</small>
       </button>
     </div>
@@ -45,6 +45,7 @@ const props = defineProps<{
   examples: readonly WorkbenchExample[];
   disabled?: boolean;
   busy?: boolean;
+  compact?: boolean;
   hint?: string;
 }>();
 
