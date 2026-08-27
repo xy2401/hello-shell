@@ -10,6 +10,11 @@ RUN apk add --no-cache \
     fish \
     elvish \
     dash \
+    mksh \
+    yash \
+    oksh \
+    tcsh \
+    ion-shell \
     python3 \
     py3-pip \
     jq \
@@ -40,6 +45,6 @@ RUN echo '[ -f /etc/motd ] && cat /etc/motd' >> /root/.bashrc && \
     echo '[ -f /etc/motd ] && cat /etc/motd' >> /root/.zshrc && \
     mkdir -p /root/.config/fish && \
     echo 'if test -f /etc/motd; cat /etc/motd; end' >> /root/.config/fish/config.fish && \
-    printf "\n=======================================================\n  Welcome to hello-shell Browser Multi-Shell Container\n  Available Shells: bash, zsh, fish, elvish, dash, python3\n  Workspace: /workspace\n=======================================================\n\n" > /etc/motd
+    printf "\n=======================================================\n  Welcome to hello-shell Browser Multi-Shell Container\n  Available Shells: ash, bash, zsh, fish, elvish, dash, mksh, yash, oksh, tcsh, ion, python3\n  Workspace: /workspace\n=======================================================\n\n" > /etc/motd
 
 CMD ["/bin/bash", "-l"]
