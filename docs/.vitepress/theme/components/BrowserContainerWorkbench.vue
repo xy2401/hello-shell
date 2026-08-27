@@ -32,9 +32,6 @@
         <div class="workbench-toolbar">
           <div class="workbench-toolbar-message">
             <strong>容器终端</strong><span>{{ message }}</span>
-            <span v-if="getRuntimeId() === 'c2w-powershell'" class="workbench-runtime-warning" role="note">
-              ⚠ 冷启动可能耗时数分钟甚至更久，出现 PS&gt; 后才可输入。
-            </span>
             <div v-if="status === 'downloading'" class="workbench-progress" :title="`已加载 ${downloadedChunks} / ${totalChunks} 分片`">
               <i :style="{ width: `${downloadProgress}%` }" />
             </div>
@@ -751,18 +748,6 @@ onBeforeUnmount(() => {
   white-space: normal;
 }
 
-.workbench-runtime-warning {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid color-mix(in srgb, #f59e0b 65%, transparent);
-  border-radius: .35rem;
-  padding: .12rem .4rem;
-  background: color-mix(in srgb, #f59e0b 16%, var(--wb-bg-soft));
-  color: #f59e0b;
-  font-weight: 700;
-  line-height: 1.45;
-}
-
 .workbench-terminal-host.is-dragging {
   position: relative;
 }
@@ -787,7 +772,7 @@ onBeforeUnmount(() => {
 }
 
 .workbench-terminal-host.is-booting::after {
-  content: 'PowerShell Core 正在引导，出现 PS> 后将自动开放输入';
+  content: 'PowerShell Core 冷启动较慢，出现 PS> 后即可输入';
   position: absolute;
   inset: 0;
   display: flex;
