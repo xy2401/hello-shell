@@ -26,6 +26,18 @@ function crossOriginIsolationPlugin() {
 }
 
 export default defineConfig({
+  markdown: {
+    languageAliases: {
+      elvish: 'bash',
+      murex: 'bash',
+      ysh: 'bash',
+      rc: 'bash',
+      oils: 'bash',
+      dash: 'bash',
+      ash: 'bash',
+      nushell: 'bash'
+    }
+  },
   title: 'Hello Shell',
   titleTemplate: ':title | Shell 手册',
   description:
