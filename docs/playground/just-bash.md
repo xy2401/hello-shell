@@ -19,4 +19,4 @@ pageClass: shell-runtime-page
 | 生命周期 | 刷新页面或重新启动后清空 | 不保存长期数据，也不能读取电脑文件 |
 | 系统能力 | 没有 Linux 内核和原生进程 | 不支持 systemd、Docker、宿主设备或任意 ELF 程序 |
 
-支持变量、引号、条件、循环、函数、管道与重定向，并内置 `grep`、`sed`、`awk`、`jq` 等常见工具。需要真实进程或多 Shell 对照时改用 [container2wasm](./container2wasm)，需要完整 Linux 系统时改用 [V86](./v86)。
+支持变量、引号、条件、循环、函数、管道与重定向，并内置 `grep`、`sed`、`awk`、`jq` 等常见工具。需要真实进程或多 Shell 对照时改用 [container2wasm](./c2w-alpine)，需要完整 Linux 系统时改用 [V86](./v86)。
