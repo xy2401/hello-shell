@@ -17,13 +17,6 @@ on:
         description: 'Chunk size for splitting (e.g. 10M, 5M)'
         required: true
         default: '10M'
-  push:
-    branches:
-      - main
-    paths:
-      - 'docs/public/runtime/c2w*/Dockerfile'
-      - '.github/workflows/build-c2w-runtime.yml'
-      - 'scripts/package-c2w.js'
 
 permissions:
   contents: write
