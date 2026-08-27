@@ -40,7 +40,7 @@
             </div>
           </div>
           <div class="workbench-controls">
-            <WorkbenchExampleMenu :examples="examples" :disabled="status !== 'running'" :hint="controlHint" @select="runExample" />
+            <WorkbenchExampleMenu :examples="examples" :disabled="status !== 'running'" :compact="getRuntimeId() === 'c2w-shell'" :hint="controlHint" @select="runExample" />
             <button
               type="button"
               class="workbench-button"
@@ -200,18 +200,18 @@ const examples = computed(() => {
     ];
   } else if (rid === 'c2w-shell') {
     return [
-      { id: 'ash', title: '切换 Ash', summary: '进入 Alpine 默认 Shell', source: 'exec ash -l\ncat /proc/$$/comm' },
-      { id: 'bash', title: '切换 Bash', summary: '切换并从 /proc 输出进程', source: 'exec bash -l\ncat /proc/$$/comm' },
-      { id: 'zsh', title: '切换 Zsh', summary: '切换并从 /proc 输出进程', source: 'exec zsh -l\ncat /proc/$$/comm' },
-      { id: 'fish', title: '切换 Fish', summary: '切换并从 /proc 输出进程', source: 'exec fish\ncat /proc/$fish_pid/comm' },
-      { id: 'elvish', title: '切换 Elvish', summary: '进入 Elvish 交互环境', source: 'exec elvish' },
-      { id: 'dash', title: '切换 Dash', summary: '切换并从 /proc 输出进程', source: 'exec dash\ncat /proc/$$/comm' },
-      { id: 'mksh', title: '切换 mksh', summary: '进入 MirBSD Korn Shell', source: 'exec mksh -l\ncat /proc/$$/comm' },
-      { id: 'yash', title: '切换 Yash', summary: '进入 Yet Another Shell', source: 'exec yash\ncat /proc/$$/comm' },
-      { id: 'oksh', title: '切换 oksh', summary: '进入 OpenBSD Korn Shell', source: 'exec oksh -l\ncat /proc/$$/comm' },
-      { id: 'tcsh', title: '切换 tcsh', summary: '进入兼容 C Shell 的 tcsh', source: 'exec tcsh -l\ncat /proc/$$/comm' },
-      { id: 'ion', title: '切换 Ion', summary: '进入 Ion Shell', source: 'exec ion' },
-      { id: 'python', title: '启动 Python', summary: '进入 Python 交互解释器', source: 'python3' },
+      { id: 'ash', title: 'Ash', summary: '默认 Shell', source: 'exec ash -l\ncat /proc/$$/comm' },
+      { id: 'bash', title: 'Bash', summary: '通用 Shell', source: 'exec bash -l\ncat /proc/$$/comm' },
+      { id: 'zsh', title: 'Zsh', summary: '交互增强', source: 'exec zsh -l\ncat /proc/$$/comm' },
+      { id: 'fish', title: 'Fish', summary: '友好易用', source: 'exec fish\ncat /proc/$fish_pid/comm' },
+      { id: 'elvish', title: 'Elvish', summary: '结构化数据', source: 'exec elvish' },
+      { id: 'dash', title: 'Dash', summary: '轻量 POSIX', source: 'exec dash\ncat /proc/$$/comm' },
+      { id: 'mksh', title: 'mksh', summary: 'MirBSD Korn', source: 'exec mksh -l\ncat /proc/$$/comm' },
+      { id: 'yash', title: 'Yash', summary: '严格 POSIX', source: 'exec yash\ncat /proc/$$/comm' },
+      { id: 'oksh', title: 'oksh', summary: 'OpenBSD Korn', source: 'exec oksh -l\ncat /proc/$$/comm' },
+      { id: 'tcsh', title: 'tcsh', summary: 'C Shell 增强', source: 'exec tcsh -l\ncat /proc/$$/comm' },
+      { id: 'ion', title: 'Ion', summary: '现代 Rust Shell', source: 'exec ion' },
+      { id: 'python', title: 'Python 3', summary: '交互式解释器', source: 'python3' },
     ];
   } else {
     return [

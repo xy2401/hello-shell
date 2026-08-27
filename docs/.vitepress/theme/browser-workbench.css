@@ -169,7 +169,11 @@ html.dark {
   right: 0;
   display: grid;
   width: 15rem;
-  overflow: hidden;
+  max-height: min(22rem, 60vh);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
   border: 1px solid var(--wb-border);
   border-radius: .55rem;
   background: var(--wb-panel);
@@ -201,6 +205,18 @@ html.dark {
 .workbench-example-options button:focus-visible { background: var(--wb-button-hover); outline: none; }
 .workbench-example-options strong { color: var(--wb-text-strong); font-size: .7rem; }
 .workbench-example-options small { color: var(--wb-muted); font-size: .62rem; font-weight: 500; }
+
+.workbench-example-menu.compact .workbench-example-options { width: 13.5rem; }
+.workbench-example-menu.compact .workbench-example-options button {
+  display: flex;
+  align-items: baseline;
+  gap: .2rem;
+  padding: .28rem .58rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.workbench-example-menu.compact .workbench-example-options strong { flex: none; }
+.workbench-example-menu.compact .workbench-example-options small { overflow: hidden; text-overflow: ellipsis; }
 
 .workbench-idle {
   display: grid;
