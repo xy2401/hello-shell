@@ -6,7 +6,7 @@
 
 Bash 中使用 `$1`, `$2` 非常容易出错。YSH 允许像现代语言一样声明函数并绑定参数名称。
 
-```ysh
+```bash
 proc build(target, --clean) {
     if (clean) {
         echo "Cleaning..."

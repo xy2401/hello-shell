@@ -5,7 +5,7 @@
 ## 强类型数据流
 Murex 管道传递的是包含类型元数据的数据块。它原生支持 JSON、YAML、CSV 等。
 
-```murex
+```bash
 # 读取一个 JSON 文件并通过管道处理
 open config.json | format yaml
 ```
@@ -13,7 +13,7 @@ open config.json | format yaml
 ## 智能变量与类型映射
 Murex 会自动推断数据结构，并允许直接使用类似 JS 的对象访问语法。
 
-```murex
+```bash
 # 直接提取 JSON 树中的某个节点
 open data.json | [Person.Name]
 ```
