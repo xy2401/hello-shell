@@ -53,7 +53,7 @@
           </div>
         </div>
         <div v-if="status === 'idle' || status === 'error' || status === 'not_ready'" class="workbench-idle">
-          <div class="workbench-preview" aria-hidden="true"><span>alpine:~$</span><code>exec zsh -l</code></div>
+          <div class="workbench-preview" aria-hidden="true"><span>alpine:~$</span><code>{{ getRuntimeId() === 'c2w-powershell' ? 'pwsh' : (getRuntimeId() === 'c2w-shell' ? 'exec zsh -l' : 'cat /etc/os-release') }}</code></div>
           <p>{{ status === 'idle' ? '容器尚未加载。点击右上角“未启动 · 启动容器”后下载运行时分片。' : message }}</p>
           <a v-if="status === 'not_ready'" class="workbench-button" href="https://github.com/container2wasm/container2wasm" target="_blank" rel="noopener noreferrer">查看 container2wasm</a>
         </div>
@@ -104,7 +104,11 @@ interface Manifest {
 const { isDark } = useData();
 const terminalHost = ref<HTMLElement>();
 const status = ref<RuntimeStatus>('idle');
-const message = ref('支持在同一容器内无缝切换 Bash 5.2、Zsh 5.9、Fish 3.7 与 Python 3.12。');
+const message = ref(
+  getRuntimeId() === 'c2w-powershell' ? '在浏览器中运行跨平台的 .NET PowerShell Core。' :
+  getRuntimeId() === 'c2w-shell' ? '支持在同一容器内无缝切换 Bash 5.2、Zsh 5.9、Fish 3.7、Elvish 等与 Python 3.12。' :
+  '极致纯净的 Alpine 容器环境，仅自带基础工具链。'
+);
 
 const targetArchDisplay = computed(() => {
   const rid = getRuntimeId();
@@ -175,13 +179,28 @@ const controlHint = computed(() => status.value === 'running'
   ? '选择环境或运行示例'
   : status.value === 'paused' ? '容器已暂停，请先继续' : status.value === 'idle' ? '未启动，请先启动容器' : '容器尚未就绪');
 
-const examples: Array<{ id: string; title: string; summary: string; source: string }> = [
-  { id: 'bash', title: '切换 Bash', summary: '切换并从 /proc 输出当前进程', source: 'exec bash -l\ncat /proc/$$/comm' },
-  { id: 'zsh', title: '切换 Zsh', summary: '切换并从 /proc 输出当前进程', source: 'exec zsh -l\ncat /proc/$$/comm' },
-  { id: 'fish', title: '切换 Fish', summary: '切换并从 /proc 输出当前进程', source: 'exec fish\ncat /proc/$fish_pid/comm' },
-  { id: 'python', title: '启动 Python', summary: '进入 Python 交互解释器', source: 'python3' },
-  { id: 'system', title: '系统信息', summary: '查看 Alpine、内核和架构', source: `cat /etc/os-release; uname -a` },
-];
+const examples = computed(() => {
+  const rid = getRuntimeId();
+  if (rid === 'c2w-powershell') {
+    return [
+      { id: 'pwsh', title: '启动 PowerShell', summary: '进入 PowerShell Core 环境', source: 'pwsh' },
+      { id: 'obj', title: '对象管道', summary: '基于属性过滤进程对象', source: 'Get-Process | Where-Object CPU -gt 0' },
+      { id: 'system', title: '系统信息', summary: '查看内核和架构', source: 'cat /etc/os-release; uname -a' },
+    ];
+  } else if (rid === 'c2w-shell') {
+    return [
+      { id: 'bash', title: '切换 Bash', summary: '切换并从 /proc 输出进程', source: 'exec bash -l\ncat /proc/$$/comm' },
+      { id: 'zsh', title: '切换 Zsh', summary: '切换并从 /proc 输出进程', source: 'exec zsh -l\ncat /proc/$$/comm' },
+      { id: 'fish', title: '切换 Fish', summary: '切换并从 /proc 输出进程', source: 'exec fish\ncat /proc/$fish_pid/comm' },
+      { id: 'python', title: '启动 Python', summary: '进入 Python 交互解释器', source: 'python3' },
+    ];
+  } else {
+    return [
+      { id: 'system', title: '系统信息', summary: '查看 Alpine、内核和架构', source: 'cat /etc/os-release; uname -a' },
+      { id: 'apk', title: '安装包测试', summary: '尝试使用 apk', source: 'apk search htop' }
+    ];
+  }
+});
 
 function handleRuntimeAction() {
   if (status.value === 'paused') toggleRun();
