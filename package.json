@@ -15,8 +15,9 @@
     "check:docker-catalog": "node scripts/check-docker-catalog.js",
     "check:matrix-experiments": "node scripts/check-matrix-experiments.js",
     "check:versions": "node scripts/check-version-docs.js",
+    "check:installs": "node scripts/check-install-docs.js",
     "check:project": "node scripts/check-project.js",
-    "check": "npm run check:versions && npm run check:project && npm run check:docker-catalog && npm run check:matrix-experiments && npm run docs:build"
+    "check": "npm run check:versions && npm run check:installs && npm run check:project && npm run check:docker-catalog && npm run check:matrix-experiments && npm run docs:build"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

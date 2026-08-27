@@ -87,6 +87,7 @@ export default defineConfig({
       '/products/bash/': [
         { text: 'bash', items: [
           { text: '概览', link: '/products/bash/' },
+          { text: '安装与切换', link: '/products/bash/install' },
           { text: '语法与语义', link: '/products/bash/syntax' },
           { text: '参数与位置变量', link: '/products/bash/args' },
           { text: '常见坑位', link: '/products/bash/pitfalls' },
@@ -109,6 +110,7 @@ export default defineConfig({
       '/products/zsh/': [
         { text: 'zsh', items: [
           { text: '概览', link: '/products/zsh/' },
+          { text: '安装与切换', link: '/products/zsh/install' },
           { text: '语法与展开', link: '/products/zsh/syntax' },
           { text: '参数与选项', link: '/products/zsh/args' },
           { text: '常见坑位', link: '/products/zsh/pitfalls' },
@@ -128,6 +130,7 @@ export default defineConfig({
       '/products/fish/': [
         { text: 'fish', items: [
           { text: '概览', link: '/products/fish/' },
+          { text: '安装与切换', link: '/products/fish/install' },
           { text: '语法与交互', link: '/products/fish/syntax' },
           { text: '参数与选项', link: '/products/fish/args' },
           { text: '常见坑位', link: '/products/fish/pitfalls' },
@@ -148,6 +151,7 @@ export default defineConfig({
       '/products/cmd/': [
         { text: 'cmd', items: [
           { text: '概览', link: '/products/cmd/' },
+          { text: '安装与切换', link: '/products/cmd/install' },
           { text: '批处理语法', link: '/products/cmd/syntax' },
           { text: '参数与变量', link: '/products/cmd/args' },
           { text: '常见坑位', link: '/products/cmd/pitfalls' },
@@ -167,6 +171,7 @@ export default defineConfig({
       '/products/powershell/': [
         { text: 'PowerShell', items: [
           { text: '概览', link: '/products/powershell/' },
+          { text: '安装与切换', link: '/products/powershell/install' },
           { text: '语法与管道', link: '/products/powershell/syntax' },
           { text: '参数与对象', link: '/products/powershell/args' },
           { text: '常见坑位', link: '/products/powershell/pitfalls' },
@@ -189,6 +194,7 @@ export default defineConfig({
       '/products/nushell/': [
         { text: '👑 Nushell', items: [
           { text: '概览', link: '/products/nushell/' },
+          { text: '安装与切换', link: '/products/nushell/install' },
           { text: '语法与特性', link: '/products/nushell/syntax' },
           { text: '参数与交互', link: '/products/nushell/args' },
           { text: '常见坑位', link: '/products/nushell/pitfalls' },
@@ -205,6 +211,7 @@ export default defineConfig({
       '/products/oils/': [
         { text: '🛢️ Oils for Unix', items: [
           { text: '概览', link: '/products/oils/' },
+          { text: '安装与切换', link: '/products/oils/install' },
           { text: '语法与特性', link: '/products/oils/syntax' },
           { text: '参数与交互', link: '/products/oils/args' },
           { text: '常见坑位', link: '/products/oils/pitfalls' },
@@ -222,6 +229,7 @@ export default defineConfig({
       '/products/elvish/': [
         { text: '🧝 Elvish', items: [
           { text: '概览', link: '/products/elvish/' },
+          { text: '安装与切换', link: '/products/elvish/install' },
           { text: '语法与特性', link: '/products/elvish/syntax' },
           { text: '参数与交互', link: '/products/elvish/args' },
           { text: '常见坑位', link: '/products/elvish/pitfalls' },
@@ -239,6 +247,7 @@ export default defineConfig({
       '/products/rc/': [
         { text: '🪐 rc', items: [
           { text: '概览', link: '/products/rc/' },
+          { text: '安装与切换', link: '/products/rc/install' },
           { text: '语法与特性', link: '/products/rc/syntax' },
           { text: '参数与交互', link: '/products/rc/args' },
           { text: '常见坑位', link: '/products/rc/pitfalls' },
@@ -256,6 +265,7 @@ export default defineConfig({
       '/products/murex/': [
         { text: '🦕 Murex', items: [
           { text: '概览', link: '/products/murex/' },
+          { text: '安装与切换', link: '/products/murex/install' },
           { text: '语法与特性', link: '/products/murex/syntax' },
           { text: '参数与交互', link: '/products/murex/args' },
           { text: '常见坑位', link: '/products/murex/pitfalls' },
@@ -273,6 +283,7 @@ export default defineConfig({
       '/products/dash/': [
         { text: '⚡ Dash', items: [
           { text: '概览', link: '/products/dash/' },
+          { text: '安装与切换', link: '/products/dash/install' },
           { text: '语法与特性', link: '/products/dash/syntax' },
           { text: '参数与交互', link: '/products/dash/args' },
           { text: '常见坑位', link: '/products/dash/pitfalls' },
@@ -290,6 +301,7 @@ export default defineConfig({
       '/products/ash/': [
         { text: '🪨 Ash (BusyBox)', items: [
           { text: '概览', link: '/products/ash/' },
+          { text: '安装与切换', link: '/products/ash/install' },
           { text: '语法与特性', link: '/products/ash/syntax' },
           { text: '参数与交互', link: '/products/ash/args' },
           { text: '常见坑位', link: '/products/ash/pitfalls' },
