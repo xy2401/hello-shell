@@ -97,7 +97,7 @@ jobs:
             
             echo "3. Splitting and generating manifest..."
             DEST_DIR="./docs/public/runtime/c2w"
-            if [ "${ENV_NAME}" != "base" ]; then
+            if [ "${ENV_NAME}" != "empty" ]; then
               DEST_DIR="./docs/public/runtime/c2w-${ENV_NAME}"
             fi
             
