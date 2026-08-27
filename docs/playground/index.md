@@ -22,7 +22,7 @@
 
   引导真实 Buildroot Linux，用于观察进程树、目录层次和内核行为；软件模拟较慢，系统镜像固定。
 
-- **[container2wasm](./container2wasm) — 容器转 WebAssembly**
+- **[container2wasm](./c2w-alpine) — 容器转 WebAssembly**
 
   在同一个 Alpine 环境内切换 Bash、Zsh、Fish 和 Python，并可安装软件包；下载和启动成本最高。
 
