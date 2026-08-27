@@ -372,7 +372,7 @@ async function startContainer() {
     }
 
     terminal?.writeln(`\x1b[32m✔\x1b[0m 已加载并验证全部分片 (共 ${(wasmBytes.byteLength / 1024 / 1024).toFixed(1)} MB)`);
-    terminal?.writeln('\x1b[34m[Boot]\x1b[0m 启动 Alpine Linux 3.22 内核与多 Shell 终端...');
+    terminal?.writeln(`\x1b[34m[Boot]\x1b[0m ${getRuntimeId() === 'c2w-powershell' ? '启动 x86_64 Bochs 模拟器与 PowerShell Core...' : '启动 Alpine Linux 3.22 内核...'}`);
 
     const { openpty, TtyServer, Termios } = (window as any);
     const { master, slave } = openpty();
@@ -395,7 +395,7 @@ async function startContainer() {
 
       if (data.type === 'runtime-started') {
         status.value = 'running';
-        message.value = 'WebAssembly 虚拟机已启动，正在引导 Alpine Linux。';
+        message.value = getRuntimeId() === 'c2w-powershell' ? 'WebAssembly 虚拟机已启动，x86_64 镜像体积较大，引导可能需要 30~60 秒，请耐心等待...' : 'WebAssembly 虚拟机已启动，正在引导 Alpine Linux。';
       } else if (data.type === 'runtime-error') {
         showRuntimeError(data.stack || data.message || 'Worker 运行失败');
       }
