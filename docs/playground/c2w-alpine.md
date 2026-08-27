@@ -7,7 +7,7 @@ pageClass: shell-runtime-page
 
 本页提供一个极简版本的 Alpine 3.22 容器环境（纯 `sh`），用于演示 container2wasm 在 RISC-V 64 架构下最小化的运行开销。
 
-<BrowserContainerWorkbench runtimeId="c2w" />
+<BrowserContainerWorkbench runtimeId="c2w-empty" />
 
 ## 特性与环境
 

@@ -74,10 +74,7 @@ jobs:
               TARGET_ARCH="riscv64"
             fi
             
-            DEST_DIR="./docs/public/runtime/c2w"
-            if [ "${ENV_NAME}" != "empty" ]; then
-              DEST_DIR="./docs/public/runtime/c2w-${ENV_NAME}"
-            fi
+            DEST_DIR="./docs/public/runtime/c2w-${ENV_NAME}"
 
             echo "1. Building Docker image for ${TARGET_ARCH}..."
             docker buildx build \
@@ -96,10 +93,7 @@ jobs:
             ls -lh ./out/${ENV_NAME}/c2w-runtime.wasm
             
             echo "3. Splitting and generating manifest..."
-            DEST_DIR="./docs/public/runtime/c2w"
-            if [ "${ENV_NAME}" != "empty" ]; then
-              DEST_DIR="./docs/public/runtime/c2w-${ENV_NAME}"
-            fi
+            DEST_DIR="./docs/public/runtime/c2w-${ENV_NAME}"
             
             node scripts/package-c2w.js \
               --input ./out/${ENV_NAME}/c2w-runtime.wasm \
