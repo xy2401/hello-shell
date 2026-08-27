@@ -76,7 +76,7 @@
 import { computed, nextTick, onBeforeUnmount, ref, watch, onMounted } from 'vue';
 import { useData } from 'vitepress';
 const props = defineProps<{ runtimeId?: string }>();
-const getRuntimeId = () => props.runtimeId || "c2w-empty";
+const getRuntimeId = () => props.runtimeId || "c2w";
 import type { Terminal } from '@xterm/xterm';
 import type { FitAddon } from '@xterm/addon-fit';
 import WorkbenchExampleMenu from './WorkbenchExampleMenu.vue';
