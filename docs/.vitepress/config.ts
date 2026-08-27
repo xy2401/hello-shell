@@ -90,7 +90,19 @@ export default defineConfig({
           { text: '语法与语义', link: '/products/bash/syntax' },
           { text: '参数与位置变量', link: '/products/bash/args' },
           { text: '常见坑位', link: '/products/bash/pitfalls' },
-          { text: '版本演进', link: '/products/bash/versions' },
+          {
+            text: '版本演进',
+            link: '/products/bash/version/',
+            collapsed: false,
+            items: [
+              { text: "Bash 5.3", link: '/products/bash/version/bash-5.3' },
+              { text: "Bash 5.2", link: '/products/bash/version/bash-5.2' },
+              { text: "Bash 5.1", link: '/products/bash/version/bash-5.1' },
+              { text: "Bash 5.0", link: '/products/bash/version/bash-5.0' },
+              { text: "Bash 4.4", link: '/products/bash/version/bash-4.4' },
+              { text: "Bash 4.0", link: '/products/bash/version/bash-4.0' },
+            ],
+          },
           { text: 'Docker 验证', link: '/products/bash/DockerTooling' },
         ] },
       ],
@@ -100,7 +112,16 @@ export default defineConfig({
           { text: '语法与展开', link: '/products/zsh/syntax' },
           { text: '参数与选项', link: '/products/zsh/args' },
           { text: '常见坑位', link: '/products/zsh/pitfalls' },
-          { text: '版本演进', link: '/products/zsh/versions' },
+          {
+            text: '版本演进',
+            link: '/products/zsh/version/',
+            collapsed: false,
+            items: [
+              { text: "Zsh 5.9", link: '/products/zsh/version/zsh-5.9' },
+              { text: "Zsh 5.8", link: '/products/zsh/version/zsh-5.8' },
+              { text: "Zsh 5.0", link: '/products/zsh/version/zsh-5.0' },
+            ],
+          },
           { text: 'Docker 验证', link: '/products/zsh/DockerTooling' },
         ] },
       ],
@@ -110,7 +131,17 @@ export default defineConfig({
           { text: '语法与交互', link: '/products/fish/syntax' },
           { text: '参数与选项', link: '/products/fish/args' },
           { text: '常见坑位', link: '/products/fish/pitfalls' },
-          { text: '版本演进', link: '/products/fish/versions' },
+          {
+            text: '版本演进',
+            link: '/products/fish/version/',
+            collapsed: false,
+            items: [
+              { text: "Fish 4.2", link: '/products/fish/version/fish-4.2' },
+              { text: "Fish 4.0", link: '/products/fish/version/fish-4.0' },
+              { text: "Fish 3.7", link: '/products/fish/version/fish-3.7' },
+              { text: "Fish 3.0", link: '/products/fish/version/fish-3.0' },
+            ],
+          },
           { text: 'Docker 验证', link: '/products/fish/DockerTooling' },
         ] },
       ],
@@ -120,7 +151,16 @@ export default defineConfig({
           { text: '批处理语法', link: '/products/cmd/syntax' },
           { text: '参数与变量', link: '/products/cmd/args' },
           { text: '常见坑位', link: '/products/cmd/pitfalls' },
-          { text: '版本演进', link: '/products/cmd/versions' },
+          {
+            text: '版本演进',
+            link: '/products/cmd/version/',
+            collapsed: false,
+            items: [
+              { text: "Windows 11 / Server 2022 CMD", link: '/products/cmd/version/windows-11-server-2022-cmd' },
+              { text: "Windows 10 CMD", link: '/products/cmd/version/windows-10-cmd' },
+              { text: "Windows 2000 / NT 4.0 CMD", link: '/products/cmd/version/windows-2000-nt-4.0-cmd' },
+            ],
+          },
           { text: 'Docker 验证', link: '/products/cmd/DockerTooling' },
         ] },
       ],
@@ -130,7 +170,19 @@ export default defineConfig({
           { text: '语法与管道', link: '/products/powershell/syntax' },
           { text: '参数与对象', link: '/products/powershell/args' },
           { text: '常见坑位', link: '/products/powershell/pitfalls' },
-          { text: '版本演进', link: '/products/powershell/versions' },
+          {
+            text: '版本演进',
+            link: '/products/powershell/version/',
+            collapsed: false,
+            items: [
+              { text: "PowerShell 7.6 LTS", link: '/products/powershell/version/powershell-7.6' },
+              { text: "PowerShell 7.4 LTS", link: '/products/powershell/version/powershell-7.4' },
+              { text: "PowerShell 7.2 LTS", link: '/products/powershell/version/powershell-7.2' },
+              { text: "PowerShell 7.0", link: '/products/powershell/version/powershell-7.0' },
+              { text: "PowerShell Core 6.0", link: '/products/powershell/version/powershell-core-6.0' },
+              { text: "Windows PowerShell 5.1", link: '/products/powershell/version/windows-powershell-5.1' },
+            ],
+          },
           { text: 'Docker 验证', link: '/products/powershell/DockerTooling' },
         ] },
       ],
@@ -140,6 +192,14 @@ export default defineConfig({
           { text: '语法与特性', link: '/products/nushell/syntax' },
           { text: '参数与交互', link: '/products/nushell/args' },
           { text: '常见坑位', link: '/products/nushell/pitfalls' },
+          {
+            text: '版本演进',
+            link: '/products/nushell/version/',
+            collapsed: false,
+            items: [
+              { text: "Nushell 0.115", link: '/products/nushell/version/nushell-0.115' },
+            ],
+          },
         ] },
       ],
       '/products/oils/': [
@@ -148,6 +208,15 @@ export default defineConfig({
           { text: '语法与特性', link: '/products/oils/syntax' },
           { text: '参数与交互', link: '/products/oils/args' },
           { text: '常见坑位', link: '/products/oils/pitfalls' },
+          {
+            text: '版本演进',
+            link: '/products/oils/version/',
+            collapsed: false,
+            items: [
+              { text: "Oils 0.24", link: '/products/oils/version/oils-0.24' },
+              { text: "Oils 0.20", link: '/products/oils/version/oils-0.20' },
+            ],
+          },
         ] },
       ],
       '/products/elvish/': [
@@ -156,6 +225,15 @@ export default defineConfig({
           { text: '语法与特性', link: '/products/elvish/syntax' },
           { text: '参数与交互', link: '/products/elvish/args' },
           { text: '常见坑位', link: '/products/elvish/pitfalls' },
+          {
+            text: '版本演进',
+            link: '/products/elvish/version/',
+            collapsed: false,
+            items: [
+              { text: "Elvish 0.21", link: '/products/elvish/version/elvish-0.21' },
+              { text: "Elvish 0.20", link: '/products/elvish/version/elvish-0.20' },
+            ],
+          },
         ] },
       ],
       '/products/rc/': [
@@ -164,6 +242,15 @@ export default defineConfig({
           { text: '语法与特性', link: '/products/rc/syntax' },
           { text: '参数与交互', link: '/products/rc/args' },
           { text: '常见坑位', link: '/products/rc/pitfalls' },
+          {
+            text: '版本演进',
+            link: '/products/rc/version/',
+            collapsed: false,
+            items: [
+              { text: "rc 1.7", link: '/products/rc/version/rc-1.7' },
+              { text: "Plan 9 rc", link: '/products/rc/version/plan-9-rc' },
+            ],
+          },
         ] },
       ],
       '/products/murex/': [
@@ -172,6 +259,15 @@ export default defineConfig({
           { text: '语法与特性', link: '/products/murex/syntax' },
           { text: '参数与交互', link: '/products/murex/args' },
           { text: '常见坑位', link: '/products/murex/pitfalls' },
+          {
+            text: '版本演进',
+            link: '/products/murex/version/',
+            collapsed: false,
+            items: [
+              { text: "Murex 7.x", link: '/products/murex/version/murex-7.x' },
+              { text: "Murex 6.x", link: '/products/murex/version/murex-6.x' },
+            ],
+          },
         ] },
       ],
       '/products/dash/': [
@@ -180,6 +276,15 @@ export default defineConfig({
           { text: '语法与特性', link: '/products/dash/syntax' },
           { text: '参数与交互', link: '/products/dash/args' },
           { text: '常见坑位', link: '/products/dash/pitfalls' },
+          {
+            text: '版本演进',
+            link: '/products/dash/version/',
+            collapsed: false,
+            items: [
+              { text: "dash 0.5.12", link: '/products/dash/version/dash-0.5.12' },
+              { text: "dash 0.5.11", link: '/products/dash/version/dash-0.5.11' },
+            ],
+          },
         ] },
       ],
       '/products/ash/': [
@@ -188,6 +293,15 @@ export default defineConfig({
           { text: '语法与特性', link: '/products/ash/syntax' },
           { text: '参数与交互', link: '/products/ash/args' },
           { text: '常见坑位', link: '/products/ash/pitfalls' },
+          {
+            text: '版本演进',
+            link: '/products/ash/version/',
+            collapsed: false,
+            items: [
+              { text: "BusyBox 1.37", link: '/products/ash/version/busybox-1.37' },
+              { text: "BusyBox 1.36", link: '/products/ash/version/busybox-1.36' },
+            ],
+          },
         ] },
       ],
       '/products/': [
