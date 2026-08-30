@@ -25,6 +25,12 @@ function crossOriginIsolationPlugin() {
   }
 }
 
+function markProductPage(pageData: any) {
+  if (!pageData.relativePath.startsWith('products/')) return
+  const pageClasses = String(pageData.frontmatter.pageClass ?? '').split(/\s+/).filter(Boolean)
+  pageData.frontmatter.pageClass = [...new Set([...pageClasses, 'product-doc-page'])].join(' ')
+}
+
 export default defineConfig({
   markdown: {
     languageAliases: {
@@ -43,6 +49,7 @@ export default defineConfig({
   description:
     'Shell 与命令行统一任务矩阵：bash/zsh/fish/cmd/PowerShell 同任务对照与真实输出快照 (Shell & Command Line Task Matrix)',
   lang: 'zh-CN',
+  lastUpdated: true,
   base,
   head: [['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }]],
   vite: {
@@ -59,6 +66,7 @@ export default defineConfig({
       },
     },
   },
+  transformPageData: markProductPage,
   themeConfig: {
     logo: '/favicon.svg',
     nav: [
@@ -386,6 +394,8 @@ export default defineConfig({
       level: [2, 3],
       label: '本页目录',
     },
+    lastUpdated: { text: '最后更新' },
+    docFooter: { prev: '上一篇', next: '下一篇' },
     socialLinks: [],
     search: {
       provider: 'local',

@@ -1,4 +1,4 @@
-# Ash (Almquist Shell) 分卷
+# Ash (Almquist Shell) 总览
 
 > 本页结论：Ash 是轻量级嵌入式系统和容器（如 Alpine Linux）的默认王者，极简而强大。
 

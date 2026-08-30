@@ -1,4 +1,4 @@
-# cmd
+# cmd 总览
 
 
 > 本页结论：cmd 是 Windows 最古老的命令行解释器，今天的主要价值是兼容几十年积累的批处理脚本（.bat/.cmd）；它内置于每一台 Windows 与 windows-latest runner，没有独立发行渠道也无法锁版本，本仓库以 00_env 采集的 `ver` 输出快照留痕。
