@@ -1,4 +1,4 @@
-# Oils for Unix 分卷
+# Oils for Unix 总览
 
 > 本页结论：Oils（原 Oil Shell）旨在解决 Bash 沉重的历史包袱，同时兼顾向后兼容，是未来 Unix 底层 Shell 最具潜力的接班人。
 

@@ -1,4 +1,4 @@
-# bash 分卷
+# bash 总览
 
 
 > 本页结论：bash 是 POSIX 生态的事实标准，也是绝大多数 Linux 服务器与 CI 环境的默认 Shell。本卷全部行为结论来自锁版镜像 `bash:5.2` 容器内采集的真实输出快照（`demos/bash/*.out.txt`），学习路径为 [syntax（语法骨架）](./syntax) → [args（入参模型）](./args) → [pitfalls（真实陷阱）](./pitfalls)。
