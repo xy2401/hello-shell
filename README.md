@@ -57,6 +57,27 @@ pwsh scripts/collect-windows.ps1        # Windows：原生运行 cmd/PS5/PS7 任
 npm run check                           # 静态检查 + 文档构建
 ```
 
+## 共享容器运行时
+
+container2wasm 的镜像构建、打包与大型分片由 `hello-wasm` 维护；本仓库保留终端组件、轻量 Worker/PTy 桥接和实验素材。原有三个页面路径保持不变：
+
+| 页面 | 共享资产 | 架构 |
+| --- | --- | --- |
+| `/playground/c2w-alpine` | `shell/base` | riscv64 |
+| `/playground/c2w-shell` | `shell/multi` | riscv64 |
+| `/playground/c2w-powershell` | `shell/powershell` | amd64 |
+
+默认从 `https://wasm.2401.xyz/runtime` 读取清单，点击启动后才下载分片。公共站需要先发布 hello-wasm 的新增资产，再发布 Shell。重建入口是 hello-wasm 的手动 `build-shell-runtimes` 工作流。
+
+本地联调先在另一个终端启动 `npm --prefix ../hello-wasm run docs:dev`，然后在本项目执行：
+
+```powershell
+$env:VITE_WASM_RUNTIME_BASE = 'http://127.0.0.1:5177/runtime'
+npm run docs:dev
+```
+
+只验证加载器和配置可运行 `npm run test:container-runtimes` 与 `npm run check:container-runtimes`，使用小数据替身，不启动完整容器。
+
 ## 资源与安全提示
 
 - 所有实验只读挂载 fixtures，写入仅发生在容器内 `/tmp` 或系统临时目录。

@@ -11,7 +11,7 @@
           type="button"
           class="workbench-status"
           :class="status"
-          :disabled="status === 'downloading' || (status === 'initializing' && !isPowerShellBooting) || status === 'not_ready'"
+          :disabled="status === 'downloading' || (status === 'initializing' && !isPowerShellBooting)"
           @click="handleRuntimeAction"
         ><i></i>{{ runtimeActionLabel }}</button>
       </header>
@@ -55,7 +55,7 @@
         <div v-if="status === 'idle' || status === 'error' || status === 'not_ready'" class="workbench-idle">
           <div class="workbench-preview" aria-hidden="true"><span>alpine:~$</span><code>{{ getRuntimeId() === 'c2w-powershell' ? 'pwsh' : (getRuntimeId() === 'c2w-shell' ? 'exec zsh -l' : 'cat /etc/os-release') }}</code></div>
           <p>{{ status === 'idle' ? '容器尚未加载。点击右上角“未启动 · 启动容器”后下载运行时分片。' : message }}</p>
-          <a v-if="status === 'not_ready'" class="workbench-button" href="https://github.com/container2wasm/container2wasm" target="_blank" rel="noopener noreferrer">查看 container2wasm</a>
+          <a v-if="status === 'not_ready'" class="workbench-button" href="https://github.com/xy2401/hello-wasm/actions/workflows/build-shell-runtimes.yml" target="_blank" rel="noopener noreferrer">查看共享运行时工作流</a>
         </div>
         <div 
           v-show="status === 'downloading' || status === 'initializing' || status === 'running' || status === 'paused'" 
@@ -82,25 +82,10 @@ import type { Terminal } from '@xterm/xterm';
 import type { FitAddon } from '@xterm/addon-fit';
 import WorkbenchExampleMenu from './WorkbenchExampleMenu.vue';
 import { sourceModules, fixtureModules } from '../data/matrixExperiments';
+import { runtimeLocation, fetchManifest, loadChunks } from '../utils/containerRuntime.mjs';
 import '@xterm/xterm/css/xterm.css';
 
 type RuntimeStatus = 'idle' | 'downloading' | 'initializing' | 'running' | 'paused' | 'not_ready' | 'error';
-
-interface ChunkItem {
-  filename: string;
-  size?: number;
-  compressedSize?: number;
-  sha256?: string;
-}
-
-interface Manifest {
-  version: string;
-  targetArch: string;
-  chunkSize: string;
-  createdAt: string;
-  status?: string;
-  chunks: ChunkItem[];
-}
 
 const { isDark } = useData();
 const terminalHost = ref<HTMLElement>();
@@ -124,22 +109,24 @@ const envDisplay = computed(() => {
 });
 
 const chunkDisplay = ref('获取中...');
+const runtimeBase = String(import.meta.env.VITE_WASM_RUNTIME_BASE || 'https://wasm.2401.xyz/runtime');
+const metadataController = new AbortController();
+let runtimeController: AbortController | undefined;
 
 onMounted(async () => {
   try {
-    const baseUrl = import.meta.env.BASE_URL || '/';
-    const res = await fetch(`${baseUrl}runtime/${getRuntimeId()}/manifest.json`);
-    if (res.ok) {
-      const manifest = await res.json() as Manifest;
-      const chunks = manifest.chunks || [];
-      const totalCompressed = chunks.reduce((acc, cur) => acc + (cur.compressedSize || cur.size || 0), 0);
+    const manifest = await fetchManifest(runtimeLocation(getRuntimeId(), runtimeBase), { signal: metadataController.signal });
+    if (metadataController.signal.aborted) return;
+    if (manifest) {
+      const chunks = manifest.chunks;
+      const totalCompressed = chunks.reduce((acc: number, cur: { compressedSize: number }) => acc + cur.compressedSize, 0);
       const sizeMB = (totalCompressed / 1024 / 1024).toFixed(1);
-      chunkDisplay.value = `${chunks.length} 个分片 (${sizeMB} MB)`;
+      chunkDisplay.value = `${chunks.length} 个分片 (${sizeMB} MiB)`;
     } else {
-      chunkDisplay.value = '未知';
+      chunkDisplay.value = '共享资产尚未发布';
     }
   } catch (e) {
-    chunkDisplay.value = '获取失败';
+    if (!metadataController.signal.aborted) chunkDisplay.value = '共享清单获取失败';
   }
 });
 
@@ -174,7 +161,7 @@ const runtimeActionLabel = computed(() => {
     case 'paused':
       return '已暂停 · 继续';
     case 'not_ready':
-      return '运行时不可用';
+      return '尚未发布 · 重试';
     case 'error':
       return '启动失败 · 重试';
     default:
@@ -276,55 +263,6 @@ async function ensureTerminal() {
   resizeObserver.observe(terminalHost.value);
 }
 
-async function decompressIfNeeded(buf: ArrayBuffer): Promise<ArrayBuffer> {
-  const u8 = new Uint8Array(buf);
-  // Gzip magic header 0x1f 0x8b
-  if (u8.length >= 2 && u8[0] === 0x1f && u8[1] === 0x8b) {
-    if (typeof DecompressionStream !== 'undefined') {
-      const ds = new DecompressionStream('gzip');
-      const stream = new Response(buf).body!.pipeThrough(ds);
-      return await new Response(stream).arrayBuffer();
-    }
-  }
-  return buf;
-}
-
-async function loadChunks(manifest: Manifest, baseUrl: string): Promise<Uint8Array> {
-  const chunks = manifest.chunks;
-  totalChunks.value = chunks.length;
-  downloadedChunks.value = 0;
-  downloadProgress.value = 0;
-
-  const buffers: ArrayBuffer[] = new Array(chunks.length);
-  let completed = 0;
-
-  await Promise.all(
-    chunks.map(async (chunk, index) => {
-      const url = `${baseUrl}runtime/${getRuntimeId()}/${chunk.filename}`;
-      const res = await fetch(url);
-      if (!res.ok) {
-        throw new Error(`Failed to fetch chunk ${chunk.filename}: ${res.statusText}`);
-      }
-      const rawBuf = await res.arrayBuffer();
-      const decompressedBuf = await decompressIfNeeded(rawBuf);
-      buffers[index] = decompressedBuf;
-      completed++;
-      downloadedChunks.value = completed;
-      downloadProgress.value = Math.round((completed / chunks.length) * 100);
-    })
-  );
-
-  const totalLength = buffers.reduce((acc, b) => acc + b.byteLength, 0);
-  const combined = new Uint8Array(totalLength);
-  let offset = 0;
-  for (const buf of buffers) {
-    combined.set(new Uint8Array(buf), offset);
-    offset += buf.byteLength;
-  }
-
-  return combined;
-}
-
 function formatRuntimeError(error: any): string {
   if (typeof error === 'string') return error;
 
@@ -389,6 +327,9 @@ function watchForPowerShellReady() {
 }
 
 async function startContainer() {
+  runtimeController?.abort();
+  const controller = new AbortController();
+  runtimeController = controller;
   try {
     clearPowerShellReadyWatcher();
     runtimeError.value = '';
@@ -396,6 +337,7 @@ async function startContainer() {
     message.value = '正在读取运行时资产清单...';
     await nextTick();
     await ensureTerminal();
+    if (controller.signal.aborted) return;
 
     if (typeof SharedArrayBuffer === 'undefined') {
       terminal?.writeln('\x1b[33m[环境提示]\x1b[0m 当前预览环境未开放 SharedArrayBuffer。');
@@ -407,26 +349,27 @@ async function startContainer() {
 
     // 加载 xterm-pty 终端主从协议库
     await loadScript(`${baseUrl}runtime/c2w/engine/xterm-pty.js`);
+    if (controller.signal.aborted) return;
 
-    const manifestRes = await fetch(`${baseUrl}runtime/${getRuntimeId()}/manifest.json`);
-
-    if (!manifestRes.ok) {
+    const target = runtimeLocation(getRuntimeId(), runtimeBase);
+    const manifest = await fetchManifest(target, { signal: controller.signal });
+    if (controller.signal.aborted) return;
+    if (!manifest) {
       status.value = 'not_ready';
-      message.value = '云端运行时清单尚未生成。请先在 GitHub Actions 中触发 build-c2w-runtime 工作流。';
+      message.value = 'Hello WASM 共享资产尚未发布；请查看 hello-wasm 的 build-shell-runtimes 工作流或配置本地资产服务。';
       terminal?.writeln('\x1b[33m[提示]\x1b[0m 容器运行时尚未在云端生成。');
       return;
     }
 
-    const manifest: Manifest = await manifestRes.json();
-
-    if (!manifest.chunks || manifest.chunks.length === 0) {
-      status.value = 'not_ready';
-      message.value = '已配置云端构建流水线，首次使用前需在 GitHub Actions 运行 build-c2w-runtime 生成分片。';
-      return;
-    }
-
     message.value = `正在并发拉取 ${manifest.chunks.length} 个 Gzip 分片...`;
-    const wasmBytes = await loadChunks(manifest, baseUrl);
+    totalChunks.value = manifest.chunks.length;
+    downloadedChunks.value = 0;
+    downloadProgress.value = 0;
+    const wasmBytes = await loadChunks(manifest, target, { signal: controller.signal, onProgress: (completed: number, total: number) => {
+      downloadedChunks.value = completed;
+      downloadProgress.value = Math.round(completed / total * 100);
+    } });
+    if (controller.signal.aborted) return;
 
     status.value = 'initializing';
     message.value = '分片下载与解压完成，正在校验并启动 WebAssembly 虚拟机...';
@@ -455,6 +398,7 @@ async function startContainer() {
     worker = new Worker(`${baseUrl}runtime/c2w/engine/worker.js?t=${Date.now()}`);
 
     worker.addEventListener('message', (event: MessageEvent) => {
+      if (controller.signal.aborted) return;
       const data = event.data;
       if (!data || typeof data !== 'object') return;
 
@@ -474,10 +418,12 @@ async function startContainer() {
 
     worker.addEventListener('error', (event: ErrorEvent) => {
       event.preventDefault();
+      if (controller.signal.aborted) return;
       showRuntimeError(event.error || event.message || 'Worker 脚本加载失败');
     });
 
     worker.addEventListener('messageerror', () => {
+      if (controller.signal.aborted) return;
       showRuntimeError('Worker 消息无法解析，容器运行时已停止。');
     });
 
@@ -489,7 +435,7 @@ async function startContainer() {
     ttyServer = new TtyServer(slave);
     ttyServer.start(worker);
   } catch (err: any) {
-    showRuntimeError(err);
+    if (!controller.signal.aborted) showRuntimeError(err);
   }
 }
 
@@ -709,6 +655,7 @@ function toggleRun() {
 }
 
 function restartContainer() {
+  runtimeController?.abort();
   clearPowerShellReadyWatcher();
   if (worker) {
     worker.terminate();
@@ -729,6 +676,8 @@ watch(isDark, (dark) => {
 });
 
 onBeforeUnmount(() => {
+  metadataController.abort();
+  runtimeController?.abort();
   clearPowerShellReadyWatcher();
   if (worker) {
     worker.terminate();

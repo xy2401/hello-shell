@@ -7,6 +7,8 @@ pageClass: shell-runtime-page
 
 本页提供一个集成了主流 Shell 与 Python 环境的全能版容器，非常适合用于横向对比语法差异。
 
+运行时由 [Hello WASM](https://wasm.2401.xyz/runtimes/) 维护，读取 `shell/multi/riscv64`；当前 gzip 下载量为 63.5 MiB。打开页面只获取清单，点击启动才下载分片。
+
 <BrowserContainerWorkbench runtimeId="c2w-shell" />
 
 ## 特性与环境

@@ -7,6 +7,8 @@ pageClass: shell-runtime-page
 
 在浏览器里跑完整的 .NET PowerShell 运行时！
 
+运行时由 [Hello WASM](https://wasm.2401.xyz/runtimes/) 维护，读取 `shell/powershell/amd64`；当前 gzip 下载量为 112.1 MiB。保留现有 AMD64 架构，打开页面只获取清单，点击启动才下载分片。
+
 <BrowserContainerWorkbench runtimeId="c2w-powershell" />
 
 ## 特性与环境

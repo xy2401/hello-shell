@@ -28,6 +28,8 @@
 
 选择顺序也代表成本梯度：只看语法先用 JUST-BASH，需要 POSIX 工具用 BusyBox，需要 Python 对照用 Pyodide，需要真实内核用 V86，最后才使用完整的 container2wasm。
 
+container2wasm 的三个页面共用 [Hello WASM 的资产中心](https://wasm.2401.xyz/runtimes/)：基础 Alpine 为 25.9 MiB，多 Shell 为 63.5 MiB，PowerShell 为 112.1 MiB（gzip）。每次仅加载当前选择的环境；基础和多 Shell 使用 RISC-V 64，PowerShell 使用 AMD64。
+
 ---
 
 ## 浏览器 Shell 方案速查
