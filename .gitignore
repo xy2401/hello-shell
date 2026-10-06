@@ -4,3 +4,7 @@ docs/.vitepress/cache/
 *.log
 !demos/shared/fixtures/data/app.log
 .DS_Store
+
+# Shared Docker pilot workflow workspace
+.artifacts/
+.hello-docker/

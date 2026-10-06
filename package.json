@@ -17,9 +17,11 @@
     "check:versions": "node scripts/check-version-docs.js",
     "check:installs": "node scripts/check-install-docs.js",
     "check:project": "node scripts/check-project.js",
-    "check": "npm run check:versions && npm run check:installs && npm run check:project && npm run check:container-runtimes && npm run check:docker-catalog && npm run check:matrix-experiments && npm run docs:build",
     "check:container-runtimes": "node scripts/check-container-runtimes.mjs",
-    "test:container-runtimes": "node --test scripts/test-container-runtime.mjs"
+    "test:container-runtimes": "node --test scripts/test-container-runtime.mjs",
+    "check": "npm run check:versions && npm run check:installs && npm run check:project && npm run check:container-runtimes && npm run check:docker-catalog && npm run check:matrix-experiments && npm run docs:build",
+    "docker:plan": "node scripts/docker-pilot.mjs plan",
+    "docker:check": "node scripts/docker-pilot.mjs check-manifest"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

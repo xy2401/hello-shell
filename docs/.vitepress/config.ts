@@ -1,3 +1,4 @@
+import { sharedThemeLabels } from './shared-ui'
 import { defineConfig } from 'vitepress'
 import { fileURLToPath } from 'node:url'
 
@@ -68,6 +69,7 @@ export default defineConfig({
   },
   transformPageData: markProductPage,
   themeConfig: {
+    ...sharedThemeLabels,
     logo: '/favicon.svg',
     nav: [
       { text: 'Bash', link: '/products/bash/' },
@@ -87,7 +89,7 @@ export default defineConfig({
           { text: '🪨 Ash (BusyBox)', link: '/products/ash/' },
         ],
       },
-      { text: '🧪 实验台', link: '/playground/' },
+      { text: '浏览器 Shell 实验台', link: '/playground/' },
       { text: '⚖️ 对比矩阵', link: '/matrix/' },
       { text: '📚 参考资料', link: '/reference/' },
     ],
@@ -113,6 +115,7 @@ export default defineConfig({
             ],
           },
           { text: 'Docker 验证', link: '/products/bash/DockerTooling' },
+          { text: '公共 Docker 采集试点', link: '/products/bash/docker-pilot' },
         ] },
       ],
       '/products/zsh/': [
@@ -347,7 +350,7 @@ export default defineConfig({
         {
           text: '浏览器实验台',
           items: [
-            { text: '实验台总览', link: '/playground/' },
+            { text: '浏览器 Shell 实验台', link: '/playground/' },
             { text: 'JUST-BASH', link: '/playground/just-bash' },
             { text: 'BusyBox', link: '/playground/busybox' },
             { text: 'Pyodide', link: '/playground/pyodide' },
@@ -363,7 +366,7 @@ export default defineConfig({
           text: '对比矩阵',
           items: [
             { text: '矩阵总览', link: '/matrix/' },
-            { text: '统一任务实验', link: '/matrix/experiments' },
+            { text: '统一任务复现手册', link: '/matrix/experiments' },
             { text: '变量与引号', link: '/matrix/quoting-variables' },
             { text: '控制流', link: '/matrix/control-flow' },
             { text: '函数与管道', link: '/matrix/functions-pipes' },
@@ -397,8 +400,5 @@ export default defineConfig({
     lastUpdated: { text: '最后更新' },
     docFooter: { prev: '上一篇', next: '下一篇' },
     socialLinks: [],
-    search: {
-      provider: 'local',
-    },
   },
 })

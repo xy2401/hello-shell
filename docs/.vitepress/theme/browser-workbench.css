@@ -23,7 +23,7 @@ html.dark {
 }
 
 .shell-workbench {
-  --wb-accent: #0891b2;
+  --wb-accent: #0e7490;
   margin: 1rem 0 2rem;
   overflow: hidden;
   border: 1px solid var(--vp-c-divider);
@@ -38,10 +38,14 @@ html.dark {
   max-width: none;
 }
 
-.shell-workbench--busybox { --wb-accent: #0891b2; }
-.shell-workbench--python { --wb-accent: #2563eb; }
-.shell-workbench--linux { --wb-accent: #16a34a; }
-.shell-workbench--container { --wb-accent: #ea580c; }
+.shell-workbench--busybox { --wb-accent: #0e7490; }
+.shell-workbench--python { --wb-accent: #1d4ed8; }
+.shell-workbench--linux { --wb-accent: #047857; }
+.shell-workbench--container { --wb-accent: #c2410c; }
+html.dark .shell-workbench { --wb-accent: #67e8f9; }
+html.dark .shell-workbench--python { --wb-accent: #93c5fd; }
+html.dark .shell-workbench--linux { --wb-accent: #6ee7b7; }
+html.dark .shell-workbench--container { --wb-accent: #fdba74; }
 
 .workbench-header {
   display: flex;
@@ -193,8 +197,6 @@ html.dark {
   visibility: hidden;
 }
 
-.workbench-example-menu.available:hover .workbench-example-options,
-.workbench-example-menu.available:focus-within .workbench-example-options,
 .workbench-example-menu.open .workbench-example-options { opacity: 1; pointer-events: auto; transform: translateY(0); visibility: visible; }
 
 .workbench-example-options button {

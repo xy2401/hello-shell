@@ -30,13 +30,17 @@
           <span><strong>交互终端</strong>{{ message }}</span>
           <div>
             <div
+              ref="exampleMenuRoot"
               class="example-menu"
               :class="{ open: exampleMenuOpen, available: status === 'running' && !commandBusy }"
               :title="exampleControlHint"
-              @mouseleave="closeExampleMenu"
-              @keydown.esc="closeExampleMenu"
+              @pointerenter="onExamplePointerEnter"
+              @pointerleave="onExamplePointerLeave"
+              @focusout="onExampleFocusOut"
+              @keydown="onExampleMenuKeydown"
             >
               <button
+                ref="exampleMenuTrigger"
                 type="button"
                 aria-haspopup="menu"
                 :aria-expanded="exampleMenuOpen"
@@ -44,7 +48,7 @@
                 :disabled="status !== 'running' || commandBusy"
                 @click="toggleExampleMenu"
               >运行示例 <span aria-hidden="true">▾</span></button>
-              <div class="example-options" role="menu">
+              <div v-show="exampleMenuOpen" class="example-options" role="menu">
                 <button
                   v-for="example in examples"
                   :key="example.id"
@@ -93,6 +97,9 @@ const status = ref<RuntimeStatus>('idle');
 const message = ref('Bash 语法和 Unix 工具在浏览器内存沙箱中执行，不连接命令服务器。');
 const commandBusy = ref(false);
 const exampleMenuOpen = ref(false);
+const exampleMenuRoot = ref<HTMLElement>();
+const exampleMenuTrigger = ref<HTMLButtonElement>();
+let exampleOpenedByHover = false;
 
 const examples = [
   {
@@ -269,11 +276,54 @@ async function restart() {
 
 function clearTerminal() { terminal?.clear(); terminal?.focus(); }
 
-function closeExampleMenu() { exampleMenuOpen.value = false; }
+function closeExampleMenu() { exampleMenuOpen.value = false; exampleOpenedByHover = false; }
 
 function toggleExampleMenu() {
-  if (status.value === 'running' && !commandBusy.value) exampleMenuOpen.value = !exampleMenuOpen.value;
+  if (status.value !== 'running' || commandBusy.value) return;
+  if (exampleOpenedByHover) exampleOpenedByHover = false;
+  else exampleMenuOpen.value = !exampleMenuOpen.value;
 }
+
+function onExamplePointerEnter(event: PointerEvent) {
+  if (event.pointerType === 'mouse' && status.value === 'running' && !commandBusy.value && !exampleMenuOpen.value) {
+    exampleMenuOpen.value = true;
+    exampleOpenedByHover = true;
+  }
+}
+
+function onExamplePointerLeave() {
+  if (!exampleMenuRoot.value?.contains(document.activeElement)) closeExampleMenu();
+}
+
+function onExampleFocusOut(event: FocusEvent) {
+  if (!exampleMenuRoot.value?.contains(event.relatedTarget as Node | null)) closeExampleMenu();
+}
+
+async function onExampleMenuKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape' && exampleMenuOpen.value) {
+    event.preventDefault();
+    event.stopPropagation();
+    closeExampleMenu();
+    exampleMenuTrigger.value?.focus();
+    return;
+  }
+  if (status.value !== 'running' || commandBusy.value || !['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+  event.preventDefault();
+  event.stopPropagation();
+  exampleMenuOpen.value = true;
+  exampleOpenedByHover = false;
+  await nextTick();
+  const items = Array.from(exampleMenuRoot.value?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]') ?? []);
+  if (!items.length) return;
+  const current = items.indexOf(document.activeElement as HTMLButtonElement);
+  const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1
+    : event.key === 'ArrowDown' ? (current + 1) % items.length : (current - 1 + items.length) % items.length;
+  items[current < 0 && event.key === 'ArrowUp' ? items.length - 1 : next]?.focus();
+}
+
+watch([status, commandBusy], ([runtimeStatus, busy]) => {
+  if (runtimeStatus !== 'running' || busy) closeExampleMenu();
+});
 
 async function runExample(source: string) {
   closeExampleMenu();
@@ -307,7 +357,7 @@ function disposeRuntime() {
   bash = undefined;
   commandLine = '';
   commandBusy.value = false;
-  exampleMenuOpen.value = false;
+  closeExampleMenu();
   if (terminalHost.value) terminalHost.value.replaceChildren();
 }
 
@@ -378,7 +428,7 @@ onBeforeUnmount(disposeRuntime);
 .example-menu { position: relative; }
 .example-menu > button span { margin-left: .18rem; color: var(--bash-terminal-muted); }
 .example-options { position: absolute; z-index: 20; top: 100%; right: 0; display: grid; width: 15rem; overflow: hidden; border: 1px solid var(--bash-terminal-border); border-radius: .55rem; background: var(--bash-terminal-panel); box-shadow: var(--bash-terminal-menu-shadow); opacity: 0; pointer-events: none; transform: translateY(-.08rem); transition: opacity .12s ease, transform .12s ease, visibility .12s ease; visibility: hidden; }
-.example-menu.available:hover .example-options, .example-menu.available:focus-within .example-options, .example-menu.open .example-options { opacity: 1; pointer-events: auto; transform: translateY(0); visibility: visible; }
+.example-menu.open .example-options { opacity: 1; pointer-events: auto; transform: translateY(0); visibility: visible; }
 .example-options button { position: relative; display: grid; gap: .12rem; border: 0; border-bottom: 1px solid var(--bash-terminal-border); border-radius: 0; padding: .62rem .72rem; text-align: left; }
 .example-options button:last-child { border-bottom: 0; }
 .example-options button:hover, .example-options button:focus-visible { background: var(--bash-terminal-button-hover); outline: none; }

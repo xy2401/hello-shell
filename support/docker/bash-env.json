@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bash-env",
+  "title": "Bash 环境公共采集试点",
+  "kind": "container",
+  "platform": "linux/amd64",
+  "timeoutMs": 180000,
+  "images": { "runtime": { "envFile": ".env.versions", "envKey": "BASH_IMAGE" } },
+  "imageRole": "runtime",
+  "mounts": [{ "source": "demos/bash/00_env.sh", "target": "/demos/00_env.sh", "readOnly": true }],
+  "command": ["bash", "/demos/00_env.sh"],
+  "assertions": [
+    { "id": "bash-version", "stream": "stdout", "op": "includes", "value": "version=GNU bash, version 5.2" },
+    { "id": "shell-name", "stream": "stdout", "op": "includes", "value": "shell=bash" },
+    { "id": "linux-platform", "stream": "stdout", "op": "includes", "value": "platform=linux" }
+  ],
+  "output": { "evidenceDir": "demos/bash/docker-pilot", "page": "docs/products/bash/docker-pilot.md" }
+}

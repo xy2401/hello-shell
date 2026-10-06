@@ -80,4 +80,20 @@ Linux 侧的 bash/zsh/fish/python/pwsh 都在容器里运行，镜像以 tag + d
 | `07_errors.bat` | 错误处理 | `ERRORLEVEL` 分支、子 cmd 退出码 |
 | `08_real_world.bat` | 综合实战 | `copy`、`ren *.log *.log.bak`、校验 |
 
-动手复现见 [统一任务实验](/matrix/experiments)。
+动手复现见 [统一任务复现手册](/matrix/experiments)。
+
+## 适用边界
+
+适合 Windows 批处理；变量展开、错误码与引用规则不同于 Unix Shell，路径及编码需在 Windows 上确认。
+
+## 版本阅读范围
+
+[完整版本目录](./version/)收录本仓库已有专题（如 windows-10-cmd、windows-11-server-2022-cmd、windows-2000-nt-4.0-cmd）。这些是教学与兼容性对照入口；运行环境的具体版本以安装页、工作台或采集证据为准。
+
+## 推荐学习路线
+
+[安装与环境](./install) → [语法骨架](./syntax) → [入参模型](./args) → [陷阱与检查表](./pitfalls) → [完整版本目录](./version/)。先完成最小示例，再阅读版本差异。
+
+## 实验入口与范围
+
+[浏览器实验台](/playground/)提供 Bash 风格与 BusyBox 等已有引擎；这些不能自动代表本产品的完整实现。 [统一任务复现手册](/matrix/experiments)说明已有脚本、输入和采集方式；未进入快照矩阵的 Shell 请按本产品安装页在本机实践。 本产品的已采集输出见 [Docker 验证证据](./DockerTooling)。

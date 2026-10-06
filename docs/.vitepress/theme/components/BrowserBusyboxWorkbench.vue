@@ -415,7 +415,7 @@ onBeforeUnmount(() => {
 }
 
 .runtime-launcher button {
-  background: var(--vp-c-brand-1);
+  background: var(--doc-action-bg);
   color: #fff;
   padding: 0.5rem 1.25rem;
   border-radius: 8px;
@@ -426,7 +426,7 @@ onBeforeUnmount(() => {
 }
 
 .runtime-launcher button:hover {
-  background: var(--vp-c-brand-2);
+  background: var(--doc-action-hover-bg);
 }
 
 .runtime-error {

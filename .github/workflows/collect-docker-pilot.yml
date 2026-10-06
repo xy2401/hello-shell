@@ -1,0 +1,82 @@
+name: Collect bash-env with Hello Docker
+on:
+  workflow_dispatch:
+    inputs:
+      tool_sha:
+        description: Published full 40-character hello-docker commit SHA
+        type: string
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: shell-evidence-main
+  cancel-in-progress: false
+jobs:
+  execute:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Require an immutable tool reference
+        env:
+          TOOL_SHA: ${{ inputs.tool_sha }}
+        run: '[[ "$TOOL_SHA" =~ ^[a-f0-9]{40}$ ]]'
+      - uses: actions/checkout@v4
+        with:
+          repository: xy2401/hello-docker
+          ref: ${{ inputs.tool_sha }}
+          path: .hello-docker
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: ./.hello-docker
+        with:
+          manifest: support/docker/bash-env.json
+          output: .artifacts/bash-env
+          tool-sha: ${{ inputs.tool_sha }}
+      - name: Preserve execution and failure artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-pilot-bash-env-${{ github.run_id }}
+          path: .artifacts/bash-env/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14
+  publish:
+    needs: execute
+    if: ${{ needs.execute.result == 'success' && github.ref_type == 'branch' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/checkout@v4
+        with:
+          repository: xy2401/hello-docker
+          ref: ${{ inputs.tool_sha }}
+          path: .hello-docker
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: docker-pilot-bash-env-${{ github.run_id }}
+          path: .artifacts/bash-env
+      - name: Validate evidence and build the generated pilot page
+        run: |
+          node .hello-docker/bin/hello-docker.mjs render-evidence --manifest support/docker/bash-env.json --evidence .artifacts/bash-env
+          cp .artifacts/bash-env/page.md docs/products/bash/docker-pilot-preview.md
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run docs:build
+      - name: Publish only verified pilot evidence
+        env:
+          HELLO_DOCKER_TOOL_SHA: ${{ inputs.tool_sha }}
+        run: node .hello-docker/bin/hello-docker.mjs publish-evidence --manifest support/docker/bash-env.json --evidence .artifacts/bash-env

@@ -4,7 +4,7 @@
 
 ## 环境要求
 
-- **Node.js ≥ 20**：文档站与采集脚本的入口（见 `package.json` 的 `engines`）。
+- **Node.js 20.19+ 或 22.16+**：文档站与采集脚本的入口（见 `package.json` 的 `engines`）。
 - **Docker Engine**：Linux 侧实验与采集需要。
 - **Windows**：可选。没有 Windows 机器也能拿到 Windows 侧快照——由 GitHub Actions 的 collect-windows-outputs workflow 采集后提交入库。
 
@@ -16,6 +16,8 @@ cd hello-shell
 npm install          # 安装依赖
 npm run docs:dev     # 本地打开文档站（默认 http://localhost:5173）
 ```
+
+若使用 hello-world 协调仓库，在根目录运行 `pwsh ./start-all.ps1`：Shell/SQL/Lang/MQ/WASM 对应5173–5177。独立启动仍以终端实际输出为准。
 
 其他常用命令：
 

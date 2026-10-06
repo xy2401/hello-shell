@@ -1,3 +1,17 @@
+:root {
+  --vp-c-brand-1: #3451b2;
+  --vp-c-brand-2: #2f46a7;
+  --vp-c-brand-3: #3451b2;
+  --doc-action-bg: #3451b2;
+  --doc-action-hover-bg: #2f46a7;
+  --doc-action-active-bg: #213582;
+}
+
+.dark {
+  --vp-c-brand-1: #a8b1ff;
+  --vp-c-brand-2: #c7ceff;
+}
+
 /* Keep the header in the same centered layout on home and sidebar pages. */
 @media (min-width: 960px) {
   html .VPNavBar.has-sidebar.has-sidebar .wrapper {

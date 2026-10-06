@@ -120,4 +120,20 @@ Windows 侧快照同样佐证：`demos/powershell7/01_hello_io.ps1.out.txt`
 - [常见陷阱](/products/powershell/pitfalls)：编码/BOM、布尔输出、
   `$LASTEXITCODE`、路径分隔符；
 - 横向对照：[入参矩阵](/matrix/args-matrix)、
-  [错误处理矩阵](/matrix/error-handling-matrix)、[统一任务实验](/matrix/experiments)。
+  [错误处理矩阵](/matrix/error-handling-matrix)、[统一任务复现手册](/matrix/experiments)。
+
+## 适用边界
+
+适合对象管道与跨平台自动化；Windows PowerShell 5.1 和 PowerShell 7 的 API、模块与平台能力不同。
+
+## 版本阅读范围
+
+[完整版本目录](./version/)收录本仓库已有专题（如 powershell-7.0、powershell-7.2、powershell-7.4）。这些是教学与兼容性对照入口；运行环境的具体版本以安装页、工作台或采集证据为准。
+
+## 推荐学习路线
+
+[安装与环境](./install) → [语法骨架](./syntax) → [入参模型](./args) → [陷阱与检查表](./pitfalls) → [完整版本目录](./version/)。先完成最小示例，再阅读版本差异。
+
+## 实验入口与范围
+
+[浏览器实验台](/playground/)提供 Bash 风格与 BusyBox 等已有引擎；这些不能自动代表本产品的完整实现。 [统一任务复现手册](/matrix/experiments)说明已有脚本、输入和采集方式；未进入快照矩阵的 Shell 请按本产品安装页在本机实践。 本产品的已采集输出见 [Docker 验证证据](./DockerTooling)。

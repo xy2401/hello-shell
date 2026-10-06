@@ -12,7 +12,7 @@
 4. **分词**：展开结果遇到空白会不会被拆成多个词？
 5. **glob**：展开结果里的 `*` `?` `[...]` 会不会被替换成文件名？
 
-任务 02（[统一任务实验](/matrix/experiments#任务-02-变量与引号)）用四个验证点钉住这条流水线：`value`（带空格赋值）、`wordCount`（分词）、`interpolated`（插值）、`starLiteral`（glob 字面量）。
+任务 02（[统一任务复现手册](/matrix/experiments#任务-02-变量与引号)）用四个验证点钉住这条流水线：`value`（带空格赋值）、`wordCount`（分词）、`interpolated`（插值）、`starLiteral`（glob 字面量）。
 
 ## 证据：任务 02 输出八体一致
 

@@ -13,6 +13,8 @@
 
 ## 版本基线
 
+[完整版本目录](./version/)列出本仓库已收录的版本主题；已有运行基线与镜像证据继续以本页说明为准。
+
 快照 `demos/bash/00_env.sh.out.txt`（容器内真实采集）：
 
 ```text
@@ -51,6 +53,14 @@ platform=linux
 
 ## 相关页面
 
-- [统一任务实验](/matrix/experiments)：如何在本地复现这 9 个任务的采集；
+- [统一任务复现手册](/matrix/experiments)：如何在本地复现这 9 个任务的采集；
 - [内核、Shell 与 GUI](/#shell-foundation)：bash 在三层模型中的位置；
 - [Shell vs Python](/matrix/comparison/shell-vs-python)：bash 脚本的能力边界在哪里。
+
+## 适用边界
+
+适合 Bash 脚本与交互；Bash 扩展不是 POSIX sh 的通用语法，浏览器 just-bash 也不等同于本机 GNU Bash。
+
+## 实验入口与范围
+
+[浏览器实验台](/playground/)提供 Bash 风格与 BusyBox 等已有引擎；这些不能自动代表本产品的完整实现。 [统一任务复现手册](/matrix/experiments)说明已有脚本、输入和采集方式；未进入快照矩阵的 Shell 请按本产品安装页在本机实践。 本产品的已采集输出见 [Docker 验证证据](./DockerTooling)。

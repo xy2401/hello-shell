@@ -1,0 +1,2 @@
+# This pilot script is executed unchanged in Linux containers from Windows/WSL.
+demos/bash/00_env.sh text eol=lf

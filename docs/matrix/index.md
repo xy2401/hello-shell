@@ -1,6 +1,6 @@
 # 统一语义骨架：所有 Shell 用同一组维度拆解
 
-> 本页结论：bash、zsh、fish、cmd、PowerShell 语法千差万别，但能力骨架是同一套——变量与引用、控制流、函数与管道、错误与信号、入参模型五个维度。本仓库用 9 个统一任务在这五个维度上逐一打桩，每个行为结论都以 `demos/` 下的真实输出快照为证；读结论之前，请先看 [统一任务实验](/matrix/experiments)。
+> 本页结论：bash、zsh、fish、cmd、PowerShell 语法千差万别，但能力骨架是同一套——变量与引用、控制流、函数与管道、错误与信号、入参模型五个维度。本仓库用 9 个统一任务在这五个维度上逐一打桩，每个行为结论都以 `demos/` 下的真实输出快照为证；读结论之前，请先看 [统一任务复现手册](/matrix/experiments)。
 
 ## 为什么需要统一骨架
 
@@ -41,5 +41,5 @@
 - 只输出 `key=value` 形式的行，键名跨 shell 一致（如 `wordCount`、`paidCount`、`exitCodeReturn`）；
 - 正常路径一律 `exit 0`，非零退出码只出现在故意构造的子进程里（如任务 05 的 `exit 7`）；
 - stdout 与 stderr 的分流在任务 01 中专门验证，其余任务不把诊断信息混进 stdout；
-- 快照与源码同目录：Linux 五个运行体（bash/zsh/fish/pwsh/python）的 `.out.txt` 已入库，Windows 三个运行体（cmd/powershell5/powershell7）的快照由 CI 采集（见[统一任务实验](/matrix/experiments#运行方式)）。
+- 快照与源码同目录：Linux 五个运行体（bash/zsh/fish/pwsh/python）的 `.out.txt` 已入库，Windows 三个运行体（cmd/powershell5/powershell7）的快照由 CI 采集（见[统一任务复现手册](/matrix/experiments#运行方式)）。
 
