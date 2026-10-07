@@ -130,7 +130,7 @@ npm run docs:dev         # 独立启动默认 http://localhost:5173，以终端�
 npm run collect-outputs  # 容器内运行全部 9 个任务，刷新 *.out.txt 快照
 ```
 
-在 hello-world 根目录可用 `pwsh ./start-all.ps1` 同时启动五站，固定端口5173–5177；本 Shell 站使用5173。环境要求与完整说明见 [快速上手](/reference/getting-started)。
+以上命令在 hello-shell 仓库根目录执行。环境要求与完整说明见 [快速上手](/reference/getting-started)。
 
 ---
 

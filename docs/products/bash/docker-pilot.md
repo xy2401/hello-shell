@@ -13,7 +13,7 @@ npm run docker:check
 npm run docker:plan -- --shell powershell
 ```
 
-在 hello-world 中会找到相邻的 hello-docker；独立克隆时使用 `HELLO_DOCKER_HOME` 指定工具仓库绝对路径。这两个入口不执行 Docker。
+先获取独立的 [hello-docker 工具仓库](https://github.com/xy2401/hello-docker/tree/codex/hello-docker)，将 `HELLO_DOCKER_HOME` 设置为该仓库的绝对路径，再在 hello-shell 仓库根目录执行以上命令。这两个入口只检查配置和生成计划。
 
 ## Actions 执行与回写
 

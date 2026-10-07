@@ -69,7 +69,7 @@ container2wasm 的镜像构建、打包与大型分片由 `hello-wasm` 维护；
 
 默认从 `https://wasm.2401.xyz/runtime` 读取清单，点击启动后才下载分片。公共站需要先发布 hello-wasm 的新增资产，再发布 Shell。重建入口是 hello-wasm 的手动 `build-shell-runtimes` 工作流。
 
-本地联调先在另一个终端启动 `npm --prefix ../hello-wasm run docs:dev`，然后在本项目执行：
+本地联调时，在另一个终端进入 [hello-wasm 仓库](https://github.com/xy2401/hello-wasm)的根目录并运行 `npm run docs:dev`，然后在 hello-shell 仓库根目录执行：
 
 ```powershell
 $env:VITE_WASM_RUNTIME_BASE = 'http://127.0.0.1:5177/runtime'

@@ -17,7 +17,7 @@ npm install          # 安装依赖
 npm run docs:dev     # 本地打开文档站（默认 http://localhost:5173）
 ```
 
-若使用 hello-world 协调仓库，在根目录运行 `pwsh ./start-all.ps1`：Shell/SQL/Lang/MQ/WASM 对应5173–5177。独立启动仍以终端实际输出为准。
+后续命令均在 hello-shell 仓库根目录执行。开发服务地址以终端实际输出为准；按 `Ctrl+C` 停止服务。
 
 其他常用命令：
 
@@ -76,4 +76,3 @@ demos/
 | 08 | 综合实战 | `08_real_world.sh` + `08_real_world.sh.out.txt` |
 
 **推荐读法**：先读脚本（它做了什么）→ 再读并排的 `*.out.txt`（真实输出长什么样）→ 最后到[矩阵](/matrix/)看横向对照。想横向比较同一个任务，就把不同 shell 目录下同一编号的两个文件放在一起读，例如 `bash/03_args_parsing.sh.out.txt` 对 `powershell7/03_args_parsing.ps1.out.txt`。
-
