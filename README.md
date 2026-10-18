@@ -72,7 +72,7 @@ container2wasm 的镜像构建、打包与大型分片由 `hello-wasm` 维护；
 本地联调时，在另一个终端进入 [hello-wasm 仓库](https://github.com/xy2401/hello-wasm)的根目录并运行 `npm run docs:dev`，然后在 hello-shell 仓库根目录执行：
 
 ```powershell
-$env:VITE_WASM_RUNTIME_BASE = 'http://127.0.0.1:5177/runtime'
+$env:VITE_WASM_RUNTIME_BASE = 'http://127.0.0.1:24044/runtime'
 npm run docs:dev
 ```
 

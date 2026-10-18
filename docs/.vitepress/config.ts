@@ -89,7 +89,7 @@ export default defineConfig({
           { text: '🪨 Ash (BusyBox)', link: '/products/ash/' },
         ],
       },
-      { text: '浏览器 Shell 实验台', link: '/playground/' },
+      { text: '🧪 实验台', link: '/playground/' },
       { text: '⚖️ 对比矩阵', link: '/matrix/' },
       { text: '📚 参考资料', link: '/reference/' },
     ],
@@ -337,9 +337,9 @@ export default defineConfig({
       ],
       '/playground/': [
         {
-          text: '浏览器实验台',
+          text: '🧪 实验台',
           items: [
-            { text: '浏览器 Shell 实验台', link: '/playground/' },
+            { text: '🧪 实验台', link: '/playground/' },
             { text: 'JUST-BASH', link: '/playground/just-bash' },
             { text: 'BusyBox', link: '/playground/busybox' },
             { text: 'Pyodide', link: '/playground/pyodide' },
@@ -352,9 +352,9 @@ export default defineConfig({
       ],
       '/matrix/': [
         {
-          text: '对比矩阵',
+          text: '⚖️ 对比矩阵',
           items: [
-            { text: '矩阵总览', link: '/matrix/' },
+            { text: '⚖️ 对比矩阵', link: '/matrix/' },
             { text: '统一任务复现手册', link: '/matrix/experiments' },
             { text: '变量与引号', link: '/matrix/quoting-variables' },
             { text: '控制流', link: '/matrix/control-flow' },
@@ -369,9 +369,9 @@ export default defineConfig({
       ],
       '/reference/': [
         {
-          text: '参考资料',
+          text: '📚 参考资料',
           items: [
-            { text: '参考资料总览', link: '/reference/' },
+            { text: '📚 参考资料', link: '/reference/' },
             { text: '快速上手', link: '/reference/getting-started' },
             { text: '版本政策', link: '/reference/version-policy' },
             { text: '证据政策', link: '/reference/evidence-policy' },

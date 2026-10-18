@@ -7,11 +7,11 @@ import { runtimeLocation, validateManifest, fetchManifest, loadChunks } from '..
 const bytes = Uint8Array.from([0, 97, 115, 109, 1, 0, 0, 0])
 const gzip = gzipSync(bytes)
 const digest = createHash('sha256').update(gzip).digest('hex')
-const target = runtimeLocation('c2w', 'http://127.0.0.1:5177/runtime/')
+const target = runtimeLocation('c2w', 'http://127.0.0.1:24044/runtime/')
 const fixture = () => ({ schemaVersion: 1, runtimeId: 'shell/base', targetArch: 'riscv64', runtimeVersion: 'fixture', systemVersion: 'Alpine Linux 3.22', container2wasmVersion: '0.8.4', createdAt: '2026-10-05T00:00:00Z', totalRawSize: bytes.length, chunks: [{ filename: 'runtime-abcdef012345-part-00.gz', sha256: digest, compressedSize: gzip.length, rawSize: bytes.length }] })
 
 test('three existing page IDs map to explicit shared assets and architectures', () => {
-  assert.equal(target.assetBase, 'http://127.0.0.1:5177/runtime/shell/base/riscv64')
+  assert.equal(target.assetBase, 'http://127.0.0.1:24044/runtime/shell/base/riscv64')
   assert.equal(runtimeLocation('c2w-shell').runtimeId, 'shell/multi')
   assert.equal(runtimeLocation('c2w-powershell').assetBase, 'https://wasm.2401.xyz/runtime/shell/powershell/amd64')
   for (const id of ['unknown', '__proto__', 'constructor']) assert.throws(() => runtimeLocation(id))

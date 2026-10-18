@@ -14,7 +14,7 @@
 git clone https://github.com/xy2401/hello-shell.git
 cd hello-shell
 npm install          # 安装依赖
-npm run docs:dev     # 本地打开文档站（默认 http://localhost:5173）
+npm run docs:dev     # 本地打开文档站（默认 http://127.0.0.1:24040）
 ```
 
 后续命令均在 hello-shell 仓库根目录执行。开发服务地址以终端实际输出为准；按 `Ctrl+C` 停止服务。
@@ -75,4 +75,4 @@ demos/
 | 07 | 错误处理 | `07_errors.sh` + `07_errors.sh.out.txt` |
 | 08 | 综合实战 | `08_real_world.sh` + `08_real_world.sh.out.txt` |
 
-**推荐读法**：先读脚本（它做了什么）→ 再读并排的 `*.out.txt`（真实输出长什么样）→ 最后到[矩阵](/matrix/)看横向对照。想横向比较同一个任务，就把不同 shell 目录下同一编号的两个文件放在一起读，例如 `bash/03_args_parsing.sh.out.txt` 对 `powershell7/03_args_parsing.ps1.out.txt`。
+**推荐读法**：先读脚本（它做了什么）→ 再读并排的 `*.out.txt`（真实输出长什么样）→ 最后到[⚖️ 对比矩阵](/matrix/)看横向对照。想横向比较同一个任务，就把不同 shell 目录下同一编号的两个文件放在一起读，例如 `bash/03_args_parsing.sh.out.txt` 对 `powershell7/03_args_parsing.ps1.out.txt`。

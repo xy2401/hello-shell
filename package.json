@@ -7,9 +7,9 @@
     "node": "^20.19.0 || >=22.16.0"
   },
   "scripts": {
-    "docs:dev": "vitepress dev docs",
+    "docs:dev": "vitepress dev docs --host 127.0.0.1 --port 24040 --strictPort",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",
+    "docs:preview": "vitepress preview docs --host 127.0.0.1 --port 24040 --strictPort",
     "collect:docker": "node scripts/initialize-docker-evidence.js && node scripts/run-docker-demos.js",
     "collect-outputs": "npm run collect:docker",
     "check:docker-catalog": "node scripts/check-docker-catalog.js",

@@ -96,4 +96,4 @@ Linux 侧的 bash/zsh/fish/python/pwsh 都在容器里运行，镜像以 tag + d
 
 ## 实验入口与范围
 
-[浏览器实验台](/playground/)提供 Bash 风格与 BusyBox 等已有引擎；这些不能自动代表本产品的完整实现。 [统一任务复现手册](/matrix/experiments)说明已有脚本、输入和采集方式；未进入快照矩阵的 Shell 请按本产品安装页在本机实践。 本产品的已采集输出见 [Docker 验证证据](./DockerTooling)。
+[🧪 实验台](/playground/)提供 Bash 风格与 BusyBox 等已有引擎；这些不能自动代表本产品的完整实现。 [统一任务复现手册](/matrix/experiments)说明已有脚本、输入和采集方式；未进入快照矩阵的 Shell 请按本产品安装页在本机实践。 本产品的已采集输出见 [Docker 验证证据](./DockerTooling)。

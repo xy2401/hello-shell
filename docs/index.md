@@ -13,10 +13,10 @@ hero:
       text: 基础概念
       link: /#shell-foundation
     - theme: alt
-      text: 🧪 浏览器 Shell 实验台
+      text: 🧪 实验台
       link: /playground/
     - theme: alt
-      text: ⚖️ 横向对比矩阵
+      text: ⚖️ 对比矩阵
       link: /matrix/
 
 features:
@@ -61,7 +61,7 @@ import { withBase } from "vitepress";
 
 <a :href="withBase('/matrix/')" style="text-decoration: none;">
   <div style="background: var(--vp-c-bg-soft); border: 1px solid var(--vp-c-divider); padding: 20px; border-radius: 12px; height: 100%; transition: all 0.3s ease;">
-    <h3 style="margin: 0 0 8px 0; color: var(--vp-c-brand-1);">⚖️ 5 大横向对比矩阵</h3>
+    <h3 style="margin: 0 0 8px 0; color: var(--vp-c-brand-1);">⚖️ 对比矩阵</h3>
     <p style="margin: 0; font-size: 0.875rem; color: var(--vp-c-text-2);">入参模型、引号语义、通配匹配、错误处理、可移植性五大维度深度对比表</p>
   </div>
 </a>
@@ -93,11 +93,11 @@ import { withBase } from "vitepress";
 | 07 | **errors** | 捕获失败继续执行、`set -e` 类退出码 | `caughtError=true`<br>`afterFailure=continued`<br>`setEExitCode=1` |
 | 08 | **real_world** | 复制—改名—校验—报告批处理流水线 | `prepared=3,renamed=1,unchanged=2,verify=ok` |
 
-直接试写代码可进入 [浏览器 Shell 实验台](/playground/)；完整任务、采集方式与已保存输出见 [统一任务复现手册](/matrix/experiments)。
+直接试写代码可进入 [🧪 实验台](/playground/)；完整任务、采集方式与已保存输出见 [统一任务复现手册](/matrix/experiments)。
 
 ---
 
-## 📊 横向对比矩阵速览
+## ⚖️ 对比矩阵速览 {#📊-横向对比矩阵速览}
 
 各 Shell 在关键功能上的支持方式不同——「原生」不等于「简单」，「兼容标准」也不等于「易用」。
 
@@ -124,7 +124,7 @@ git clone https://github.com/xy2401/hello-shell.git && cd hello-shell
 npm install              # Node.js 20.19+ 或 22.16+，具体范围见 package.json
 
 # 查看文档站
-npm run docs:dev         # 独立启动默认 http://localhost:5173，以终端输出为准
+npm run docs:dev         # 独立启动默认 http://127.0.0.1:24040，以终端输出为准
 
 # 重新采集所有输出（需 Docker）
 npm run collect-outputs  # 容器内运行全部 9 个任务，刷新 *.out.txt 快照
